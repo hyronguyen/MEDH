@@ -1,0 +1,193 @@
+﻿@{
+    ViewData["Title"] = "Tiếp đón mới";
+}
+
+<link rel="stylesheet" href="~/css/tiepdonmoi.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<div class="container-fluid px-4 pt-3">
+
+    <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+      <li class="breadcrumb-item"><a>Tiếp đón</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Tiếp đón mới</li>
+    </ol>
+  </nav>
+
+    <h3 class="mb-4">@ViewData["Title"]</h3>
+
+    <!-- Mục 1 + 2: Lý do đến khám + Quầy -->
+    <div class="row mb-4">
+        <!-- Lý do đến khám -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3">Thồn tin chung</h5>
+                <form id="lyDoForm">
+
+                    <div class="mb-2 position-relative">
+                        <span>
+                            <label class="form-label">SCAN TIẾP ĐÓN</label>
+                            <i class="fa-solid fa-qrcode qr-icon"></i>
+                        </span>
+                        
+                        <input type="text" class="form-control highlight-input pe-5" id="maDinhDanh" placeholder="Scan QR để tiếp đón...">
+                        
+                    </div>
+
+
+                    <div class="mb-2">
+                        <label class="form-label required">Lý do khám</label>
+                        <input type="text" class="form-control" id="lyDoKham">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Loại đối tượng</label>
+                        <select class="form-select" id="loaiDoiTuong">
+                            <option>BHYT</option>
+                            <option>Thu phí</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label">Tìm mã NB cũ</label>
+                        <input type="text" class="form-control" id="maNbCu">
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Quầy -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3">Thông tin Quầy</h5>
+                <form id="quayForm">
+                    <div class="mb-3">
+                        <label class="form-label">Chọn quầy</label>
+                        <select class="form-select" id="chonQuay">
+                            <option>Quầy 1</option>
+                            <option>Quầy 2</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-between mt-4">
+                        <div class="text-center flex-fill me-2">
+                            <label class="form-label fw-semibold">STT đang tiếp đón</label>
+                            <div style="background-color: var(--primary-color);"  class="border rounded text-white fs-1 fw-bold py-3">
+                                <span id="sttDangTiepDon">0001</span>
+                            </div>
+                        </div>
+                        <div class="text-center flex-fill ms-2">
+                            <label class="form-label fw-semibold">STT tiếp theo</label>
+                            <div class="border rounded bg-secondary text-white fs-1 fw-bold py-3">
+                                <span id="sttTiepTheo">0002</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+                 <div class="d-flex justify-content-between mt-4">
+                          <button style="background-color: var(--primary-color); color:white" class="btn px-4" onclick="xacNhan()">Xác nhận tiếp đón</button>
+                        <button type="button" class="btn btn-outline-dark" onclick="chuyenBenhNhanTiepTheo()">Bệnh nhân tiếp theo</button>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Mục 3 + 4: Hành chính + BHYT -->
+    <div class="row mb-4">
+        <!-- Thông tin hành chính -->
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3">Thông tin Hành chính</h5>
+                <form id="hanhChinhForm">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label required">Họ và tên</label>
+                            <input type="text" class="form-control" id="hoTen" required oninput="tuDongVietHoa(this)">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Giới tính</label>
+                            <select class="form-select" id="gioiTinh">
+                                <option>Nam</option>
+                                <option>Nữ</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label required">Ngày sinh</label>
+                            <input type="date" class="form-control" id="ngaySinh">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Tuổi</label>
+                            <input type="text" class="form-control" id="tuoi" readonly>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">Nghề nghiệp</label>
+                            <input type="text" class="form-control" id="ngheNghiep">
+                        </div>
+                        <div class="col-md-8">
+                            <label class="form-label">Địa chỉ</label>
+                            <input type="text" class="form-control" id="diaChi">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Số giấy tờ</label>
+                            <input type="text" class="form-control" id="soGiayTo">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Thông tin BHYT -->
+        <div class="col-md-6">
+            <div  id="thongTinBHYT" class="card shadow-sm p-3">
+                <h5 class="fw-bold mb-3">Thông tin BHYT</h5>
+                <form id="bhytForm">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Mã thẻ</label>
+                            <input type="text" class="form-control" id="maThe" maxlength="15" oninput="kiemTraVaChuyenHoaMaThe()" onblur="kiemTraMaThe()">
+
+
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Mức hưởng</label>
+                            <input type="text" class="form-control" id="mucHuong" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ngày cấp</label>
+                            <input type="date" class="form-control" id="ngayCapThe">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Hạn thẻ</label>
+                            <input type="date" class="form-control" id="ngayHetHan">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nơi đăng ký</label>
+                            <input type="text" class="form-control" id="noiDangKy">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Nơi giới thiệu</label>
+                            <input type="text" class="form-control" id="noiGioiThieu">
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="thongTuyen">
+                                <label class="form-check-label" for="thongTuyen">
+                                    Khám thông tuyến
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+  
+
+</div>
+
+<script src="~/js/tiepDonMoi.js" asp-append-version="true"></script>
