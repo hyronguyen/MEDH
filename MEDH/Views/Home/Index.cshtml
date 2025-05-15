@@ -1,0 +1,164 @@
+﻿@{
+    ViewData["Title"] = "Trang Chủ HIS";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="~/css/trangchu.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/color/color.css" asp-append-version="true" />
+
+<!-- Phần video giới thiệu trải rộng -->
+<div class="video-banner">
+    <video autoplay muted loop>
+        <source src="~/assets/video/intro_benhvien.mp4" type="video/mp4" />
+        Trình duyệt của bạn không hỗ trợ video.
+    </video>
+
+    <div class="fade-bottom"></div>
+
+    <!-- Thêm div chứa chữ -->
+    <div class="video-text">
+        <img src="~/assets/images/logo.webp" alt="Logo" style="width: 80px; height: 80px; margin-bottom: 0.5rem;" />
+      
+        <h1>PHÒNG KHÁM ĐA KHOA DEMO</h1>
+    </div>
+</div>
+
+
+<!-- Phần danh sách module -->
+<section class="modules-section">
+    <h2 class="text-center">____ MEDH HIS ____</h2>
+    <div class="module-grid">
+
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-user-check"></i>
+            <h5>Tiếp Đón</h5>
+            <ul class="context-menu" id="context-menu-card-tiepdon">
+                <li><a href="#">Tiếp đón mới</a></li>
+                <li><a href="#">DS đã tiếp đón</a></li>
+                <li><a href="#">Lịch hẹn khám</a></li>
+            </ul>
+        </div>
+
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-handshake"></i>
+            <h5>Hội Chẩn</h5>
+            <ul class="context-menu" id="context-menu-card-hoichan">
+                <li><a href="#">DS hội chẩn</a></li>
+                <li><a href="#">Thư mời hội chẩn</a></li>
+
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-warehouse"></i>
+            <h5>Quản Lý Kho</h5>
+            <ul class="context-menu" id="context-menu-card-kho">
+                <li><a href="#">DS tồn kho</a></li>
+                <li><a href="#">Xuất kho</a></li>
+                <li><a href="#">Nhập kho</a></li>
+                <li><a href="#">Phân quản lý</a></li>
+            </ul>
+        </div>
+
+        
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-stethoscope"></i>
+            <h5>Khám Bệnh</h5>
+        </div>
+
+        <!-- Hàng 2 -->
+
+      
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-bed-pulse"></i>
+            <h5>Nhập viện</h5>
+            <ul class="context-menu" id="context-menu-card-noitru">
+                <li><a href="#">DS nội trú</a></li>
+                <li><a href="#">DS chờ lập BA</a></li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-vial-virus"></i>
+            <h5>Xét nghiệm</h5>
+            <ul class="context-menu" id="context-menu-card-xetnghiem">
+                <li><a href="#">Tiếp nhận</a></li>
+                <li><a href="#">Sinh Hóa - huyết học</a></li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-cash-register"></i>
+            <h5>Thu Ngân</h5>
+            <ul class="context-menu" id="context-menu-card-thungan">
+                <li><a href="#">Thu phí</a></li>
+                <li><a href="#">Quản lý tạm ứng</a></li>
+                <li><a href="#">Hoàn đổi</a></li>
+                <li><a href="#">Danh sách phiếu thu</a></li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-pills"></i>
+            <h5>Nhà Thuốc</h5>
+        </div>
+        
+        
+
+        
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-book-medical"></i>
+            <h5>HS Bệnh án</h5>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-x-ray"></i>
+            <h5>CDHA - PHCN</h5>
+            <ul class="context-menu" id="context-menu-card-cdha">
+                <li><a href="#">Tiếp nhận</a></li>
+                <li><a href="#">CDHA - PHCN</a></li>
+            </ul>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-droplet"></i>
+            <h5>Kho máu</h5>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-layer-group"></i>
+            <h5>DL Danh mục</h5>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-tv"></i>
+            <h5>QMS</h5>
+        </div>
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-ticket"></i>
+            <h5>Kiosk số</h5>
+        </div>
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-utensils"></i>
+            <h5>QL Dinh dưỡng</h5>
+        </div>
+
+
+        <div class="module-card">
+            <i class="module-icon fa-solid fa-sliders"></i>
+            <h5>Thiết lập</h5>
+        </div>
+
+
+
+
+    </div>
+</section>
+
+<script src="~/js/trangChu.js" asp-append-version="true"></script>

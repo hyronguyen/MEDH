@@ -1,0 +1,146 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    background-color: #fff; /* nền trắng */
+    color: #000; /* chữ màu đen để tương phản */
+    font-family: 'Segoe UI', sans-serif;
+}
+.video-banner {
+    position: relative;
+    width: 100vw;
+    height: 70vh;
+    overflow: hidden;
+    margin-left: calc(-50vw + 50%);
+}
+
+    .video-banner video {
+        width: 100vw;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.fade-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to top, #000, transparent);
+}
+
+/* Thêm phần chữ căn giữa */
+.video-text {
+    position: absolute;
+    top: 50%; /* canh giữa theo chiều dọc */
+    left: 50%; /* canh giữa theo chiều ngang */
+    transform: translate(-50%, -50%); /* dịch chuyển để chính xác trung tâm */
+    color: white; /* màu chữ */
+    text-align: center;
+    z-index: 5; /* ưu tiên hiển thị trên video */
+    user-select: none; /* không cho chọn chữ */
+}
+
+    .video-text h1 {
+        font-size: 3rem;
+        font-weight: bold;
+        text-shadow: 0 0 10px rgba(0,0,0,0.7); /* tạo bóng đổ cho chữ rõ hơn */
+    }
+
+
+.fade-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 150px;
+    background: linear-gradient(to top, #fff, transparent); /* fade trắng lên video */
+}
+
+.modules-section {
+    padding: 3rem 2rem 8rem 2rem;
+    position: relative;
+    z-index: 10;
+    color: #000; /* chữ đen */
+}
+
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.module-card {
+    position: relative;
+    background-color: #f2f2f2; /* màu xám sáng */
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.2s;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    color: #000; /* chữ đen */
+}
+
+    .module-card:hover {
+        transform: scale(1.05);
+        background-color: #e6e6e6;
+        position: relative; /* tạo context mới để z-index có tác dụng */
+        z-index: 10; /* nâng lên trên các phần tử khác */
+    }
+
+
+    .module-card h5 {
+        margin: 0.5rem 0 0 0;
+        color: #000;
+    }
+
+.module-icon {
+    font-size: 48px;
+    color: var(--primary-color); /* xanh dương đậm */
+}
+
+/* context menu của card */
+.context-menu {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+    display: none;
+    background-color: #ffffff;
+    color: var(--text-color);
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 200px; /* tăng độ rộng */
+    text-align: left; /* căn trái nội dung */
+    z-index: 1000;
+}
+
+    .context-menu li {
+        padding: 0.6rem 1.2rem; /* tăng padding cho thoáng */
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 0.95rem;
+        color: var(--text-color);
+        transition: background-color 0.2s;
+        text-align: left; /* căn trái */
+    }
+
+        .context-menu li:hover {
+            background-color: #f2f2f2;
+        }
+
+        /* Xóa định dạng mặc định của thẻ <a> nếu có dùng */
+        .context-menu li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            text-align: left;
+        }
+
+            .context-menu li a:hover {
+                background-color: #f2f2f2;
+            }
