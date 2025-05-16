@@ -1,0 +1,304 @@
+﻿body {
+    background-color: var(--background-color);
+}
+
+
+/* Header: chiếm 10% chiều cao */
+.kb-header {
+    padding: 0.75rem 1rem;
+    background-color: #eef2f7;
+    border-bottom: 1px solid #ddd;
+}
+
+.kb-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.kb-status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-weight: 500;
+    font-size: 1rem;
+    color: #333;
+}
+
+    .kb-status > div {
+        background-color: #ffffff;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+/* Nhóm nút */
+.kb-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+    .kb-actions button {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        transition: background-color 0.2s ease;
+    }
+
+
+.btn-list {
+    background-color: #f3f4f6;
+    color: #111827;
+}
+
+    .btn-list:hover {
+        background-color: #e5e7eb;
+    }
+
+
+
+/* Body: chiếm phần còn lại (90%) */
+/* Container bố cục chính */
+.kb-body {
+    flex: 1;
+    display: flex;
+    margin-top: 0.75rem;
+    height: calc(100vh - 4rem); /* Chiều cao trừ header (tùy header cao bao nhiêu) */
+    gap: 1rem;
+    overflow: hidden;
+}
+
+/* Cột chung */
+.kb-col {
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+/* Tỉ lệ chiều rộng từng khung */
+.kb-col-left {
+    flex: 2;
+}
+
+.kb-col-center {
+    flex: 7;
+    background: var(--primary-color);
+}
+
+.kb-col-right {
+    flex: 2;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0; /* nếu muốn sát lề */
+}
+
+/* TAB CHỨC NĂNG BÁC SĨ */
+.kb-tab-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.kb-tab {
+    background-color: #ffffff;
+    border: none; /* XÓA viền đen */
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    outline: none; /* XÓA viền khi focus (trình duyệt tự sinh) */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+
+    .kb-tab i {
+        width: 20px; /* Cố định để icon không làm lệch chữ */
+        text-align: center;
+        font-size: 1.1rem;
+    }
+
+    .kb-tab:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .kb-tab.active {
+        background-color: var(--primary-color);
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 0 6px rgba(37, 99, 235, 0.7);
+    }
+
+/* Tiện ích khác*/
+.kb-utilities {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 cột */
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.kb-util-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1f2937;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+}
+
+.kb-util-btn-closehs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-align: center;
+    background-color: var(--primary-color);
+}
+/* THông tin hành chính*/
+.patient-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+/* Lịch sử khám*/
+.patient-history {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+    .patient-history h5 {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        color: #2563eb;
+    }
+
+.history-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.history-card {
+    background-color: #f9fafb;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #374151;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.history-date {
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/*Thông tin khám bệnh - BS điền*/
+.kb-col-center fieldset {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+}
+
+.kb-col-center legend {
+    font-weight: bold;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+/*Khợi ý ICD*/
+.suggestion-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-top: none;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+    .suggestion-item:hover {
+        background-color: #f0f0f0;
+    }
+
+.kb-col {
+    overflow: auto; /* Cho phép cuộn */
+    scrollbar-width: none; /* Ẩn scrollbar trên Firefox */
+}
+
+    /* Ẩn scrollbar trên Chrome, Edge và Safari */
+    .kb-col::-webkit-scrollbar {
+        display: none;
+    }

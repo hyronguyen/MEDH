@@ -5,6 +5,7 @@
     color: #000; /* chữ màu đen để tương phản */
     font-family: 'Segoe UI', sans-serif;
 }
+
 .video-banner {
     position: relative;
     width: 100vw;
@@ -125,7 +126,7 @@
         font-weight: bold;
         font-size: 0.95rem;
         color: var(--text-color);
-        transition: background-color 0.2s; 
+        transition: background-color 0.2s;
         text-align: left; /* căn trái */
     }
 
@@ -145,3 +146,10 @@
             .context-menu li a:hover {
                 background-color: #f2f2f2;
             }
+
+a {
+    text-decoration: none; /* bỏ gạch chân */
+    color: inherit; /* màu chữ thừa kế, không xanh */
+    cursor: default; /* con trỏ bình thường, không phải pointer */
+    display: block; /* nếu muốn cho nó thành block */
+}
