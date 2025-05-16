@@ -94,6 +94,14 @@
     background: var(--primary-color);
 }
 
+#chidinh{
+    background:white;
+}
+
+#kedonthuoc{
+    background:white;
+}
+
 .kb-col-right {
     flex: 2;
     background: none !important;
@@ -302,3 +310,34 @@ textarea {
     .kb-col::-webkit-scrollbar {
         display: none;
     }
+
+    /*các trường bắt buộc*/
+.required::after {
+    content: " *";
+    color: red;
+}
+
+.is-invalid {
+    border-color: red;
+}
+
+.form-group.is-invalid label {
+    color: red;
+}
+
+.form-group.is-invalid input,
+.form-group.is-invalid textarea {
+    border-color: red;
+}
+
+
+#patient-list {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    padding: 10px;
+    min-width: 200px;
+}

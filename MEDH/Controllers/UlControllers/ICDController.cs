@@ -26,7 +26,14 @@ namespace MEDH.Controllers.UlControllers
             try
             {
                 var response = await _httpClient.GetAsync(url);
+
+                var content = await response.Content.ReadAsStringAsync();
+
+                // Ghi log phản hồi để kiểm tra
+                Console.WriteLine($"ICD API Response for '{code}': {content}");
+
                 response.EnsureSuccessStatusCode();
+
 
                 var json = await response.Content.ReadAsStringAsync();
                 return Content(json, "application/json");
