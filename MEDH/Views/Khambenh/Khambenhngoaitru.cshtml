@@ -2,8 +2,8 @@
     ViewData["Title"] = "Khám bệnh";
 }
 
-<link rel="stylesheet" href="~/css/Khambenh/khambenh.css" asp-append-version="true" />
-<link rel="stylesheet" href="~/css/Khambenh/chidinhdichvu.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/khambenhStyles/khambenh.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/khambenhStyles/chidinhdichvu.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 
@@ -229,34 +229,6 @@
             </div>
 
                 </fieldset>
-            <!-- Popup chọn dịch vụ -->
-            <div id="popupDichVu" aria-modal="true" role="dialog" tabindex="-1" style="display: none">
-                <div class="popup-container">
-                    <button class="btn-close" onclick="closePopup()" aria-label="Đóng popup">×</button>
-                    <h4>Chọn dịch vụ</h4>
-                    <div class="search-wrapper">
-                        <input type="text" id="filterDichVu" placeholder="Tìm dịch vụ..." aria-label="Tìm dịch vụ">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M21 20l-5.59-5.59A7.91 7.91 0 0 0 17 9a8 8 0 1 0-8 8 7.91 7.91 0 0 0 5.41-2.59L20 21zM4 9a5 5 0 1 1 5 5 5 5 0 0 1-5-5z" />
-                        </svg>
-                    </div>
-                    <div class="table-wrapper">
-                        <table id="listDichVu">
-                            <thead>
-                                <tr>
-                                    <th>Tên dịch vụ</th>
-                                    <th>Loại dịch vụ</th>
-                                    <th>Giá (VNĐ)</th>
-                                    <th>Phòng</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dịch vụ lọc ở đây -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </section>
 
        <!-- Section: Kết luận khám -->
@@ -317,29 +289,28 @@
                 </div>
 
                 <!-- Danh sách thuốc bên ngoài -->
-                <table class="table" id="danhsach-thuoc-chon">
-                    <thead>
-                        <tr>
-                            <th>Mã</th>
-                            <th>Tên thuốc</th>
-                            <th>Cách dùng</th>
-                            <th>Giá</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Thuốc sẽ được thêm ở đây -->
-                    </tbody>
-                </table>
+                    <table id="danhsach-thuoc-chon" style="background-color: white; border-collapse: collapse; width: 100%; border-radius: 5px; overflow: hidden; margin-bottom:10px">
+                        <thead>
+                            <tr style="background-color: grey; color: white;">
+                                <th style="padding: 8px; text-align: left;">Mã</th>
+                                <th style="padding: 8px; text-align: left;">Tên</th>
+                                <th style="padding: 8px; text-align: left;">Cách dùng</th>
+                                <th style="padding: 8px; text-align: left;">Thành tiền</th>
+                                <th style="padding: 8px; text-align: center;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Các dòng dịch vụ thêm vào đây -->
+                        </tbody>
+                    </table>
 
                 <!-- Nút mở popup chọn thuốc -->
                 <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#popupThuoc">Chọn thuốc</button>
-                    <button id="btn-luu-donthuoc" type="button" class="btn" style="color: white;background: var(--primary-color)">Lưu đơn thuốc</button>
+                <button id="btn-luu-donthuoc" type="button" class="btn" style="color: white;background: var(--primary-color)">Lưu đơn thuốc</button>
             </form>
             </fieldset>
         </section>
 
-        <!-- Popup Modal danh sách thuốc -->
         <!-- Modal popup thuốc -->
         <div class="modal fade" id="popupThuoc" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-xl">
@@ -347,7 +318,7 @@
 
                     <div class="modal-header">
                         <h5 class="modal-title">Chọn thuốc</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
 
                     <div class="modal-body">
@@ -355,36 +326,60 @@
 
                             <!-- Bên trái: danh sách thuốc -->
                             <div class="col-md-6">
-                                <input type="text" id="timKiemThuoc" class="form-control mb-2" placeholder="Tìm kiếm thuốc...">
-                                <table class="table table-sm table-bordered">
-                                    <thead>
-                                        <tr><th>Mã</th><th>Tên thuốc</th><th>Giá</th><th>Tồn</th><th>Chọn</th></tr>
-                                    </thead>
-                                    <tbody id="tbodyDanhSachThuoc">
-                                        <!-- Danh sách thuốc load ở đây -->
-                                    </tbody>
-                                </table>
+                                <!-- Tìm kiếm -->
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="search-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                             class="bi bi-search" viewBox="0 0 16 16">
+                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0
+                                     1.415-1.414l-3.85-3.85zm-5.242 1.656a5.5 5.5 0 1
+                                     1 0-11 5.5 5.5 0 0 1 0 11z" />
+                                        </svg>
+                                    </span>
+                                    <input type="text" id="timKiemThuoc" class="form-control" placeholder="Tìm kiếm thuốc..." aria-label="Tìm thuốc" aria-describedby="search-icon">
+                                </div>
+
+                                <!-- Bảng danh sách thuốc -->
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="bangDanhSachThuoc">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th>Mã</th>
+                                                <th>Tên thuốc</th>
+                                                <th>Giá</th>
+                                                <th>Tồn</th>
+                                                <th>Chọn</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbodyDanhSachThuoc">
+                                            <!-- Danh sách thuốc load ở đây -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                             <!-- Bên phải: thuốc đã chọn -->
                             <div class="col-md-6">
-                                <table class="table table-sm table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>Mã</th>
-                                            <th>Tên</th>
-                                            <th>Sáng</th>
-                                            <th>Chiều</th>
-                                            <th>Tối</th>
-                                            <th>Tổng</th>
-                                            <th>Ghi chú</th>
-                                            <th>Xóa</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="thuoc-da-chon">
-                                        <!-- Thuốc đã chọn hiện ở đây -->
-                                    </tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead style="background-color: var(--primary-color); color: white;">
+
+                                            <tr>
+                                                <th>Mã</th>
+                                                <th>Tên</th>
+                                                <th>Sáng</th>
+                                                <th>Chiều</th>
+                                                <th>Tối</th>
+                                                <th>Tổng</th>
+                                                <th>Ghi chú</th>
+                                                <th>Xóa</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="thuoc-da-chon">
+                                            <!-- Thuốc đã chọn hiện ở đây -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
 
                         </div>
@@ -398,6 +393,60 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Popup Modal danh sách dịch vụ-->
+        <div class="modal fade" id="popupDichVu" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Chọn dịch vụ</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <!-- Ô tìm kiếm -->
+                        <div class="input-group mb-3" style="max-width: 400px;">
+                            <span class="input-group-text" id="search-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                     class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0
+                 1.415-1.414l-3.85-3.85zm-5.242 1.656a5.5 5.5 0 1
+                 1 0-11 5.5 5.5 0 0 1 0 11z" />
+                                </svg>
+                            </span>
+                            <input type="text" id="filterDichVu" class="form-control" placeholder="Tìm dịch vụ..."
+                                   aria-label="Tìm dịch vụ" aria-describedby="search-icon">
+                        </div>
+
+                        <!-- Bảng danh sách dịch vụ -->
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="listDichVu">
+                                <thead class="table-secondary">
+                                    <tr>
+                                        <th scope="col">Tên dịch vụ</th>
+                                        <th scope="col">Loại dịch vụ</th>
+                                        <th scope="col">Giá (VNĐ)</th>
+                                        <th scope="col">Phòng</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Các dịch vụ sẽ được render ở đây bằng JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                       
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
 
         <!-- Các tab chức năng:Thông tin khám, Chỉ định Dịch vụ, Kết luận khám, Kê đơn thuốc-->
         <section class="kb-col kb-col-right" aria-label="Chức năng khác">

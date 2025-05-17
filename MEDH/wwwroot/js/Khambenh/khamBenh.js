@@ -21,11 +21,6 @@ const suggestionsBox = document.getElementById('icd-suggestions');
 const tabs = document.querySelectorAll('.kb-tab');
 const sections = document.querySelectorAll('.kb-col.kb-col-center');    
 
-const popup = document.getElementById('popupDichVu');
-const listDichVuBody = document.querySelector('#listDichVu tbody');
-const filterInput = document.getElementById('filterDichVu');
-const dsDichVuBody = document.querySelector('#dsDichVu tbody');
-
 
 // Sau này đổ dữ liệu vào đây
 const dichVuCoSan = [
@@ -41,12 +36,6 @@ const dichVuCoSan = [
     { ten: "Siêu âm tim", gia: 550000, phong: "Phòng siêu âm tim", loai: "CDHA" },
     { ten: "Xét nghiệm nước tiểu", gia: 130000, phong: "Phòng xét nghiệm", loai: "Xét nghiệm" },
 ];
-
-
-const dsDichVu = [];
-
-
-
 
 // FUCNTION CỦA THÔNG TIN KHÁM------------------------------------------------------------------------------------
 
@@ -239,8 +228,18 @@ const dsDichVu = [];
 
 // FUCNTION CỦA KÊ DỊCH VỤ-----------------------------------------------------------------------------------
 
+const popup = document.getElementById('popupDichVu');
+const listDichVuBody = document.querySelector('#listDichVu tbody'); // OK
+const filterInput = document.getElementById('filterDichVu');
+const dsDichVuBody = document.querySelector('#dsDichVu tbody');     // <-- cần chắc #dsDichVu tồn tại
+
+let dsDichVu = []; // <-- phải có
+
     // Mở popup khi click input
-    document.getElementById('timDichVu').addEventListener('click', openPopup);
+    popup.addEventListener('show.bs.modal', () => {
+        loadDanhSachThuoc();
+        renderListDichVu();
+    });
 
     // Render danh sách dịch bụ
     function renderListDichVu(filter = '') {
@@ -280,16 +279,13 @@ const dsDichVu = [];
         renderListDichVu(e.target.value);
     });
 
-    function openPopup() {
-        popup.style.display = 'block';
-        filterInput.value = '';
-        renderListDichVu();
-        filterInput.focus();
+function closePopup() {
+    const popupInstance = bootstrap.Modal.getInstance(popup);
+    if (popupInstance) {
+        popupInstance.hide();
     }
+}
 
-    function closePopup() {
-        popup.style.display = 'none';
-    }
 
     function themDichVuVaoDanhSach(dv) {
         if (dsDichVu.some(d => d.ten === dv.ten && d.phong === dv.phong)) return;
@@ -300,7 +296,8 @@ const dsDichVu = [];
 
 
     function themDichVuTuPopup() {
-        openPopup();
+        const popupInstance = new bootstrap.Modal(popup); 
+        popupInstance.show();
     }
 
     function xoaDichVu(index) {
@@ -329,7 +326,6 @@ const dsDichVu = [];
             dsDichVuBody.appendChild(tr);
         });
     }
-
 
     function luuChiDinh() {
         if (dsDichVu.length === 0) {
@@ -556,104 +552,104 @@ timKiemThuocInput.addEventListener('input', e => {
 const btnLuuThuoc = document.getElementById('luu-thuoc');
 const tbodyDanhSachThuocChonNgoai = document.querySelector('#danhsach-thuoc-chon tbody');
 
-btnLuuThuoc.onclick = () => {
-    tbodyDanhSachThuocChonNgoai.innerHTML = '';
+    btnLuuThuoc.onclick = () => {
+        tbodyDanhSachThuocChonNgoai.innerHTML = '';
 
-    thuocDaChon.forEach(item => {
-        const tr = document.createElement('tr');
+        thuocDaChon.forEach(item => {
+            const tr = document.createElement('tr');
 
-        const soNgay = Number(document.getElementById('songay').value) || 1; // mặc định 1 nếu không có
+            const soNgay = Number(document.getElementById('songay').value) || 1; // mặc định 1 nếu không có
 
-        // Tính tổng liều trong ngày
-        const tongLieuTrongNgay = Number(item.sang) + Number(item.chieu) + Number(item.toi);
+            // Tính tổng liều trong ngày
+            const tongLieuTrongNgay = Number(item.sang) + Number(item.chieu) + Number(item.toi);
 
-        // Tính thành tiền
-        const thanhTien = tongLieuTrongNgay * soNgay * Number(item.gia);
+            // Tính thành tiền
+            const thanhTien = tongLieuTrongNgay * soNgay * Number(item.gia);
 
-        // Format thành tiền kiểu VNĐ
-        const thanhTienFormatted = thanhTien.toLocaleString('vi-VN') + ' đ';
+            // Format thành tiền kiểu VNĐ
+            const thanhTienFormatted = thanhTien.toLocaleString('vi-VN') + ' đ';
 
-        tr.innerHTML = `
-      <td>${item.mathuoc}</td>
-      <td>${item.tenthuoc}</td>
-      <td>S:${item.sang} C:${item.chieu} T:${item.toi}</td>
-      <td>${thanhTienFormatted}</td>
-      <td><button class="btn btn-grey btn-sm btn-xoa-ngoai" data-mathu="${item.mathuoc}">&times;</button></td>
-    `;
-        tbodyDanhSachThuocChonNgoai.appendChild(tr);
-    });
-
-    // Đóng popup sau khi lưu
-    const modal = bootstrap.Modal.getInstance(document.getElementById('popupThuoc'));
-    modal.hide();
-};
-
-
-tbodyDanhSachThuocChonNgoai.addEventListener('click', e => {
-    if (!e.target.classList.contains('btn-xoa-ngoai')) return;
-
-    const mathuoc = e.target.dataset.mathu;
-    // Xóa khỏi map, đồng thời bỏ chọn checkbox bên trái popup (nếu mở lại)
-    thuocDaChon.delete(mathuoc);
-
-    // Xóa row khỏi bảng ngoài
-    e.target.closest('tr').remove();
-
-
-    const checkbox = tbodyDanhSachThuoc.querySelector(`input.chkChonThuoc[data-mathu="${mathuoc}"]`);
-    if (checkbox) checkbox.checked = false;
-
-    // Cập nhật lại popup thuốc đã chọn nếu popup đang mở
-    renderThuocDaChon();
-});
-
-
-const popupThuoc = document.getElementById('popupThuoc');
-popupThuoc.addEventListener('show.bs.modal', () => {
-    loadDanhSachThuoc();
-    // Sau khi load, check những thuốc đã chọn
-    setTimeout(() => {
-        thuocDaChon.forEach((value, key) => {
-            const cb = tbodyDanhSachThuoc.querySelector(`input.chkChonThuoc[data-mathu="${key}"]`);
-            if (cb) cb.checked = true;
+            tr.innerHTML = `
+          <td>${item.mathuoc}</td>
+          <td><strong>${item.tenthuoc}</strong></td>
+          <td>Sang:${item.sang} Chiều:${item.chieu} Tối:${item.toi}  ${item.ghichu}</td>
+          <td>${thanhTienFormatted}</td>
+          <td><button class="btn btn-grey btn-sm btn-xoa-ngoai" data-mathu="${item.mathuoc}">&times;</button></td>
+        `;
+            tbodyDanhSachThuocChonNgoai.appendChild(tr);
         });
-        renderThuocDaChon();
-    }, 100);
-});
 
-document.getElementById('btn-luu-donthuoc').addEventListener('click', function () {
-    // Lấy giá trị các trường
-    const ngayKe = document.getElementById('ngayke').value;
-    const ngayDen = document.getElementById('ngayden').value;
-    const soNgay = document.getElementById('songay').value;
-    const ghiChu = document.getElementById('ghichu').value;
-
-    // Lấy danh sách thuốc đã chọn từ bảng #danhsach-thuoc-chon tbody
-    // Giả sử mỗi dòng thuốc có các cột: Mã, Tên, Cách dùng, Giá
-    const thuocRows = document.querySelectorAll('#danhsach-thuoc-chon tbody tr');
-    const danhSachThuoc = [];
-
-    thuocRows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length >= 4) {
-            danhSachThuoc.push({
-                ma: cells[0].innerText.trim(),
-                ten: cells[1].innerText.trim(),
-                cachDung: cells[2].innerText.trim(),
-                gia: cells[3].innerText.trim()
-            });
-        }
-    });
-
-    // Tạo đối tượng đơn thuốc
-    const donThuoc = {
-        ngayKe,
-        ngayDen,
-        soNgay,
-        ghiChu,
-        danhSachThuoc
+        // Đóng popup sau khi lưu
+        const modal = bootstrap.Modal.getInstance(document.getElementById('popupThuoc'));
+        modal.hide();
     };
 
-    // In ra console
-    console.log('Đơn thuốc:', donThuoc);
-});
+
+    tbodyDanhSachThuocChonNgoai.addEventListener('click', e => {
+        if (!e.target.classList.contains('btn-xoa-ngoai')) return;
+
+        const mathuoc = e.target.dataset.mathu;
+        // Xóa khỏi map, đồng thời bỏ chọn checkbox bên trái popup (nếu mở lại)
+        thuocDaChon.delete(mathuoc);
+
+        // Xóa row khỏi bảng ngoài
+        e.target.closest('tr').remove();
+
+
+        const checkbox = tbodyDanhSachThuoc.querySelector(`input.chkChonThuoc[data-mathu="${mathuoc}"]`);
+        if (checkbox) checkbox.checked = false;
+
+        // Cập nhật lại popup thuốc đã chọn nếu popup đang mở
+        renderThuocDaChon();
+    });
+
+
+    const popupThuoc = document.getElementById('popupThuoc');
+    popupThuoc.addEventListener('show.bs.modal', () => {
+        loadDanhSachThuoc();
+        // Sau khi load, check những thuốc đã chọn
+        setTimeout(() => {
+            thuocDaChon.forEach((value, key) => {
+                const cb = tbodyDanhSachThuoc.querySelector(`input.chkChonThuoc[data-mathu="${key}"]`);
+                if (cb) cb.checked = true;
+            });
+            renderThuocDaChon();
+        }, 100);
+    });
+
+    document.getElementById('btn-luu-donthuoc').addEventListener('click', function () {
+        // Lấy giá trị các trường
+        const ngayKe = document.getElementById('ngayke').value;
+        const ngayDen = document.getElementById('ngayden').value;
+        const soNgay = document.getElementById('songay').value;
+        const ghiChu = document.getElementById('ghichu').value;
+
+        // Lấy danh sách thuốc đã chọn từ bảng #danhsach-thuoc-chon tbody
+        // Giả sử mỗi dòng thuốc có các cột: Mã, Tên, Cách dùng, Giá
+        const thuocRows = document.querySelectorAll('#danhsach-thuoc-chon tbody tr');
+        const danhSachThuoc = [];
+
+        thuocRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 4) {
+                danhSachThuoc.push({
+                    ma: cells[0].innerText.trim(),
+                    ten: cells[1].innerText.trim(),
+                    cachDung: cells[2].innerText.trim(),
+                    gia: cells[3].innerText.trim()
+                });
+            }
+        });
+
+        // Tạo đối tượng đơn thuốc
+        const donThuoc = {
+            ngayKe,
+            ngayDen,
+            soNgay,
+            ghiChu,
+            danhSachThuoc
+        };
+
+        // In ra console
+        console.log('Đơn thuốc:', donThuoc);
+    });
