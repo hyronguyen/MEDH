@@ -1,0 +1,37 @@
+﻿.kiosk-title {
+    font-size: 3.5rem;
+    cursor: pointer;
+    color: black;
+}
+
+    .kiosk-title:hover {
+        color: var(--primary-color);
+    }
+
+.kiosk-options {
+    min-height: calc(100vh - 27rem);
+}
+
+.kiosk-btn {
+    background-color: var(--primary-color);
+    width: 360px;
+    height: 300px;
+    border-radius: 1.5rem;
+    font-size: 2.5rem;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.btn-main-label {
+    font-weight: bold;
+    font-size: 2.6rem;
+    color: white;
+}
+
+.btn-sub-info {
+    font-size: 1.3rem;
+    color: white;
+}

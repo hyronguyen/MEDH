@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Kiosk lấy số";
+}
+
+<link rel="stylesheet" href="~/css/QMSStyles/kiosk.css" asp-append-version="true" />
+
+<!-- Tiêu đề (Chọn khu vực) -->
+<div class="kiosk-header text-center my-4">
+    <h1 id="kioskTitle" class="kiosk-title btn btn-link fw-bold text-decoration-none">
+        KIOSK - Chọn khu vực
+    </h1>
+    <h2>Vui lòng lấy số tiếp đón tại đây.</h2>
+</div>
+
+<!-- Nút lấy số to + gộp dữ liệu -->
+<div class="kiosk-options d-flex justify-content-center align-items-center gap-5 flex-wrap">
+    <button class="kiosk-btn kiosk-btn-bhyt btn  shadow-lg">
+        <div class="btn-main-label">KHÁM BHYT</div>
+        <div class="btn-sub-info">
+            <div>Đã lấy: <strong>0052</strong></div>
+            <div>Số hiện tại: <strong>0053</strong></div>
+        </div>
+    </button>
+
+    <button class="kiosk-btn kiosk-btn-dv btn shadow-lg">
+        <div class="btn-main-label">KHÁM DỊCH VỤ</div>
+        <div class="btn-sub-info">
+            <div>Đã lấy: <strong>0018</strong></div>
+            <div>Số hiện tại: <strong>0019</strong></div>
+        </div>
+    </button>
+</div>
+
+<!-- Modal nhập PIN -->
+<div class="modal fade" id="pinModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Xác thực PIN</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <label for="pinInput" class="form-label">Nhập mã PIN</label>
+                <input type="password" class="form-control" id="pinInput" placeholder="••••" />
+                <div id="pinError" class="text-danger small mt-2" style="display:none;">
+                    Mã PIN không đúng.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button class="btn btn-primary" id="validatePinBtn">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal chọn khu vực -->
+<div class="modal fade" id="zoneModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn khu vực</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <select class="form-select" id="zoneSelect">
+                    <option selected>-- Chọn khu vực --</option>
+                    <option value="Khu A - Khám Ngoại">Khu A - Khám Ngoại</option>
+                    <option value="Khu B - Khám Nội">Khu B - Khám Nội</option>
+        
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveZoneBtn">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/QMS/kiosk.js" asp-append-version="true"></script>

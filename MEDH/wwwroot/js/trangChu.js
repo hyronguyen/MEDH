@@ -1,5 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     initContextMenus();
+
+
 });
 
 // ------------------- Hàm chính khởi tạo menu ngữ cảnh -------------------
