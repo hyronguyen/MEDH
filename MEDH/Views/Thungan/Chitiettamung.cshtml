@@ -1,0 +1,180 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết tạm ứng";
+}
+
+<link rel="stylesheet" href="~/css/thunganStyles/chitiettamung.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Thu ngân</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Thungan" asp-action="Quanlytamung">Danh sách tạm ứng</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewBag.MaHS</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Chi tiết tạm ứng</h2>
+    <!-- Toolbar: thời gian ca + chọn quầy -->
+    <div class="toolbar">
+   
+        <select class="form-select w-auto">
+            <option selected>Quầy 1</option>
+            <option>Quầy 2</option>
+        </select>
+    </div>
+
+    <!-- Patient Header -->
+    <div class="patient-header">
+        <div class="patient-avatar">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="patient-info">
+            <div><span class="label">Mã BN:</span> <span class="value">@ViewBag.MaBN</span></div>
+            <div><span class="label">Mã HS:</span> <span class="value">@ViewBag.MaHS</span></div>
+            <div><span class="label">Mã BA:</span> <span class="value">@ViewBag.MaBA</span></div>
+            <div><span class="label">Khoa:</span> <span class="value">@ViewBag.Khoa</span></div>
+            <div><span class="label">Trạng thái:</span> <span class="value">@ViewBag.TrangThai</span></div>
+            <div><span class="label">Ngày đăng ký:</span> <span class="value">@ViewBag.NgayDK</span></div>
+            <div><span class="label">Ngày nhập viện:</span> <span class="value">@ViewBag.NgayNV</span></div>
+            <div><span class="label">Số BHYT:</span> <span class="value">@ViewBag.SoBHYT</span></div>
+            <div><span class="label">Giá trị thẻ:</span> <span class="value">@ViewBag.GiaTriThe</span></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-9">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs mb-3" id="tamungTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="thuTamUng-tab" data-bs-toggle="tab" data-bs-target="#thuTamUng" type="button" role="tab">Thu tạm ứng</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="hoanTamUng-tab" data-bs-toggle="tab" data-bs-target="#hoanTamUng" type="button" role="tab">Hoàn tạm ứng</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="huyTamUng-tab" data-bs-toggle="tab" data-bs-target="#huyTamUng" type="button" role="tab">Hủy tạm ứng</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ngoaiTru-tab" data-bs-toggle="tab" data-bs-target="#ngoaiTru" type="button" role="tab">Phiếu thu ngoại trú</button>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <!-- Thu tạm ứng -->
+                <div class="tab-pane fade show active" id="thuTamUng" role="tabpanel">
+                    <h5>DS Phiếu thu tạm ứng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Số tiền</th>
+                                    <th>Ký hiệu</th>
+                                    <th>Số phiếu</th>
+                                    <th>Lần</th>
+                                    <th>Ngày thu</th>
+                                    <th>PTTT</th>
+                                    <th>Lý do</th>
+                                    <th>Khoa</th>
+                                    <th>Thu ngân</th>
+                                    <th>Xác nhận</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* … *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hoàn tạm ứng -->
+                <div class="tab-pane fade" id="hoanTamUng" role="tabpanel">
+                    <h5>DS Phiếu hoàn tạm ứng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Số tiền</th>
+                                    <th>Ký hiệu</th>
+                                    <th>Số phiếu</th>
+                                    <th>Lần</th>
+                                    <th>Ngày hoàn</th>
+                                    <th>Khoa</th>
+                                    <th>Thu ngân</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* … *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Hủy tạm ứng -->
+                <div class="tab-pane fade" id="huyTamUng" role="tabpanel">
+                    <h5>DS Phiếu hủy tạm ứng</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Số tiền</th>
+                                    <th>Số phiếu</th>
+                                    <th>Ngày hủy</th>
+                                    <th>Lý do</th>
+                                    <th>Thu ngân</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* … *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Phiếu thu ngoại trú -->
+                <div class="tab-pane fade" id="ngoaiTru" role="tabpanel">
+                    <h5>DS Phiếu thu ngoại trú</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã HS</th>
+                                    <th>Họ tên</th>
+                                    <th>Ngày thu</th>
+                                    <th>Số tiền</th>
+                                    <th>Thu ngân</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @* … *@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3">
+      <div class="money-card">
+        <h5>Thông tin số tiền</h5>
+        <div class="money-item"><span>Số tiền đã tạm ứng:</span><span>500.000 đ</span></div>
+        <div class="money-item"><span>Số tiền DV phải trả:</span><span>0 đ</span></div>
+        <div class="money-item"><span>Số tiền còn lại:</span><span>500.000 đ</span></div>
+        <div class="money-item total"><span>Tổng cần xử lý:</span><span>500.000 đ</span></div>
+      </div>
+    </div>
+    </div>
+
+ </div>

@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Chi tiết tiếp đón";
+}
+
+<link rel="stylesheet" href="~/css/tiepdonStyles/chitiettiepdon.css" asp-append-version="true" />
+
+<div class="container mt-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Tiếp đón</a></li>
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Tiepdon" asp-action="Dstiepdon">Danh sách tiếp đón</a></li>
+            <li class="breadcrumb-item active">@ViewBag.MaHS</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4 text-primary">Chi tiết tiếp đón</h2>
+
+    <!-- Section 1: Thông tin hành chính -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary">
+            Thông tin hành chính
+        </div>
+        <div class="card-body row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Mã hồ sơ:</label>
+                <div>@ViewBag.MaHS</div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Họ tên:</label>
+                <div><span class="text-muted">[Chưa có]</span></div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Năm sinh:</label>
+                <div><span class="text-muted">[Chưa có]</span></div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Giới tính:</label>
+                <div><span class="text-muted">[Chưa có]</span></div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-bold">Địa chỉ:</label>
+                <div><span class="text-muted">[Chưa có]</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Danh sách dịch vụ đã kê -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary">
+            Danh sách dịch vụ đã kê
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Mã dịch vụ</th>
+                        <th>Tên dịch vụ</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dữ liệu dịch vụ sẽ load ở đây -->
+                    <tr>
+                        <td colspan="7" class="text-center text-muted">Chưa có dịch vụ nào được kê</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Nút chức năng -->
+    <div class="mb-5">
+        <a asp-controller="Tiepdon"
+           asp-action="KethemDichvu"
+           asp-route-maHS="@ViewBag.MaHS"
+           class="btn btn-success me-2">
+            <i class="bi bi-plus-circle"></i> Kê thêm dịch vụ
+        </a>
+        <a asp-controller="Tiepdon"
+           asp-action="HuyTiepdon"
+           asp-route-maHS="@ViewBag.MaHS"
+           class="btn btn-danger">
+            <i class="bi bi-x-circle"></i> Hủy tiếp đón
+        </a>
+    </div>
+</div>

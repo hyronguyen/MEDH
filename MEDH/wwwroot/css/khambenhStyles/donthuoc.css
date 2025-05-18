@@ -1,1 +1,12 @@
-﻿
+﻿#danhsach-thuoc-chon {
+    background-color: white;
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom:10px;
+}
+
+#luu-thuoc{
+    background-color: var(--primary-color);
+}

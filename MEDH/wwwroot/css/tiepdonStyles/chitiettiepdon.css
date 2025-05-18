@@ -1,0 +1,60 @@
+﻿.breadcrumb .breadcrumb-item.active {
+    color: var(--primary-color);
+}
+
+    h2.text-primary {
+        color: var(--black-color) !important;
+    }
+
+    .card {
+        background-color: #fff;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-weight: 600;
+    }
+
+    .card-header.bg-primary {
+        background-color: var(--primary-color) !important;
+        color: #fff;
+    }
+
+    .card-header.bg-secondary {
+        background-color: var(--secondary-color) !important;
+        color: #fff;
+    }
+
+    .table thead {
+        background-color: var(--primary-color);
+        color: #fff;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(5, 167, 158, 0.1);
+    }
+
+    .btn-success {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    .btn-success:hover {
+        background-color: #04917e;
+        border-color: #04917e;
+    }
+
+    .btn-danger {
+        background-color: var(--highlight-color);
+        border-color: var(--highlight-color);
+    }
+    .btn-danger:hover {
+        background-color: #e65c00;
+        border-color: #e65c00;
+    }
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}

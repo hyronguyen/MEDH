@@ -22,7 +22,7 @@ const tabs = document.querySelectorAll('.kb-tab');
 const sections = document.querySelectorAll('.kb-col.kb-col-center');    
 
 
-// Sau này đổ dữ liệu vào đây
+//Call API ĐỔ vào danh sách này
 const dichVuCoSan = [
     { ten: "Siêu âm bụng tổng quát", gia: 500000, phong: "Phòng siêu âm 1", loai: "CDHA" },
     { ten: "Xét nghiệm máu", gia: 150000, phong: "Phòng xét nghiệm", loai: "Xét nghiệm" },
@@ -35,6 +35,20 @@ const dichVuCoSan = [
     { ten: "Nội soi dạ dày", gia: 700000, phong: "Phòng nội soi", loai: "CDHA" },
     { ten: "Siêu âm tim", gia: 550000, phong: "Phòng siêu âm tim", loai: "CDHA" },
     { ten: "Xét nghiệm nước tiểu", gia: 130000, phong: "Phòng xét nghiệm", loai: "Xét nghiệm" },
+];
+
+//Call API ĐỔ vào danh sách này
+const danhSachThuoc = [
+    { ma: "T001", ten: "Paracetamol 500mg", gia: 5000, ton: 100 },
+    { ma: "T002", ten: "Amoxicillin 250mg", gia: 12000, ton: 50 },
+    { ma: "T003", ten: "Vitamin C 1000mg", gia: 8000, ton: 75 },
+    { ma: "T004", ten: "Ibuprofen 400mg", gia: 9000, ton: 60 },
+    { ma: "T005", ten: "Metformin 500mg", gia: 15000, ton: 40 },
+    { ma: "T006", ten: "Loratadine 10mg", gia: 7000, ton: 30 },
+    { ma: "T007", ten: "Omeprazole 20mg", gia: 20000, ton: 25 },
+    { ma: "T008", ten: "Captopril 25mg", gia: 10000, ton: 45 },
+    { ma: "T009", ten: "Simvastatin 20mg", gia: 18000, ton: 20 },
+    { ma: "T010", ten: "Cetirizine 10mg", gia: 6000, ton: 80 },
 ];
 
 // FUCNTION CỦA THÔNG TIN KHÁM------------------------------------------------------------------------------------
@@ -167,6 +181,26 @@ const dichVuCoSan = [
     });
 
 
+const printBtn = document.getElementById('printbutton');
+    const menu = document.getElementById('printContextMenu');
+
+    printBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ngăn sự kiện lan ra document
+
+        const btnRect = printBtn.getBoundingClientRect();
+
+        menu.style.top = `${btnRect.top}px`;
+        menu.style.left = `${btnRect.left - menu.offsetWidth - 200}px`; // 10px cách trái
+        menu.classList.toggle('d-none');
+    });
+
+    // Ẩn menu nếu nhấn ra ngoài
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target) && !printBtn.contains(e.target)) {
+            menu.classList.add('d-none');
+        }
+    });
+
     // Kiểm tra các trường bắt buộc trước khi đóng hồ sơ
     function kiemTraTruocKhiDongHoSo() {
         const requiredFields = [
@@ -279,14 +313,15 @@ let dsDichVu = []; // <-- phải có
         renderListDichVu(e.target.value);
     });
 
-function closePopup() {
-    const popupInstance = bootstrap.Modal.getInstance(popup);
-    if (popupInstance) {
-        popupInstance.hide();
+    // Đóng popup thuốc
+    function closePopup() {
+        const popupInstance = bootstrap.Modal.getInstance(popup);
+        if (popupInstance) {
+            popupInstance.hide();
+        }
     }
-}
 
-
+    // Thêm dịch vụ vào danh sách
     function themDichVuVaoDanhSach(dv) {
         if (dsDichVu.some(d => d.ten === dv.ten && d.phong === dv.phong)) return;
 
@@ -340,18 +375,6 @@ function closePopup() {
 
 // FUCNTION CỦA ĐƠN THUỐC------------------------------------------------------------------------------------
 
-const danhSachThuoc = [
-    { ma: "T001", ten: "Paracetamol 500mg", gia: 5000, ton: 100 },
-    { ma: "T002", ten: "Amoxicillin 250mg", gia: 12000, ton: 50 },
-    { ma: "T003", ten: "Vitamin C 1000mg", gia: 8000, ton: 75 },
-    { ma: "T004", ten: "Ibuprofen 400mg", gia: 9000, ton: 60 },
-    { ma: "T005", ten: "Metformin 500mg", gia: 15000, ton: 40 },
-    { ma: "T006", ten: "Loratadine 10mg", gia: 7000, ton: 30 },
-    { ma: "T007", ten: "Omeprazole 20mg", gia: 20000, ton: 25 },
-    { ma: "T008", ten: "Captopril 25mg", gia: 10000, ton: 45 },
-    { ma: "T009", ten: "Simvastatin 20mg", gia: 18000, ton: 20 },
-    { ma: "T010", ten: "Cetirizine 10mg", gia: 6000, ton: 80 },
-];
 
 const ngaykeInput = document.getElementById('ngayke');
 const ngaydenInput = document.getElementById('ngayden');

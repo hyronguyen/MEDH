@@ -2,6 +2,32 @@
     background-color: #f5f7fa;
 }
 
+.tdm-body {
+    height: calc(100vh - 24rem); /* Chiều cao trừ header (tùy header cao bao nhiêu) */
+    gap: 1rem;
+    overflow: hidden;
+    overflow-y:scroll;
+}
+
+    .tdm-body::-webkit-scrollbar {
+        width: 8px; /* độ rộng của scrollbar */
+    }
+
+    .tdm-body::-webkit-scrollbar-track {
+        background: var(--background-color); /* màu nền */
+        border-radius: 4px;
+    }
+
+    .tdm-body::-webkit-scrollbar-thumb {
+        background-color: var(--primary-color); /* màu thanh kéo */
+        border-radius: 4px;
+        border: 2px solid var(--background-color); /* tạo padding xung quanh */
+    }
+
+        .tdm-body::-webkit-scrollbar-thumb:hover {
+            background-color: var(--highlight-color);
+        }
+
 .card {
     border-radius: 12px;
     border: 1px solid #ddd;
@@ -27,3 +53,13 @@ label.form-label {
 .is-invalid {
     border-color: red;
 }
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item.active {
+    color: var(--primary-color);
+}
+

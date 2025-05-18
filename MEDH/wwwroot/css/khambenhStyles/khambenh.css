@@ -69,7 +69,7 @@
     flex: 1;
     display: flex;
     margin-top: 0.75rem;
-    height: calc(100vh - 4rem); /* Chiều cao trừ header (tùy header cao bao nhiêu) */
+    height: calc(100vh - 24rem); /* Chiều cao trừ header (tùy header cao bao nhiêu) */
     gap: 1rem;
     overflow: hidden;
 }
@@ -82,6 +82,8 @@
     border-radius: 8px;
     overflow-y: auto;
     height: 100%;
+    overflow: auto; /* Cho phép cuộn */
+    scrollbar-width: none; /* Ẩn scrollbar trên Firefox */
 }
 
 /* Tỉ lệ chiều rộng từng khung */
@@ -297,21 +299,17 @@ textarea {
     cursor: pointer;
 }
 
-    .suggestion-item:hover {
+.suggestion-item:hover {
         background-color: #f0f0f0;
     }
 
-.kb-col {
-    overflow: auto; /* Cho phép cuộn */
-    scrollbar-width: none; /* Ẩn scrollbar trên Firefox */
-}
 
-    /* Ẩn scrollbar trên Chrome, Edge và Safari */
+/* Ẩn scrollbar trên Chrome, Edge và Safari */
     .kb-col::-webkit-scrollbar {
         display: none;
     }
 
-    /*các trường bắt buộc*/
+/*các trường bắt buộc*/
 .required::after {
     content: " *";
     color: red;
@@ -330,7 +328,7 @@ textarea {
     border-color: red;
 }
 
-
+/*Danh sách hàng chờ*/
 #patient-list {
     display: none;
     position: absolute;
@@ -340,4 +338,39 @@ textarea {
     box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     padding: 10px;
     min-width: 200px;
+}
+
+
+/*Context menu bên trái nút IN ẤN*/
+.print-context-menu {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    padding: 0;
+    width: 200px;
+}
+
+    .print-context-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .print-context-menu li a {
+        display: block;
+        padding: 10px 15px;
+        text-decoration: none;
+        color: #333;
+    }
+
+        .print-context-menu li a:hover {
+            background-color: #f5f5f5;
+        }
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
 }

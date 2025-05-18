@@ -1,0 +1,45 @@
+﻿
+.table-wrapper {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+table thead {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+table tbody tr:hover {
+    background-color: #eafaf9;
+}
+
+h2 {
+    color: var(--black-color);
+    font-weight: 600;
+}
+
+.filter-bar {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+    .filter-bar .form-control {
+        max-width: 220px;
+    }
+
+.text-center {
+    text-align: center;
+}
+
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item.active {
+    color: var(--primary-color);
+}

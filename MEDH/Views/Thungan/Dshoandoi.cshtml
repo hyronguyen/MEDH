@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Danh hoàn đổi";
+}
+
+<link rel="stylesheet" href="~/css/thunganStyles/dshoandoi.css" asp-append-version="true" />
+
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Thu ngân</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Danh hoàn đổi</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Danh hoàn đổi</h2>
+
+    <!-- Filter-bar -->
+    <div class="filter-bar">
+        <input type="text" id="fltHS" class="form-control" placeholder="Mã hồ sơ..." />
+        <input type="text" id="fltTenBN" class="form-control" placeholder="Tên bệnh nhân..." />
+        <input type="date" id="fltNgay" class="form-control" placeholder="Ngày hoàn..." />
+        <input type="text" id="fltNguoi" class="form-control" placeholder="Người thực hiện..." />
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tblHoanDoi">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã HS</th>
+                        <th>Họ tên</th>
+                        <th>Ngày hoàn đổi</th>
+                        <th>Số tiền (VNĐ)</th>
+                        <th>Người thực hiện</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Ví dụ tĩnh *@
+                    <tr>
+                        <td>1</td>
+                        <td>HS010</td>
+                        <td>Trần Văn X</td>
+                        <td>2025-05-20</td>
+                        <td>300,000</td>
+                        <td>Thu ngân A</td>
+                        <td>Hoàn trả viện phí</td>
+                        <td><span class="badge bg-warning">Hoàn đổi</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>HS011</td>
+                        <td>Phạm Thị Y</td>
+                        <td>2025-05-21</td>
+                        <td>150,000</td>
+                        <td>Thu ngân B</td>
+                        <td>Đổi sang viện phí</td>
+                        <td><span class="badge bg-warning">Hoàn đổi</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tbody = document.querySelector("#tblHoanDoi tbody");
+            const fltHS = document.getElementById("fltHS");
+            const fltTen = document.getElementById("fltTenBN");
+            const fltNgay = document.getElementById("fltNgay");
+            const fltNguoi = document.getElementById("fltNguoi");
+
+            function filterHoan() {
+                const vHS = fltHS.value.trim().toLowerCase();
+                const vTen = fltTen.value.trim().toLowerCase();
+                const vNgay = fltNgay.value;
+                const vNguoi = fltNguoi.value.trim().toLowerCase();
+
+                Array.from(tbody.rows).forEach(row => {
+                    const hs = row.cells[1].textContent.toLowerCase();
+                    const ten = row.cells[2].textContent.toLowerCase();
+                    const ngay = row.cells[3].textContent;
+                    const nguoi = row.cells[5].textContent.toLowerCase();
+
+                    const show =
+                        hs.includes(vHS) &&
+                        ten.includes(vTen) &&
+                        (!vNgay || ngay === vNgay) &&
+                        nguoi.includes(vNguoi);
+
+                    row.style.display = show ? '' : 'none';
+                });
+            }
+
+            [fltHS, fltTen, fltNgay, fltNguoi].forEach(i =>
+                i.addEventListener("input", filterHoan)
+            );
+        });
+    </script>
+}

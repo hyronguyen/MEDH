@@ -1,0 +1,135 @@
+﻿@{
+    ViewData["Title"] = "Danh sách tiếp đón";
+}
+
+<link rel="stylesheet" href="~/css/tiepdonStyles/dansachtiepdon.css" asp-append-version="true" />
+
+<div class="container py-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Tiếp đón</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Danh sách tiếp đón</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Danh Sách Bệnh Nhân Đã Tiếp Đón</h2>
+
+    <!-- Bộ lọc -->
+    <div class="filter-bar">
+        <input type="text" class="form-control" id="searchMaNB" placeholder="Lọc theo mã NB...">
+        <input type="text" class="form-control" id="searchMaHS" placeholder="Lọc theo mã hồ sơ...">
+        <input type="text" class="form-control" id="searchTen" placeholder="Tìm theo tên bệnh nhân...">
+        <input type="text" class="form-control" id="searchNguoiTiep" placeholder="Lọc theo người tiếp...">
+        <input type="date" class="form-control" id="searchNgayTiep" placeholder="Lọc theo ngày tiếp...">
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tableTiepDon">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã NB</th>
+                        <th>Mã HS</th>
+                        <th>Họ tên</th>
+                        <th>Năm sinh</th>
+                        <th>Ngày tiếp</th>
+                        <th>Người tiếp</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>BN001</td>
+                        <td>HS001</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>1980</td>
+                        <td>2025-05-18</td>
+                        <td>Trần Thị B</td>
+                        <td><span class="badge bg-success">Đã tiếp đón</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>BN002</td>
+                        <td>HS002</td>
+                        <td>Lê Thị C</td>
+                        <td>1975</td>
+                        <td>2025-05-18</td>
+                        <td>Phạm Văn D</td>
+                        <td><span class="badge bg-success">Đã tiếp đón</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const table = document.querySelector("#tableTiepDon tbody");
+        const searchMaNB = document.getElementById("searchMaNB");
+        const searchMaHS = document.getElementById("searchMaHS");
+        const searchTen = document.getElementById("searchTen");
+        const searchNguoiTiep = document.getElementById("searchNguoiTiep");
+        const searchNgayTiep = document.getElementById("searchNgayTiep");
+
+        function filterTable() {
+            const valMaNB = searchMaNB.value.trim().toLowerCase();
+            const valMaHS = searchMaHS.value.trim().toLowerCase();
+            const valTen = searchTen.value.trim().toLowerCase();
+            const valNguoi = searchNguoiTiep.value.trim().toLowerCase();
+            const valNgay = searchNgayTiep.value;
+
+            const isFiltering = valMaNB || valMaHS || valTen || valNguoi || valNgay;
+
+            let matchCount = 0;
+
+            Array.from(table.rows).forEach(row => {
+                const maNB = row.cells[1].textContent.toLowerCase();
+                const maHS = row.cells[2].textContent.toLowerCase();
+                const ten = row.cells[3].textContent.toLowerCase();
+                const nguoi = row.cells[6].textContent.toLowerCase();
+                const ngay = row.cells[5].textContent;
+
+                const match =
+                    maNB.includes(valMaNB) &&
+                    maHS.includes(valMaHS) &&
+                    ten.includes(valTen) &&
+                    nguoi.includes(valNguoi) &&
+                    (!valNgay || ngay === valNgay);
+
+                row.style.display = match ? '' : 'none';
+                if (match) matchCount++;
+            });
+
+        }
+
+        // Gắn sự kiện
+        [searchMaNB, searchMaHS, searchTen, searchNguoiTiep, searchNgayTiep].forEach(input =>
+            input.addEventListener("input", filterTable)
+        );
+
+        LoadChitietTiepdon();
+    });
+
+    const baseUrl = '@Url.Action("Chitietnbtiepdon", "Tiepdon")';
+
+    function LoadChitietTiepdon() {
+        const rows = document.querySelectorAll("#tableTiepDon tbody tr");
+
+        rows.forEach(row => {
+            row.style.cursor = "pointer";
+
+            row.addEventListener("click", function () {
+                const maHS = row.cells[2].textContent.trim();
+                if (maHS) {
+                    window.location.href = `${baseUrl}?maHS=${encodeURIComponent(maHS)}`;
+                }
+            });
+        });
+    }
+</script>
+

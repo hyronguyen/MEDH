@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "Danh phiếu thu";
+}
+
+<link rel="stylesheet" href="~/css/thunganStyles/dsphieuthu.css" asp-append-version="true" />
+
+<div class="container py-4">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Thu ngân</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Danh sách phiếu thu</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Danh phiếu thu</h2>
+
+    <!-- Bộ lọc nằm ngang -->
+    <div class="filter-bar">
+        <input type="text" id="fltMaHS" class="form-control" placeholder="Mã hồ sơ..." />
+        <input type="text" id="fltTenBN" class="form-control" placeholder="Tên bệnh nhân..." />
+        <input type="date" id="fltNgayThu" class="form-control" placeholder="Ngày thu..." />
+        <input type="text" id="fltNguoiThu" class="form-control" placeholder="Người thu..." />
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tblPhieuThu">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã HS</th>
+                        <th>Họ tên</th>
+                        <th>Ngày thu</th>
+                        <th>Số tiền (VNĐ)</th>
+                        <th>Người thu</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @* Dữ liệu tĩnh mẫu *@
+                    <tr>
+                        <td>1</td>
+                        <td>HS001</td>
+                        <td>Nguyễn Văn A</td>
+                        <td>2025-05-17</td>
+                        <td>500,000</td>
+                        <td>Thu ngân B</td>
+                        <td><span class="badge bg-success">Đã thanh toán</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>HS002</td>
+                        <td>Lê Thị C</td>
+                        <td>2025-05-18</td>
+                        <td>1,200,000</td>
+                        <td>Thu ngân D</td>
+                        <td><span class="badge bg-success">Đã thanh toán</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tblBody = document.querySelector("#tblPhieuThu tbody");
+            const fltMaHS = document.getElementById("fltMaHS");
+            const fltTenBN = document.getElementById("fltTenBN");
+            const fltNgayThu = document.getElementById("fltNgayThu");
+            const fltNguoiThu = document.getElementById("fltNguoiThu");
+
+            function filterPhieuThu() {
+                const vMaHS = fltMaHS.value.trim().toLowerCase();
+                const vTenBN = fltTenBN.value.trim().toLowerCase();
+                const vNgay = fltNgayThu.value;
+                const vNguoi = fltNguoiThu.value.trim().toLowerCase();
+
+                Array.from(tblBody.rows).forEach(row => {
+                    const maHS = row.cells[1].textContent.toLowerCase();
+                    const tenBN = row.cells[2].textContent.toLowerCase();
+                    const ngay = row.cells[3].textContent;
+                    const nguoi = row.cells[5].textContent.toLowerCase();
+
+                    const show =
+                        maHS.includes(vMaHS) &&
+                        tenBN.includes(vTenBN) &&
+                        (!vNgay || ngay === vNgay) &&
+                        nguoi.includes(vNguoi);
+
+                    row.style.display = show ? '' : 'none';
+                });
+            }
+
+            [fltMaHS, fltTenBN, fltNgayThu, fltNguoiThu].forEach(inp =>
+                inp.addEventListener("input", filterPhieuThu)
+            );
+
+            LoadChitietPhieuThu();
+        });
+
+
+        const baseUrl = '@Url.Action("Chitietphieuthu", "Thungan")';
+
+        function LoadChitietPhieuThu() {
+            const rows = document.querySelectorAll("#tblPhieuThu tbody tr");
+
+        rows.forEach(row => {
+            row.style.cursor = "pointer";
+
+            row.addEventListener("click", function () {
+                const maHS = row.cells[1].textContent.trim();
+                if (maHS) {
+                    window.location.href = `${baseUrl}?maHS=${encodeURIComponent(maHS)}`;
+                }
+            });
+        });
+    }
+    </script>
+}

@@ -1,0 +1,122 @@
+﻿@{
+    ViewData["Title"] = "Quản lý tạm ứng";
+}
+
+<link rel="stylesheet" href="~/css/thunganStyles/quanlytamung.css" asp-append-version="true" />
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Thu ngân</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Quản lý tạm ứng</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4">Quản lý tạm ứng</h2>
+
+    <!-- Filter-bar -->
+    <div class="filter-bar">
+        <input type="text" id="fltMaHS2" class="form-control" placeholder="Mã hồ sơ..." />
+        <input type="text" id="fltTenBN2" class="form-control" placeholder="Tên bệnh nhân..." />
+        <input type="date" id="fltNgay2" class="form-control" placeholder="Ngày ứng..." />
+        <input type="text" id="fltNguoi2" class="form-control" placeholder="Người ứng..." />
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover" id="tblTamUng">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã HS</th>
+                        <th>Họ tên</th>
+                        <th>Ngày ứng</th>
+                        <th>Số tiền (VNĐ)</th>
+                        <th>Người ứng</th>
+                        <th>Ghi chú</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Ví dụ tĩnh -->
+                    <tr>
+                        <td>1</td>
+                        <td>HS020</td>
+                        <td>Mai Thị Z</td>
+                        <td>2025-05-22</td>
+                        <td>700,000</td>
+                        <td>Thu ngân C</td>
+                        <td>Ứng trước viện phí</td>
+                        <td><span class="badge bg-info">Đang ứng</span></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>HS021</td>
+                        <td>Hoàng Văn W</td>
+                        <td>2025-05-23</td>
+                        <td>300,000</td>
+                        <td>Thu ngân D</td>
+                        <td>Ứng trước xét nghiệm</td>
+                        <td><span class="badge bg-info">Đang ứng</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tbody2 = document.querySelector("#tblTamUng tbody");
+            const fltHS2 = document.getElementById("fltMaHS2");
+            const fltTen2 = document.getElementById("fltTenBN2");
+            const fltNgay2 = document.getElementById("fltNgay2");
+            const fltNguoi2 = document.getElementById("fltNguoi2");
+
+            function filterTamUng() {
+                const vHS = fltHS2.value.trim().toLowerCase();
+                const vTen = fltTen2.value.trim().toLowerCase();
+                const vNgay = fltNgay2.value;
+                const vNguoi = fltNguoi2.value.trim().toLowerCase();
+
+                Array.from(tbody2.rows).forEach(row => {
+                    const hs = row.cells[1].textContent.toLowerCase();
+                    const ten = row.cells[2].textContent.toLowerCase();
+                    const ngay = row.cells[3].textContent;
+                    const nguoi = row.cells[5].textContent.toLowerCase();
+
+                    const show =
+                        hs.includes(vHS) &&
+                        ten.includes(vTen) &&
+                        (!vNgay || ngay === vNgay) &&
+                        nguoi.includes(vNguoi);
+
+                    row.style.display = show ? '' : 'none';
+                });
+            }
+
+            [fltHS2, fltTen2, fltNgay2, fltNguoi2].forEach(i =>
+                i.addEventListener("input", filterTamUng)
+            );
+
+            // Gắn sự kiện click để load chi tiết
+            const baseUrl = '@Url.Action("Chitiettamung", "Thungan")';
+            function LoadChitietTamung() {
+                const rows = document.querySelectorAll("#tblTamUng tbody tr");
+                rows.forEach(row => {
+                    row.style.cursor = "pointer";
+                    row.addEventListener("click", function () {
+                        const maHS = row.cells[1].textContent.trim();
+                        if (maHS) {
+                            window.location.href = `${baseUrl}?maHS=${encodeURIComponent(maHS)}`;
+                        }
+                    });
+                });
+            }
+
+            LoadChitietTamung();
+        });
+    </script>
+}

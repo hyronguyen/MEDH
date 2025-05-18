@@ -1,0 +1,109 @@
+﻿a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item.active {
+    color: var(--primary-color);
+}
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.patient-header {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.patient-avatar {
+    width: 80px;
+    height: 80px;
+    background: var(--background-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-color);
+    font-size: 36px;
+}
+
+.patient-info {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 2rem;
+}
+
+    .patient-info .label {
+        font-weight: 600;
+        color: var(--secondary-color);
+    }
+
+    .patient-info .value {
+        color: var(--black-color);
+    }
+
+.nav-tabs .nav-link {
+    color: var(--black-color);
+}
+
+
+
+    /* Đảm bảo không bị hover đổi màu lạ */
+    .nav-tabs .nav-link:hover {
+        color: var(--black-color);
+    }
+
+.nav-tabs .nav-link.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.tab-content > .tab-pane {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+table thead {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(5,167,158,0.1);
+}
+
+/* Card money info */
+.money-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 1rem;
+}
+
+    .money-card h5 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+.money-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: .5rem;
+}
+
+    .money-item.total {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--highlight-color);
+    }

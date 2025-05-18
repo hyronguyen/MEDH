@@ -8,5 +8,22 @@ namespace MEDH.Controllers
         {
             return View();
         }
+
+        public IActionResult Dstiepdon()
+        {
+            return View();
+        }
+
+        public IActionResult Chitietnbtiepdon(String maHS)
+        {
+            ViewBag.MaHS = maHS;
+            return View();
+        }
+
+        public IActionResult Dshenkham()
+        {
+            return View();
+        }
     }
+
 }
