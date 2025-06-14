@@ -148,10 +148,10 @@
             }
 
 a {
-    text-decoration: none; /* bỏ gạch chân */
-    color: inherit; /* màu chữ thừa kế, không xanh */
-    cursor: default; /* con trỏ bình thường, không phải pointer */
-    display: block; /* nếu muốn cho nó thành block */
+    text-decoration: none; 
+    color: inherit; 
+    cursor: default; 
+    display: block; 
 }
 
 

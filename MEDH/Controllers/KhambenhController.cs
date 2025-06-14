@@ -4,8 +4,9 @@ namespace MEDH.Controllers
 {
     public class KhambenhController : Controller
     {
-        public IActionResult Khambenhngoaitru()
+        public IActionResult Khambenhngoaitru(String MaHoso)
         {
+            ViewBag.MaHS = MaHoso;
             return View();
         }
     }

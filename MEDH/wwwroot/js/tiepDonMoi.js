@@ -1,6 +1,6 @@
 ﻿
 // XÁC NHẬN TIẾP ĐÓN
-function xacNhan() {
+async function xacNhan() {
     const requiredFields = [
         'hoTen', 'gioiTinh', 'ngaySinh', 'ngheNghiep',
         'diaChi', 'soGiayTo', 'lyDoKham', 'loaiDoiTuong',
@@ -9,7 +9,6 @@ function xacNhan() {
 
     const loaiDoiTuong = document.getElementById('loaiDoiTuong').value;
 
-    // Nếu là BHYT thì bắt buộc thêm các trường BHYT
     if (loaiDoiTuong === 'BHYT') {
         requiredFields.push('maThe', 'mucHuong', 'ngayCapThe', 'ngayHetHan', 'noiDangKy', 'noiGioiThieu');
     }
@@ -34,39 +33,71 @@ function xacNhan() {
         return;
     }
 
-    const data = {
-        hanhChinh: {
-            hoTen: document.getElementById('hoTen').value,
-            gioiTinh: document.getElementById('gioiTinh').value,
-            ngaySinh: document.getElementById('ngaySinh').value,
-            tuoi: document.getElementById('tuoi').value,
-            ngheNghiep: document.getElementById('ngheNghiep').value,
-            diaChi: document.getElementById('diaChi').value,
-            soGiayTo: document.getElementById('soGiayTo').value
-        },
-        bhyt: {
-            maThe: document.getElementById('maThe').value,
-            mucHuong: document.getElementById('mucHuong').value,
-            ngayCapThe: document.getElementById('ngayCapThe').value,
-            ngayHetHan: document.getElementById('ngayHetHan').value,
-            noiDangKy: document.getElementById('noiDangKy').value,
-            noiGioiThieu: document.getElementById('noiGioiThieu').value,
-            thongTuyen: document.getElementById('thongTuyen').checked
-        },
-        lyDo: {
-            lyDoKham: document.getElementById('lyDoKham').value,
-            loaiDoiTuong: loaiDoiTuong,
-            maNbCu: document.getElementById('maNbCu').value,
-            maDinhDanh: document.getElementById('maDinhDanh').value
-        },
-        quay: {
-            chonQuay: document.getElementById('chonQuay').value
-        }
+    // Thu thập dữ liệu
+    const getValue = id => {
+        const el = document.getElementById(id);
+        return el && el.value.trim() !== "" ? el.value.trim() : undefined;
     };
 
-    console.log("Thông tin tiếp đón:", data);
-    alert("Thông tin đã được log ra console!");
+    const getChecked = id => {
+        const el = document.getElementById(id);
+        return el ? el.checked : undefined;
+    };
+
+    const gioiTinhRaw = getValue('gioiTinh');
+    const gioiTinh = gioiTinhRaw === 'Nam' ? 'M' :
+        gioiTinhRaw === 'Nữ' ? 'F' : null;
+
+    const payload = {
+        p_token: localStorage.getItem('token') || null,
+        p_ho_ten: getValue('hoTen') || null,
+        p_gioi_tinh: gioiTinh,
+        p_ngay_sinh: getValue('ngaySinh') || null,
+        p_so_dien_thoai: getValue('soDienThoai') || null,
+        p_dia_chi: getValue('diaChi') || null,
+        p_nghe_nghiep: getValue('ngheNghiep') || null,
+        p_giay_to: getValue('soGiayTo') || null,
+        p_ly_do_den_kham: getValue('lyDoKham') || null,
+        p_so_the_bhyt: loaiDoiTuong === 'BHYT' ? getValue('maThe') || null : null,
+        p_noi_dang_ky_kcb: loaiDoiTuong === 'BHYT' ? getValue('noiDangKy') || null : null,
+        p_ngay_bat_dau_bhyt: loaiDoiTuong === 'BHYT' ? getValue('ngayCapThe') || null : null,
+        p_ngay_ket_thuc_bhyt: loaiDoiTuong === 'BHYT' ? getValue('ngayHetHan') || null : null,
+        p_muc_huong_bhyt: loaiDoiTuong === 'BHYT' ? parseFloat(getValue('mucHuong') || 0) : null
+    };
+
+
+    console.log("Payload gửi lên:", JSON.stringify(payload, null, 2));
+
+
+    // Xóa các key undefined để tránh lỗi PostgREST
+    Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined) delete payload[key];
+    });
+
+    try {
+        const response = await fetch(`https://mpmtmnfjswssnkjbrhfw.supabase.co/rest/v1/rpc/tiep_don_nguoi_benh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wbXRtbmZqc3dzc25ramJyaGZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4NzU3OTEsImV4cCI6MjA2NTQ1MTc5MX0.DpcrSo6Iu9DbEHImq7WSKMXYnne9GHszSWazgia1LJM',
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.message || 'Có lỗi xảy ra khi tiếp đón.');
+        }
+
+        const result = await response.json();
+        console.log("Tiếp đón thành công:", result);
+        alert("Tiếp đón thành công!");
+    } catch (err) {
+        console.error("Lỗi:", err.message);
+        alert("Lỗi khi tiếp đón: " + err.message);
+    }
 }
+
 
 
 
