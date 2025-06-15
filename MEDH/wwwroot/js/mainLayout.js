@@ -32,3 +32,4 @@ function togglePopupMenu() {
     const menu = document.getElementById('popupMenu');
     menu.classList.toggle('d-none');
 }
+

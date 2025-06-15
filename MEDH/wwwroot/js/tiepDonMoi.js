@@ -1,4 +1,9 @@
 ﻿
+document.addEventListener('DOMContentLoaded', () => {
+    Laythongtinquay();
+});
+
+
 // XÁC NHẬN TIẾP ĐÓN
 async function xacNhan() {
     const requiredFields = [
@@ -53,7 +58,7 @@ async function xacNhan() {
         p_ho_ten: getValue('hoTen') || null,
         p_gioi_tinh: gioiTinh,
         p_ngay_sinh: getValue('ngaySinh') || null,
-        p_so_dien_thoai: getValue('soDienThoai') || null,
+        p_so_dien_thoai: getValue('soDienThoai') || "",
         p_dia_chi: getValue('diaChi') || null,
         p_nghe_nghiep: getValue('ngheNghiep') || null,
         p_giay_to: getValue('soGiayTo') || null,
@@ -65,40 +70,14 @@ async function xacNhan() {
         p_muc_huong_bhyt: loaiDoiTuong === 'BHYT' ? parseFloat(getValue('mucHuong') || 0) : null
     };
 
-
     console.log("Payload gửi lên:", JSON.stringify(payload, null, 2));
 
-
-    // Xóa các key undefined để tránh lỗi PostgREST
     Object.keys(payload).forEach(key => {
         if (payload[key] === undefined) delete payload[key];
     });
 
-    try {
-        const response = await fetch(`https://mpmtmnfjswssnkjbrhfw.supabase.co/rest/v1/rpc/tiep_don_nguoi_benh`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wbXRtbmZqc3dzc25ramJyaGZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4NzU3OTEsImV4cCI6MjA2NTQ1MTc5MX0.DpcrSo6Iu9DbEHImq7WSKMXYnne9GHszSWazgia1LJM',
-            },
-            body: JSON.stringify(payload)
-        });
-
-        if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.message || 'Có lỗi xảy ra khi tiếp đón.');
-        }
-
-        const result = await response.json();
-        console.log("Tiếp đón thành công:", result);
-        alert("Tiếp đón thành công!");
-    } catch (err) {
-        console.error("Lỗi:", err.message);
-        alert("Lỗi khi tiếp đón: " + err.message);
-    }
+    TiepDonNguoiBenh(payload);
 }
-
-
 
 
 // Tính tuổi
@@ -142,18 +121,38 @@ document.getElementById("loaiDoiTuong").addEventListener("change", function () {
 });
 
 // Người bệnh tiếp theo (UPDATE THEO API)
- function chuyenBenhNhanTiepTheo() {
-        const dangTiepDonEl = document.getElementById("sttDangTiepDon");
-        const tiepTheoEl = document.getElementById("sttTiepTheo");
+async function chuyenBenhNhanTiepTheo() {
+    
+    const maPhong = parseInt(document.getElementById('chonQuay').value);
 
-        let dang = parseInt(dangTiepDonEl.textContent);
-        let tiep = parseInt(tiepTheoEl.textContent);
+    const payload = {
+        p_token: localStorage.getItem('token') || null,
+        ma_phong_input: maPhong
+    };
 
-        if (!isNaN(dang) && !isNaN(tiep)) {
-            dangTiepDonEl.textContent = tiep.toString().padStart(4, '0');
-            tiepTheoEl.textContent = (tiep + 1).toString().padStart(4, '0');
-        }
+    // Gọi số tiếp theo (RPC goi_so_thu_tu)
+    const ketQuaGoi = await GoiSoThuTu(payload);
+
+    // Nếu không còn người chờ thì cảnh báo và kết thúc
+    if (!ketQuaGoi || ketQuaGoi.r_ma_hang_doi === null) {
+        alert('✅ Đã gọi hết người trong hàng đợi.');
+        return;
+    }
+
+    // Lấy số thứ tự mới nhất sau khi gọi
+    const soDangTiep = await LaySTTDaGoiMoiNhat(maPhong);
+
+    if (soDangTiep !== null) {
+        const dangTiepDonEl = document.getElementById('sttDangTiepDon');
+        const tiepTheoEl = document.getElementById('sttTiepTheo');
+
+        dangTiepDonEl.textContent = soDangTiep.toString().padStart(4, '0');
+        tiepTheoEl.textContent = (soDangTiep + 1).toString().padStart(4, '0');
+    } else {
+        alert('❌ Không thể lấy số thứ tự đang tiếp đón.');
+    }
 }
+
 
 // Kiểm tra mã thẻ với mức hưởng
 function kiemTraVaChuyenHoaMaThe() {
@@ -212,4 +211,35 @@ function tuDongVietHoa(input) {
     input.value = input.value.toUpperCase();
 
     input.setSelectionRange(start, end);
+}
+
+// Load quầy
+ async function Laythongtinquay(){
+    const selectElement = document.getElementById("chonQuay");
+
+    if (!selectElement) {
+        console.error("Không tìm thấy phần tử #chonQuay trong DOM.");
+        return;
+    }
+
+    // Gợi ý: đặt sẵn option tạm thời
+    selectElement.innerHTML = `<option disabled selected>Đang tải quầy tiếp đón...</option>`;
+
+    // Gọi hàm lấy danh sách phòng
+    const danhSachPhong = await LayDanhSachPhongTiepDon();
+
+    // Xóa option tạm nếu có dữ liệu
+    if (danhSachPhong.length > 0) {
+        selectElement.innerHTML = ""; // Xóa các option cũ
+
+        danhSachPhong.forEach(phong => {
+            const option = document.createElement("option");
+            option.value = phong.ma_phong;
+            option.textContent = phong.ten_phong;
+            selectElement.appendChild(option);
+        });
+    } else {
+        // Trường hợp không có dữ liệu
+        selectElement.innerHTML = `<option disabled selected>Không có quầy tiếp đón nào</option>`;
+    }
 }
