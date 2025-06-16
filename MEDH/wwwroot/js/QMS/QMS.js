@@ -1,4 +1,49 @@
-﻿document.addEventListener("DOMContentLoaded", () => {
+﻿import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.6/+esm';
+
+window.supabase = createClient(api_host, apikey);
+let maPhongHienTai = null;
+
+document.addEventListener("DOMContentLoaded", () => {    
+    ModelChonQms();
+    Laythongtinquay();
+});
+
+// REALTIME: KIỂM TRA TRẠNG THÁI GỘi
+window.supabase
+    .channel('realtime:hangdoi')
+    .on(
+        'postgres_changes',
+        {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'hangdoi',
+            filter: 'trang_thai=eq.da_goi'  // chỉ cần điều kiện thay đổi thành true
+        },
+        async (payload) => {
+            console.log('📡 Cập nhật từ Realtime:', payload);
+            if (maPhongHienTai) {
+                await capNhatSTT(maPhongHienTai);
+            }
+        }
+    )
+    .subscribe();
+
+
+
+// FUNCTION: CẬP NHẬT HIỂN THỊ MÀN HÌNH QMS
+async function capNhatSTT(maPhong) {
+    const stt = await LaySTTDaGoiMoiNhat(maPhong);
+    if (stt !== null) {
+        const currentTicketEl = document.getElementById("currentTicket");
+        if (currentTicketEl) {
+            currentTicketEl.textContent = stt.toString().padStart(4, '0');
+        }
+    }
+}
+
+
+// FUNCTION: CHỌN MÀN HÌNH QMS
+function ModelChonQms() {
     const qmsTitle = document.getElementById('qmsTitle');
     const pinModalEl = document.getElementById('pinModal');
     const roomModalEl = document.getElementById('roomModal');
@@ -35,7 +80,8 @@
 
     // Lưu quầy / phòng được chọn
     saveRoomBtn.addEventListener('click', () => {
-        const selectedRoom = roomSelect.value;
+        const selectedRoom = roomSelect.textContent;
+        maPhongHienTai = roomSelect.value;
         if (!selectedRoom || selectedRoom === 'Chọn quầy / phòng...') return;
 
         roomModal.hide();
@@ -52,4 +98,35 @@
             document.body.style.overflow = '';
         }, 300);
     });
-});
+}
+
+// FUNCTION: LOAD DANH SÁCH MÀN HÌNH
+async function Laythongtinquay() {
+    const selectElement = document.getElementById("roomSelect");
+
+    if (!selectElement) {
+        console.error("Không tìm thấy phần tử #roomSelect trong DOM.");
+        return;
+    }
+
+    // Gợi ý: đặt sẵn option tạm thời
+    selectElement.innerHTML = `<option disabled selected>Đang tải Màn hình QMS...</option>`;
+
+    // Gọi hàm lấy danh sách phòng
+    const danhSachPhong = await LayDanhSachPhongTiepDon();
+
+    // Xóa option tạm nếu có dữ liệu
+    if (danhSachPhong.length > 0) {
+        selectElement.innerHTML = ""; // Xóa các option cũ
+
+        danhSachPhong.forEach(phong => {
+            const option = document.createElement("option");
+            option.value = phong.ma_phong;
+            option.textContent = phong.ten_phong;
+            selectElement.appendChild(option);
+        });
+    } else {
+        // Trường hợp không có dữ liệu
+        selectElement.innerHTML = `<option disabled selected>Không có quầy tiếp đón nào</option>`;
+    }
+}
