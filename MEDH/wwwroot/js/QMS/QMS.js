@@ -80,13 +80,13 @@ function ModelChonQms() {
 
     // Lưu quầy / phòng được chọn
     saveRoomBtn.addEventListener('click', () => {
-        const selectedRoom = roomSelect.textContent;
+        const selectedRoom = roomSelect.options[roomSelect.selectedIndex].text;
         maPhongHienTai = roomSelect.value;
         if (!selectedRoom || selectedRoom === 'Chọn quầy / phòng...') return;
 
         roomModal.hide();
 
-        // Đặt lại tiêu đề
+        
         qmsTitle.textContent = `QMS - ${selectedRoom}`;
 
         // Xử lý backdrop (nếu có sự cố)
@@ -113,7 +113,7 @@ async function Laythongtinquay() {
     selectElement.innerHTML = `<option disabled selected>Đang tải Màn hình QMS...</option>`;
 
     // Gọi hàm lấy danh sách phòng
-    const danhSachPhong = await LayDanhSachPhongTiepDon();
+    const danhSachPhong = await LayDanhSachPhong();
 
     // Xóa option tạm nếu có dữ liệu
     if (danhSachPhong.length > 0) {

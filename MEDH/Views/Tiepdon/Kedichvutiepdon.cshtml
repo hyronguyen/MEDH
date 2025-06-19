@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "Kê dịch vụ từ tiếp đón";
+}
+
+<link rel="stylesheet" href="~/css/tiepdonStyles/kedichdutiepdon.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<div class="container-fluid px-4 pt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a>Tiếp đón</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Kê dịch vụ</li>
+        </ol>
+    </nav>
+
+    <h3 class="mb-4">@ViewData["Title"]</h3>
+
+    <div class="row tdm-body">
+            <!-- Cột trái -->
+            <div class="col-md-6">
+                <!-- Thông tin người bệnh -->
+                <div class="card mb-4">
+                    <div class="card-header fw-bold">Thông tin người bệnh</div>
+                    <div class="card-body px-3 py-2">
+                        <div class="row g-2">
+                            <div class="col-md-6"><strong>Mã hồ sơ:</strong> HS001</div>
+                            <div class="col-md-6"><strong>Mã NB:</strong> NB12345</div>
+                            <div class="col-md-6"><strong>Họ tên:</strong> Nguyễn Văn A</div>
+                            <div class="col-md-6"><strong>SĐT:</strong> 0912345678</div>
+                            <div class="col-md-6"><strong>Địa chỉ:</strong> 123 Nguyễn Trãi, Hà Nội</div>
+                            <div class="col-md-6" id="thebhyt"><strong>BHYT:</strong> BN123456789</div>
+                            <div class="col-md-6"><strong>Lý do khám:</strong> Đau bụng kéo dài</div>
+                            <div class="col-md-6" id="muchuong"><strong>Mức hưởng:</strong> 80</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách dịch vụ -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">Danh sách dịch vụ khám</div>
+                <div class="card-body">
+                    <!-- Thanh tìm kiếm -->
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm theo mã hoặc tên..." oninput="locDichVu()">
+                        <span class="input-group-text"><i class="fa fa-search"></i></span>
+                    </div>
+
+                    <!-- Bảng -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Mã</th>
+                                    <th>Tên dịch vụ</th>
+                                    <th>Giá (VNĐ)</th>
+                                    <th>Phòng</th>
+                                    <th>TT</th>
+                                    <th>Chọn</th>
+                                </tr>
+                            </thead>
+                            <tbody id="danhSachDichVu">
+                                <!-- Gợi ý record mẫu hoặc render từ JS -->
+                                <tr class="dich-vu-item" data-ma="1" data-ten="Khám tổng quát">
+                                    <td>1</td>
+                                    <td>Khám tổng quát</td>
+                                    <td>150,000</td>
+                                    <td>Phòng Khám Nội</td>
+                                    <td>DV</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success"
+                                                onclick="themDichVu({
+                        ma_dich_vu: 1,
+                        ten_dich_vu: 'Khám tổng quát',
+                        don_gia: 150000,
+                        thanh_toan: 'DV',
+                        ten_phong: 'Phòng Khám Nội'
+                      })">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <!-- Thêm dòng tương tự cho mỗi dịch vụ -->
+                                <tr class="dich-vu-item" data-ma="1" data-ten="Khám tổng quát">
+                                    <td>2</td>
+                                    <td>Khám tổng quát BH</td>
+                                    <td>150,000</td>
+                                    <td>Phòng Khám Nội</td>
+                                    <td>BH</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success"
+                                                onclick="themDichVu({
+                        ma_dich_vu: 2,
+                        ten_dich_vu: 'Khám tổng quát',
+                        don_gia: 150000,
+                        thanh_toan: 'BH',
+                        ten_phong: 'Phòng Khám Nội',
+                       
+                      })">
+                                            <i class="fa fa-plus"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                              
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+        </div> <!-- 🔁 KẾT THÚC CỘT TRÁI -->
+
+            <!-- Cột phải -->
+            <div class="col-md-6">
+                <div class="card mt-4">
+                  <div class="card-header text-white dsdachonheader">Dịch vụ đã chọn</div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-bordered table-hover align-middle mb-0">
+                        <thead>
+                          <tr>
+                            <th>Mã</th>
+                            <th>Tên dịch vụ</th>
+                            <th>Giá (VNĐ)</th>
+                            <th>Phòng</th>
+                            <th>PT</th>
+                            <th>TT</th>
+                            <th>BS</th>
+                            <th>Xóa</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bangDichVuDaChon">
+                          <!-- Dữ liệu sẽ được render động từ JavaScript -->
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="tong-chiphi-box mt-4">
+                        <div class="tong-tien-title">TỔNG TIỀN: <span id="tongTien">0</span> VNĐ</div>
+                        <hr />
+                        <div class="row justify-content-end">
+                            <div class="col-auto text-end">
+                                <div>Tiền BH trả: <strong><span id="tienBH">0</span> VNĐ</strong></div>
+                                <div>Tự túc: <strong><span id="tuTuc">0</span> VNĐ</strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="taoPayloadKeDichVu(1)" class="btn float-end mt-2 btnxacnhanke">Xác nhận kê dịch vụ</button>
+                  </div>
+                </div>
+
+        </div>
+</div>
+
+ <script src="~/js/api_services.js" asp-append-version="true"></script>
+<script src="~/js/Tiepdon/Kedichvutiepdon.js" asp-append-version="true"></script>

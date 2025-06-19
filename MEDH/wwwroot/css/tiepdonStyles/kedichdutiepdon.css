@@ -1,0 +1,48 @@
+﻿
+/* Navigator link */
+a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.breadcrumb .breadcrumb-item.active {
+    color: var(--primary-color);
+}
+
+/* Header danh sách dịch vụ đã kê */
+.dsdachonheader {
+    background: var(--primary-color);
+}
+
+/* button xác nhận kê */
+.btnxacnhanke {
+    background: var(--primary-color);
+    color: var(--background-color);
+    border: none;
+    padding: 8px 16px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background 0.2s ease-in-out;
+}
+
+    .btnxacnhanke:hover {
+        background: darken(var(--primary-color), 10%);
+        filter: brightness(90%);
+        cursor: pointer;
+    }
+
+/* Tổng chi phí */
+.tong-chiphi-box {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.tong-tien-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: end;
+}

@@ -1,4 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
+
     Queuecheck();
     const ngaykeInput = document.getElementById('ngayke');
     const today = new Date();
@@ -10,10 +11,11 @@
 
     ngaykeInput.value = `${yyyy}-${mm}-${dd}`;
 
+    apiLayDanhSachNguoiBenhTaiPhong(2,2);
  
 });
 
-// VARIBLES ------------------------------------------------------------------------------------
+// VARIBLES -----------------------------------------------------------------------------------------------------------------------
 
 const input = document.getElementById('icd-input');
 const input_des = document.getElementById('icd-desc-input');
@@ -50,6 +52,10 @@ const danhSachThuoc = [
     { ma: "T009", ten: "Simvastatin 20mg", gia: 18000, ton: 20 },
     { ma: "T010", ten: "Cetirizine 10mg", gia: 6000, ton: 80 },
 ];
+
+// FUNTION: LẤY NGƯỜI BỆNH TẠI PHÒNG
+
+
 
 // FUCNTION CỦA THÔNG TIN KHÁM------------------------------------------------------------------------------------
 
