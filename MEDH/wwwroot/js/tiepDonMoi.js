@@ -76,7 +76,14 @@ async function xacNhan() {
         if (payload[key] === undefined) delete payload[key];
     });
 
-    TiepDonNguoiBenh(payload);
+    const response = await TiepDonNguoiBenh(payload);
+
+    if (response.status && response.ma_dot_kham) {
+        window.location.href = `/TenController/Kedichvutiepdon?maHS=${encodeURIComponent(response.ma_dot_kham)}`;
+    } else {
+        alert("Tiếp đón thất bại. Vui lòng thử lại.");
+    }
+
 }
 
 
