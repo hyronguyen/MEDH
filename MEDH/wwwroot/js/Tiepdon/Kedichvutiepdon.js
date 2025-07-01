@@ -83,9 +83,9 @@ function renderBangDichVu() {
             <td>${dv.ma_dich_vu}</td>
             <td>${dv.ten_dich_vu}</td>
             <td>${dv.don_gia.toLocaleString()}</td>
-            <td>${dv.ten_phong}</td>
+            <td value="${dv.ma_phong}">${dv.ten_phong}</td>
             <td>${dv.thanh_toan}</td>
-            <td>${thanhTien.toLocaleString()}</td>
+            <td value="${dv.ma_dich_vu}">${thanhTien.toLocaleString()}</td>
             <td>
                 <select class="form-select form-select-sm" name="bac_si_thuc_hien_${dv.ma_dich_vu}">
                     ${bacSiOptions}
@@ -116,35 +116,48 @@ function taoPayloadKeDichVu(maDotKham) {
         return [];
     }
 
-    // Lấy mức hưởng
-    const mucHuongText = document.getElementById("muchuong")?.textContent || "";
-    const mucHuong = parseInt(mucHuongText.replace(/[^\d]/g, "")) || 0;
+    const tbody = document.getElementById("bangDichVuDaChon");
+    if (!tbody) {
+        alert("Không tìm thấy bảng dịch vụ đã chọn.");
+        return [];
+    }
 
+    const rows = tbody.querySelectorAll("tr");
+    const payloads = [];
     let chuaChonBacSi = null;
 
-    const payloads = dichVuDaChon.map(dv => {
-        const select = document.querySelector(`select[name="bac_si_thuc_hien_${dv.ma_dich_vu}"]`);
+    rows.forEach(row => {
+        const cells = row.querySelectorAll("td");
+        if (cells.length < 6) return;
+
+        const ma_dich_vu = parseInt(cells[0].textContent.trim());
+        const ten_dich_vu = cells[1].textContent.trim();
+        const don_gia_text = cells[2].textContent.replace(/[^\d]/g, "");
+        const don_gia = parseInt(don_gia_text) || 0;
+
+        const tdPhong = cells[3];
+        const p_ma_phong = parseInt(tdPhong.getAttribute("value")) || null;
+
+        const thanh_toan = cells[4].textContent.trim();
+        const thanh_tien_text = cells[5].textContent.replace(/[^\d]/g, "");
+        const thanh_tien = parseInt(thanh_tien_text) || 0;
+
+        const select = row.querySelector("select");
         const ma_bac_si = select ? parseInt(select.value) || null : null;
 
         if (ma_bac_si === null) {
-            chuaChonBacSi = dv.ten_dich_vu;
+            chuaChonBacSi = ten_dich_vu;
+            return;
         }
 
-        let giam = 0;
-        if (dv.thanh_toan === 'BH' && mucHuong > 0) {
-            giam = dv.don_gia * mucHuong / 100;
-        }
-
-        const thanhTien = dv.don_gia - giam;
-
-        return {
+        payloads.push({
             p_token: token,
             p_ma_dot_kham: maDotKham,
-            p_ma_dich_vu: dv.ma_dich_vu,
+            p_ma_dich_vu: ma_dich_vu,
             p_ma_bac_si: ma_bac_si,
-            p_ma_phong: dv.ma_phong,
-            p_don_gia_thuc_the: Math.round(thanhTien) // Làm tròn nếu cần
-        };
+            p_ma_phong: p_ma_phong,
+            p_don_gia_thuc_the: thanh_tien
+        });
     });
 
     if (chuaChonBacSi) {
@@ -155,7 +168,12 @@ function taoPayloadKeDichVu(maDotKham) {
     console.log("Payload kê dịch vụ:", payloads);
 
     if (payloads.length > 0) {
-        apiKeDichVu(payloads);
+        const success =  apiKeDichVu(payloads);
+        if (success) {
+            alert("✅ Kê dịch vụ thành công.");
+        } else {
+            alert("❌ Có lỗi xảy ra khi kê một số dịch vụ.");
+        }
     }
 }
 

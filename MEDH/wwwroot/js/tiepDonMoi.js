@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// XÁC NHẬN TIẾP ĐÓN
+// XÁC NHẬN TIẾP ĐÓN - THU THẬP THÔNG TIN NGƯỜI BỆNH
 async function xacNhan() {
     const requiredFields = [
         'hoTen', 'gioiTinh', 'ngaySinh', 'ngheNghiep',
@@ -76,12 +76,15 @@ async function xacNhan() {
         if (payload[key] === undefined) delete payload[key];
     });
 
-    const response = await TiepDonNguoiBenh(payload);
+    const response = await window.TiepDonNguoiBenh(payload);
 
-    if (response.status && response.ma_dot_kham) {
-        window.location.href = `/TenController/Kedichvutiepdon?maHS=${encodeURIComponent(response.ma_dot_kham)}`;
+    if (response.status === true && response.ma_dot_kham) {
+        window.location.href = `/Tiepdon/Kedichvutiepdon?maHS=${encodeURIComponent(response.ma_dot_kham)}`;
+    } else if (response.da_ton_tai && response.ma_dot_kham) {
+     
+        console.warn("Đã có hồ sơ chưa hoàn thành: " + response.ma_dot_kham);
     } else {
-        alert("Tiếp đón thất bại. Vui lòng thử lại.");
+        alert("Tiếp đón thất bại.");
     }
 
 }

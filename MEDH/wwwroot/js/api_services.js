@@ -13,17 +13,32 @@ window.TiepDonNguoiBenh = async function (payload) {
             body: JSON.stringify(payload)
         });
 
+        const result = await response.json();
+
         if (!response.ok) {
-            const err = await response.json();
-            throw new Error(err.message || 'Có lỗi xảy ra khi tiếp đón.');
+            console.error("Lỗi tiếp đón:", result?.message || 'Lỗi không xác định.');
+            return { status: false };
         }
 
-        const result = await response.json();
+        // Xử lý trường hợp hồ sơ chưa hoàn thành
+        if (result.status === "DA_TON_TAI_HSDT_CHUA_HOAN_THANH") {
+            alert(`Người bệnh đã có hồ sơ chưa hoàn thành. Mã hồ sơ: ${result.ma_dot_kham}`);
+            return {
+                status: false,
+                ma_dot_kham: result.ma_dot_kham || null,
+                da_ton_tai: true
+            };
+        }
+
         console.log("Tiếp đón thành công:", result);
-        alert(result.status);
+        return {
+            status: true,
+            ma_dot_kham: result?.ma_dot_kham || null
+        };
+
     } catch (err) {
         console.error("Lỗi:", err.message);
-        alert("Lỗi khi tiếp đón: " + err.message);
+        return { status: false };
     }
 };
 
@@ -120,6 +135,8 @@ window.LaySTTDaGoiMoiNhat = async function (maPhong) {
 };
 
 window.apiKeDichVu = async function (payloads) {
+    let allSuccess = true;
+
     for (const payload of payloads) {
         try {
             const response = await fetch(`${api_host}/rest/v1/rpc/ke_dich_vu_kham`, {
@@ -138,14 +155,18 @@ window.apiKeDichVu = async function (payloads) {
                 apiSinhSTTchoDV(payload.p_ma_phong, payload.p_ma_dot_kham);
             } else {
                 console.warn(`❌ Kê thất bại dịch vụ mã ${payload.p_ma_dich_vu}: ${result.r_message || 'Không rõ lỗi'}`);
+                allSuccess = false;
             }
         } catch (err) {
             console.error(`❌ Lỗi hệ thống khi kê dịch vụ mã ${payload.p_ma_dich_vu}:`, err.message);
+            allSuccess = false;
         }
     }
 
     console.log("👉 Đã hoàn tất quá trình kê tất cả dịch vụ.");
-}
+    return allSuccess;
+};
+
 
 // API CHUNG --------------------------------------------------------------------------------------
 
@@ -217,9 +238,9 @@ window.apiSinhSTTchoDV = async function (ma_phong, ma_ho_so) {
 
         const result = await response.json;
         if (result.r_status == "SUCCESS") {
-            console.load("Sinh số cho dịch vụ thành công");
+            console.log(result.r_message);
         }
-        else console.load("Sinh số cho dịch vụ thất bại");
+        else console.log(result.r_message);
     }
     catch (err) {
         console.log(err.message)

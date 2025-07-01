@@ -20,11 +20,12 @@
         <div class="kb-header-content">
             <!-- Trạng thái hàng chờ -->
             <div class="kb-status" style="position: relative;">
-                <div class="kb-status-btn"><strong>Chờ khám:</strong> 10</div>
-                <div class="kb-status-btn"><strong>Đã khám:</strong> 5</div>
-                <div class="kb-status-btn"><strong>Chưa kết luận:</strong> 3</div>
-                <div class="kb-status-btn"><strong>Đã kết luận:</strong> 7</div>
+                <div class="kb-status-btn" data-status="Chờ khám"><strong>Chờ khám:</strong> <span class="count">0</span></div>
+                <div class="kb-status-btn" data-status="Hủy khám"><strong>Hủy khám:</strong> <span class="count">0</span></div>
+                <div class="kb-status-btn" data-status="Chưa kết luận"><strong>Chưa kết luận:</strong> <span class="count">0</span></div>
+                <div class="kb-status-btn" data-status="Đã kết luận"><strong>Đã kết luận:</strong> <span class="count">0</span></div>
             </div>
+
 
             <!-- Bảng danh sách người bệnh -->
             <div id="patient-list">
@@ -37,10 +38,18 @@
 
             <!-- Nhóm nút chức năng -->
             <div class="kb-actions">
-                <button class="">Nội tiêu hóa 1</button>
+                <select id="phong-kham-select" class="btn btn-outline-primary">
+                    <option value="1">Nội tiêu hóa 1</option>
+                    <option value="2">Nội tổng hợp</option>
+                    <option value="3">Ngoại tổng quát</option>
+                    <option value="4">Tai Mũi Họng</option>
+                </select>
+
+
                 <button class="btn-next btn-dark">Bệnh nhân tiếp theo</button>
                 <button class="btn-list">Danh sách bệnh nhân</button>
             </div>
+
         </div>
     </div>
 
@@ -49,20 +58,20 @@
     <div class="kb-body">
         <!-- THÔNG TIN HÀNH CHÍNH -->
         <section class="kb-col kb-col-left" aria-label="Thông tin hành chính">
-            <h5 id="kbName">NGUYỄN VĂN A</h5>
-
-            <div class="patient-info">
+            <div id="patient-info-wrapper" style="display: none;">
+                <h5 id="kbName">NGUYỄN VĂN A</h5>
+                <div class="patient-info">
+                    <div id="kbAge"><strong>Tuổi:</strong> 35</div>
+                    <div id="kbSex"><strong>Giới tính:</strong> Nam</div>
+                    <div id="kbBHYT"><strong>Đối tượng:</strong> 80%</div>
+                    <div id="kbMaHS"><strong>Mã Hồ Sơ:</strong> @ViewBag.MaHS</div>
+                    <div id="kbNbid"><strong>Mã bệnh nhân:</strong> HL383933</div>
+                    <div id="kbVienphi"><strong>Viện phí:</strong> XXX.XXX đ</div>
+                    <div id="kbNbtra"><strong>NB trả:</strong> XXX.XXX đ</div>
+                    <div id="kbBHtra"><strong>BH trả:</strong> XXX.XXX đ</div>
+                    <div id="kbTamung"><strong>Tạm ứng:</strong> XXX.XXX đ</div>
+                </div>
             
-                <div id="kbAge"><strong>Tuổi:</strong> 35</div>
-                <div id="kbSex"><strong>Giới tính:</strong> Nam</div>
-                <div id="kbBHYT"><strong>Đối tượng:</strong> 80%</div>
-                <div id="kbMaHS"><strong>Mã Hồ Sơ:</strong> @ViewBag.MaHS</div>
-                <div id="kbNbid"><strong>Mã bệnh nhân:</strong> HL383933</div>
-                <div id="kbVienphi"><strong>Viện phí:</strong> 1.000.000 đ</div>
-                <div id="kbNbtra"><strong>NB trả:</strong> 0 đ</div>
-                <div id="kbBHtra"><strong>BH trả:</strong> 1.000.000 đ</div>
-                <div id="kbTamung"><strong>Tạm ứng:</strong> 0 đ</div>
-            </div>
 
             <hr/>
 
@@ -82,7 +91,7 @@
                     </div>
                 </div>
             </div>
-
+            </div>
         </section>
         <!-------------------------------------------------------------------------------------Section thao tác chính thay đổi thay nhau khi nhấn các tab chức năng tương tự-->
         <!--------------------------------------------------- Thong tin kham benh (Hiển thị khi nhấn tab chức năng Thông tin khám) -->
@@ -101,7 +110,7 @@
                     <label>Cân nặng*:<input type="number" placeholder="kg"></label>
                     <label>SpO2:<input type="number" placeholder="%"></label>
                     <label>Nhóm máu:<input type="text" placeholder="A, B, AB, O..."></label>
-                    <label>BMI:<input type="number" step="0.1"></label>
+                    <label>BMI:<input type="number" step="0.1" id="bmi"></label>
                     <label>Thở oxy:<input type="number" placeholder="lít/phút"></label>
                     <label>Tri giác:<input type="text" placeholder="ACVPU"></label>
                     <label>Điểm đau:<input type="text" placeholder="Vị trí"></label>
@@ -125,7 +134,7 @@
                 </div>
                 <div class="form-group">
                     <label>Dị ứng thuốc*:</label>
-                    <input type="text">
+                    <input type="text" id="diungthuoc">
                 </div>
                 <div class="form-group">
                     <label>Lý do đến khám*:</label>
@@ -335,8 +344,6 @@
             </fieldset>
         </section>
 
-
-
        <!------------------------------------------------------------------------------------------------- Section: Kết luận khám -->
         <section class="kb-col kb-col-center" id="ketluan" style="display: none; ">
             <h4 style="color: white; font-weight: 700; margin-bottom: 20px;">KẾT LUẬN KHÁM</h4>
@@ -497,6 +504,25 @@
             </div>
         </div>
 
+        <!-- Model hiển thị phiếu in-->
+        <div class="modal fade" id="popupPhieuIn" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                   
+                    </div>
+
+                    <div class="modal-body">
+                        <div id="phieuInContent" style="min-height:300px;">Đang tải phiếu...</div>
+                 
+                    </div>
+                    <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+        </div>
+
         <!-- Các tab chức năng:Thông tin khám, Chỉ định Dịch vụ, Kết luận khám, Kê đơn thuốc-->
         <section class="kb-col kb-col-right" aria-label="Chức năng khác">
           <h4>KHÁM</h4>
@@ -516,9 +542,9 @@
             <button class="kb-util-btn" id="printbutton"><i class="fa fa-print"></i><span>In ấn</span></button>
                 <div id="printContextMenu" class="print-context-menu d-none">
                     <ul>
-                        <li><a href="#">In phiếu khám</a></li>
-                        <li><a href="#">In đơn thuốc</a></li>
-                        <li><a href="#">In hồ sơ</a></li>
+                        <li><a value="1">In phiếu khám</a></li>
+                            <li><a value="2">In đơn thuốc</a></li>
+                            <li><a value="3">In hồ sơ</a></li>
                     </ul>
                 </div>
 
@@ -529,6 +555,9 @@
     </div>
     </div>
 
+<script id="json-data" type="application/json">
+    @Html.Raw(ViewBag.JsonResponse ?? "null")
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.9.179/pdf.min.js"></script>
 <script src="~/js/api_services.js" asp-append-version="true"></script>
 <script src="~/js/Khambenh/khamBenh.js" asp-append-version="true"></script>

@@ -23,14 +23,14 @@
                     <div class="card-header fw-bold">Thông tin người bệnh</div>
                     <div class="card-body px-3 py-2">
                         <div class="row g-2">
-                            <div class="col-md-6"><strong>Mã hồ sơ:</strong> HS001</div>
-                            <div class="col-md-6"><strong>Mã NB:</strong> NB12345</div>
-                            <div class="col-md-6"><strong>Họ tên:</strong> Nguyễn Văn A</div>
-                            <div class="col-md-6"><strong>SĐT:</strong> 0912345678</div>
-                            <div class="col-md-6"><strong>Địa chỉ:</strong> 123 Nguyễn Trãi, Hà Nội</div>
-                            <div class="col-md-6" id="thebhyt"><strong>BHYT:</strong> BN123456789</div>
-                            <div class="col-md-6"><strong>Lý do khám:</strong> Đau bụng kéo dài</div>
-                            <div class="col-md-6" id="muchuong"><strong>Mức hưởng:</strong> 80</div>
+                            <div class="col-md-6"><strong>Mã hồ sơ:</strong>@ViewBag.MaHS</div>
+                        <div class="col-md-6"><strong>Mã NB:</strong> @ViewBag.MaNB</div>
+                        <div class="col-md-6"><strong>Họ tên:</strong> @ViewBag.HoTen</div>
+                        <div class="col-md-6"><strong>SĐT:</strong> @ViewBag.SDT</div>
+                        <div class="col-md-6"><strong>Địa chỉ:</strong> @ViewBag.DiaChi</div>
+                        <div class="col-md-6" id="thebhyt"><strong>BHYT:</strong>@ViewBag.BHYT</div>
+                        <div class="col-md-6"><strong>Lý do khám:</strong> @ViewBag.LyDoKham</div>
+                        <div class="col-md-6" id="muchuong"><strong>Mức hưởng:</strong> @ViewBag.MucHuong</div>
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                         </div>
                     </div>
 
-                    <button onclick="taoPayloadKeDichVu(1)" class="btn float-end mt-2 btnxacnhanke">Xác nhận kê dịch vụ</button>
+                    <button onclick="taoPayloadKeDichVu(@ViewBag.MaHS)" class="btn float-end mt-2 btnxacnhanke">Xác nhận kê dịch vụ</button>
                   </div>
                 </div>
 
