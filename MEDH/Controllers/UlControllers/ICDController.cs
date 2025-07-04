@@ -29,7 +29,6 @@ namespace MEDH.Controllers.UlControllers
 
                 var content = await response.Content.ReadAsStringAsync();
 
-                // Ghi log phản hồi để kiểm tra
                 Console.WriteLine($"ICD API Response for '{code}': {content}");
 
                 response.EnsureSuccessStatusCode();

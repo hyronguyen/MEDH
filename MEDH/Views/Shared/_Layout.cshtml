@@ -43,8 +43,8 @@
             <!-- Khu vực bên phải (tên + icon + đồng hồ) -->
             <div class="d-flex align-items-center" style="gap: 1rem;">
                 <!-- Tên người dùng -->
-                <span class="text-light fw-semibold" style="user-select: none; pointer-events: none;">Nguyễn Văn A</span>
-
+                <span class="text-light fw-semibold" style="user-select: none; pointer-events: none;" id="display-name">Nguyễn Văn A</span>
+                <input type="hidden" id="user-id" />
                 <!-- Biểu tượng -->
                 <ul class="nav d-flex align-items-center" style="gap: 0.5rem;">
                     <li class="nav-item">
@@ -54,7 +54,10 @@
                         <a class="nav-link text-light" href="#"><i class="bi bi-question-circle fs-5"></i></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-light" href="#"><i class="bi bi-gear fs-5"></i></a>
+                        <a class="nav-link text-light" href="#" id="logout-btn">
+                            <i class="bi bi-gear fs-5"></i>
+                        </a>
+
                     </li>
                 </ul>
 
@@ -65,7 +68,7 @@
     </header>
 
     <!--Main Frame-->
-    <div class="container con">
+    <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

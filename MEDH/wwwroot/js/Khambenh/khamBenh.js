@@ -1,7 +1,7 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
 
 
-
+// Ke thuoc
     const ngaykeInput = document.getElementById('ngayke');
     const today = new Date();
 
@@ -61,12 +61,43 @@ const danhSachThuoc = [
 
 
 function StartUp() {
-    PreLoadThongTinNB();
-    LoadDanhSachphong(3);
-    ChonPhongKham(3);
-    InPhieu();
-    }
+    const token = localStorage.getItem("token");
 
+    if (!token || token.trim() === "") {
+        window.location.href = "/Auth/Login";
+        return;
+    }
+    const decoded = parseJwt(token);
+    if (!decoded || !decoded.sub) {
+        console.warn("Token không hợp lệ hoặc thiếu trường sub.");
+        window.location.href = "/Auth/Login";
+        return;
+    }
+    const sub = decoded.sub;
+    PreLoadThongTinNB();
+    LoadDanhSachphong(sub);
+    ChonPhongKham(sub);
+    InPhieu();
+}
+
+
+// FUNCTION: LẤY TOKEN
+   function parseJwt(token) {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+            atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+        );
+        return JSON.parse(jsonPayload);
+    } catch (error) {
+        console.error("Không thể giải mã token:", error);
+        return null;
+    }
+}
 // FUNTION: LẤY NGƯỜI BỆNH TẠI PHÒNG
     async function LoadDanhSachkham(mabacsi, maphong) {
     try {

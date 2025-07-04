@@ -1,0 +1,194 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Đăng nhập";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+
+    <style>
+        :root {
+            --primary-color: #05A79E;
+            --secondary-color: #1c1c1c;
+            --background-color: #f5f7fa;
+            --text-color: #222831;
+            --highlight-color: #ff6600;
+            --black-color: #212529;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            overflow: hidden;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .login-container {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .login-box {
+            background-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(14px);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+            .login-box img {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 1rem;
+            }
+
+            .login-box h2 {
+                margin-bottom: 30px;
+                color: var(--text-color);
+                font-weight: bold;
+            }
+
+        label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid var(--black-color);
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--black-color);
+        }
+
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 0.2rem rgba(5, 167, 158, 0.25);
+            }
+
+        .btn-primary {
+            width: 100%;
+            border-radius: 6px;
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--highlight-color);
+                border-color: var(--highlight-color);
+            }
+
+        .alert {
+            text-align: center;
+            color: #fff;
+            background-color: #dc3545;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay muted loop class="video-bg">
+        <source src="~/assets/video/intro_benhvien.mp4" type="video/mp4" />
+    </video>
+
+    <div class="login-container">
+        <div class="login-box">
+            <img src="~/assets/images/logo.webp" alt="Logo" />
+            <h2>Đăng nhập</h2>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert">@ViewBag.Error</div>
+            }
+
+                <form id="loginForm">
+        <div class="form-group text-left">
+            <label for="username">Tên đăng nhập</label>
+            <input type="text" id="username" name="username" class="form-control" required />
+        </div>
+
+        <div class="form-group text-left">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" name="password" class="form-control" required />
+        </div>
+
+             <button type="submit" class="btn btn-primary">Đăng nhập</button>
+			    </form>
+        </div>
+    </div>
+</body>
+<!--Script-->
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault(); 
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    dangNhap(username, password);
+});
+
+
+    async function dangNhap() {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+            alert("Vui lòng nhập mã phòng và mã bác sĩ.");
+            return;
+        }
+
+        try {
+            const url = `/Auth/LoginAccount/?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                alert(`❌ Lỗi đăng nhập: ${err.message || "Không xác định"}`);
+                return;
+            }
+
+            const result = await response.json();
+
+            if (result.status === "success" && result.token) {
+                localStorage.setItem("token", result.token);
+                alert("✅ Đăng nhập thành công.");
+                window.location.replace("/Home/Index");
+            } else {
+                alert(`❌ Đăng nhập thất bại: ${result.message || "Không xác định"}`);
+            }
+
+        } catch (err) {
+            console.error("❌ Lỗi khi gọi API:", err);
+            alert("Lỗi hệ thống. Vui lòng thử lại sau.");
+        }
+    }
+
+</script>
+
+</html>
