@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "Danh mục";
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <style>
+        :root {
+            --primary-color: #05A79E;
+            --secondary-color: #1c1c1c;
+            --background-color: #f5f7fa;
+            --text-color: #222831;
+            --highlight-color: #ff6600;
+            --black-color: #212529;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .category-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            height: calc(100vh - 2rem);
+        }
+
+            .category-card h5 {
+                color: var(--primary-color);
+                margin-bottom: 1rem;
+            }
+
+            .category-card .nav-link {
+                color: var(--text-color);
+                margin-bottom: 0.5rem;
+                padding: 0.5rem 0.75rem;
+                border-radius: 0.25rem;
+                cursor: pointer;
+            }
+
+                .category-card .nav-link.active,
+                .category-card .nav-link:hover {
+                    background-color: var(--primary-color);
+                    color: white;
+                }
+
+        table th {
+            background-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-danger {
+            background-color: var(--highlight-color);
+            border-color: var(--highlight-color);
+        }
+
+        #popupForm {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid pt-3">
+        <div class="row">
+            <!-- Khung danh mục -->
+            <div class="col-md-3">
+                <div class="category-card">
+                    <h5>Loại danh mục</h5>
+                    <nav class="nav flex-column" id="categoryList">
+                        <a class="nav-link active" data-category="NhanVien">Nhân sự</a>
+                        <a class="nav-link" data-category="Phong">Phòng</a>
+                        <a class="nav-link" data-category="VaiTro">Vai trò nhân sự</a>
+                        <a class="nav-link" data-category="Thuoc">Thuốc</a>
+                        <a class="nav-link" data-category="DichVuKham">Dịch vụ khám</a>
+                        <a class="nav-link" data-category="XetNghiem">Xét nghiệm</a>
+                        <a class="nav-link" data-category="ChanDoan">CĐHA - PHCN</a>
+                        <a class="nav-link" data-category="PhauThuat">Phẫu thuật thủ thuật</a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Bảng dữ liệu -->
+            <div class="col-md-9">
+                <div class="content-header mb-3">
+                    <h4 id="categoryTitle">Danh sách Nhân sự</h4>
+                    <div>
+                        <button id="btnAdd" class="btn btn-primary">Thêm</button>
+                        <input type="text" class="form-control d-inline-block ml-2" placeholder="Tìm kiếm..." style="width: 200px;" />
+                    </div>
+                </div>
+
+                <table class="table table-bordered table-hover">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="popupForm" class="card shadow-lg position-fixed p-3" style="right: 20px; top: 80px; width: 320px; display: none; z-index: 1050;">
+        <h5 class="mb-3" id="popupTitle">Thêm mới</h5>
+        <form id="addForm">
+            <div id="popupFields"></div>
+            <button type="submit" class="btn btn-primary mt-3 btn-block">Thêm</button>
+        </form>
+    </div>
+
+
+</body>
+<script src="~/js/Danhmuc/danhMuc.js" asp-append-version="true"></script>
+</html>

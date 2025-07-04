@@ -29,29 +29,26 @@
     <h4 class="text-center" style="user-select: none; pointer-events: none;">Xin chào, Nguyễn Hồ Ngọc Huy</h4>
     <div class="module-grid">
 
-
-        <div class="module-card">
+        <div class="module-card" id="card-tiepdon">
             <i class="module-icon fa-solid fa-user-check"></i>
             <h5 style="user-select: none; pointer-events: none;">Tiếp Đón</h5>
             <ul class="context-menu" id="context-menu-card-tiepdon">
-                <li> <a asp-area="" asp-controller="Tiepdon" asp-action="Tiepdonmoi">Tiếp đón mới</a></li>
-                <li> <a asp-area="" asp-controller="Tiepdon" asp-action="Dstiepdon">DS Tiếp đón</a></li>
+                <li><a asp-area="" asp-controller="Tiepdon" asp-action="Tiepdonmoi">Tiếp đón mới</a></li>
+                <li><a asp-area="" asp-controller="Tiepdon" asp-action="Dstiepdon">DS Tiếp đón</a></li>
                 <li><a asp-area="" asp-controller="Tiepdon" asp-action="Kedichvutiepdon">Lịch hẹn khám</a></li>
             </ul>
         </div>
 
-
-        <div class="module-card">
+        <div class="module-card" id="card-hoichan">
             <i class="module-icon fa-solid fa-handshake"></i>
             <h5 style="user-select: none; pointer-events: none;">Hội Chẩn</h5>
             <ul class="context-menu" id="context-menu-card-hoichan">
                 <li><a href="#">DS hội chẩn</a></li>
                 <li><a href="#">Thư mời hội chẩn</a></li>
-
             </ul>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-kho">
             <i class="module-icon fa-solid fa-warehouse"></i>
             <h5 style="user-select: none; pointer-events: none;">Quản Lý Kho</h5>
             <ul class="context-menu" id="context-menu-card-kho">
@@ -62,20 +59,14 @@
             </ul>
         </div>
 
-        
         <a asp-area="" asp-controller="Khambenh" asp-action="Khambenhngoaitru" asp-route-MaHoso="N/A">
-              <div class="module-card">
-            <i class="module-icon fa-solid fa-stethoscope"></i>
-            <h5>Khám Bệnh</h5>
-        </div>
+            <div class="module-card" id="card-khambenh">
+                <i class="module-icon fa-solid fa-stethoscope"></i>
+                <h5>Khám Bệnh</h5>
+            </div>
         </a>
-      
 
-        <!-- Hàng 2 -->
-
-      
-
-        <div class="module-card">
+        <div class="module-card" id="card-nhapvien">
             <i class="module-icon fa-solid fa-bed-pulse"></i>
             <h5 style="user-select: none; pointer-events: none;">Nhập viện</h5>
             <ul class="context-menu" id="context-menu-card-noitru">
@@ -84,7 +75,7 @@
             </ul>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-xetnghiem">
             <i class="module-icon fa-solid fa-vial-virus"></i>
             <h5 style="user-select: none; pointer-events: none;">Xét nghiệm</h5>
             <ul class="context-menu" id="context-menu-card-xetnghiem">
@@ -93,7 +84,7 @@
             </ul>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-thungan">
             <i class="module-icon fa-solid fa-cash-register"></i>
             <h5 style="user-select: none; pointer-events: none;">Thu Ngân</h5>
             <ul class="context-menu" id="context-menu-card-thungan">
@@ -103,21 +94,17 @@
             </ul>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-nhathuoc">
             <i class="module-icon fa-solid fa-pills"></i>
             <h5 style="user-select: none; pointer-events: none;">Nhà Thuốc</h5>
         </div>
-        
-        
 
-        
-
-        <div class="module-card">
+        <div class="module-card" id="card-hsba">
             <i class="module-icon fa-solid fa-book-medical"></i>
             <h5 style="user-select: none; pointer-events: none;">HS Bệnh án</h5>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-cdha">
             <i class="module-icon fa-solid fa-x-ray"></i>
             <h5 style="user-select: none; pointer-events: none;">CDHA - PHCN</h5>
             <ul class="context-menu" id="context-menu-card-cdha">
@@ -126,41 +113,42 @@
             </ul>
         </div>
 
-        <div class="module-card">
+        <div class="module-card" id="card-khomau">
             <i class="module-icon fa-solid fa-droplet"></i>
             <h5 style="user-select: none; pointer-events: none;">Kho máu</h5>
         </div>
 
-        <div class="module-card">
+        <a asp-area="" asp-controller="Danhmuc" asp-action="Danhmuc">
+        <div class="module-card" id="card-danhmuc">
             <i class="module-icon fa-solid fa-layer-group"></i>
             <h5 style="user-select: none; pointer-events: none;">DL Danh mục</h5>
         </div>
+        </a>
 
         <a asp-area="" asp-controller="QMS" asp-action="Qmsscreen">
-        <div class="module-card">
-            <i class="module-icon fa-solid fa-tv"></i>
-            <h5 style="user-select: none; pointer-events: none;">QMS</h5>
-        </div>
+            <div class="module-card" id="card-qms">
+                <i class="module-icon fa-solid fa-tv"></i>
+                <h5 style="user-select: none; pointer-events: none;">QMS</h5>
+            </div>
         </a>
 
         <a asp-area="" asp-controller="QMS" asp-action="Kiosk">
-        <div class="module-card">
-            <i class="module-icon fa-solid fa-ticket"></i>
-            <h5 style="user-select: none; pointer-events: none;">Kiosk số</h5>
-        </div>
+            <div class="module-card" id="card-kiosk">
+                <i class="module-icon fa-solid fa-ticket"></i>
+                <h5 style="user-select: none; pointer-events: none;">Kiosk số</h5>
+            </div>
         </a>
 
-        <div class="module-card">
+        <div class="module-card" id="card-dinhduong">
             <i class="module-icon fa-solid fa-utensils"></i>
             <h5 style="user-select: none; pointer-events: none;">QL Dinh dưỡng</h5>
         </div>
-      
 
-
-        <div class="module-card">
+        <div class="module-card" id="card-thietlap">
             <i class="module-icon fa-solid fa-sliders"></i>
             <h5 style="user-select: none; pointer-events: none;">Thiết lập</h5>
         </div>
+
 
     </div>
 

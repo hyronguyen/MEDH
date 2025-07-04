@@ -75,11 +75,12 @@ function StartUp() {
     }
     const sub = decoded.sub;
     PreLoadThongTinNB();
+
+
     LoadDanhSachphong(sub);
     ChonPhongKham(sub);
     InPhieu();
 }
-
 
 // FUNCTION: LẤY TOKEN
    function parseJwt(token) {
