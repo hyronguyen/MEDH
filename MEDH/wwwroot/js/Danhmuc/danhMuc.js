@@ -4,6 +4,7 @@ let currentCategory = "NhanVien";
 // ON LOAD ---------------------------------------------------------------------------------
 document.addEventListener('DOMContentLoaded', () => {
     renderTable(currentCategory);
+    LoadDanhMucNhanVien();
 
 });
 
@@ -74,7 +75,6 @@ function actionButtons(id) {
 
     }
 
-
 // FUNCTION: CHỌN DANH MỤC
 document.querySelectorAll("#categoryList .nav-link").forEach(link => {
     link.addEventListener("click", function () {
@@ -119,7 +119,6 @@ document.querySelectorAll("#categoryList .nav-link").forEach(link => {
     });
 });
 
-
 // FUNCTION: THUỐC
 function LoadDanhMucThuoc() {
     fetch("/Danhmuc/Danhmucthuoc")
@@ -154,10 +153,38 @@ function LoadDanhMucThuoc() {
         });
 }
 
-
 // FUNCTION: NHÂN VIÊN
 function LoadDanhMucNhanVien() {
-    alert("Đang tải danh mục: Nhân viên");
+    fetch("/Danhmuc/Danhmucnhanvien")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Lỗi khi gọi API danh mục nhân viên.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const columns = ["ID", "Tên", "Vai trò", "Tài khoản", "Mật khẩu", "Hành động"];
+            const thead = document.getElementById("tableHead");
+            const tbody = document.getElementById("tableBody");
+
+            // Render header
+            thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join("")}</tr>`;
+
+            // Render body
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${item.ma_nhan_vien}</td>
+                    <td>${item.ho_ten}</td>
+                    <td>${item.vai_tro}</td>
+                    <td>${item.tai_khoan}</td>
+                    <td>${item.mat_khau.substring(0, 8)}...</td>
+                    <td>${actionButtons(item.ma_nhan_vien)}</td>
+                </tr>
+            `).join("");
+        })
+        .catch(error => {
+            alert("Không thể tải danh mục nhân viên: " + error.message);
+        });
 }
 
 // FUNCTION: PHÒNG
@@ -189,8 +216,6 @@ function LoadDanhMucDVCDHA() {
 function LoadDanhMucDVPTTT() {
     alert("Đang tải danh mục: Phẫu thuật thủ thuật");
 }
-
-
 
 //FUNCTION: render danh sách bên phải
 function renderTable(category) {

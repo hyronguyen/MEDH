@@ -23,7 +23,7 @@ namespace MEDH.Controllers
             return View();
         }
 
-        //THUỐC
+        //THUỐC -----------------------------------------------------------------
         [HttpGet]
         public async Task<IActionResult> Danhmucthuoc()
         {
@@ -117,6 +117,107 @@ namespace MEDH.Controllers
                 return StatusCode(500, new
                 {
                     message = "Lỗi xử lý khi thêm thuốc",
+                    detail = ex.Message
+                });
+            }
+        }
+
+        //NHÂN VIÊN -------------------------------------------------------------
+        [HttpGet]
+        public async Task<IActionResult> Danhmucnhanvien()
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = $"{baseUrl}nhanvien";
+
+                Console.WriteLine(requestUrl);
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Không lây được danh mục nhân viên",
+                        status = response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                var danhSachThuoc = JsonSerializer.Deserialize<List<NhanvienDTO>>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return Json(danhSachThuoc);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi xử lý Danhmucnhanvien",
+                    detail = ex.Message
+                });
+            }
+        }
+
+        //DỊCH VỤ ----------------------------------------------------------------
+        [HttpGet]
+        public async Task<IActionResult> Danhmucdichvu(string loaidichvu)
+        {
+            try
+            {
+                string endpoint = loaidichvu switch
+                {
+                    "kham" => "dichvu?loai_dich_vu=eq.kham",
+                    "xet_nghiem" => "dichvu?loai_dich_vu=eq.xet_nghiem",
+                    "chan_doan" => "dichvu?loai_dich_vu=eq.chan_doan",
+                    "pttt" => "dichvu?loai_dich_vu=eq.pttt",
+                    _ => throw new ArgumentException("Loại dịch vụ không hợp lệ", nameof(loaidichvu))
+                };
+
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+
+                string requestUrl = $"{baseUrl}{endpoint}";
+                Console.WriteLine(requestUrl);
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Console.WriteLine(responseContent);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Không lấy được danh mục dich vụ",
+                        status = response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                var danhSachDichvu = JsonSerializer.Deserialize<List<DichvuDTO>>(responseContent, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return Json(danhSachDichvu);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Lỗi xử lý Dahmucdichvu",
                     detail = ex.Message
                 });
             }
