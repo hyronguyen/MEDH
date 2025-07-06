@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -125,7 +126,6 @@ namespace MEDH.Controllers
             }
         }
 
-
         // LẤY DANH SÁCH PHÒNG THUỘC BÁC SĨ
         public async Task<IActionResult> Laydanhsachphongthuocbacsi(string mabacsi)
         {
@@ -164,6 +164,51 @@ namespace MEDH.Controllers
                 return Content(result, "application/json");
             }
             catch(Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> Luuthongtinkhambenh(string token,string MaHoSo,string sinhhieu, string hoibenh, string khamxet)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = baseUrl + "cap_nhat_ho_so_dot_kham";
+
+                //Tạo payload body
+                var payload = new
+                {
+                    p_token = token,
+                    ma_dot_kham_input = int.Parse(MaHoSo),
+                    hoi_benh_input = hoibenh,
+                    kham_xet_input = khamxet,
+                    sinh_hieu_input = sinhhieu
+                };
+                //Tạo Request
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
+                {
+                    Content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(payload),
+                        Encoding.UTF8,
+                        "application/json")
+                };
+                request.Headers.Add("apikey", apiKey);
+
+                //Nhận Response
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { message = "Lỗi từ Supabase", detail = errorText });
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                return Content(result, "application/json");
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
             }

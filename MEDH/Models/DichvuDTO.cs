@@ -19,6 +19,6 @@ namespace MEDH.Models
         [JsonPropertyName("thanh_toan")]
         public string ThanhToan { get; set; }
         [JsonPropertyName("phong_thuc_hien")]
-        public string PhongThucHien { get; set; }
+        public int PhongThucHien { get; set; }
     }
 }

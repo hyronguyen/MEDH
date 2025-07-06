@@ -314,8 +314,8 @@ function PreLoadThongTinNB() {
     });
 });
 
-    // Kiểm tra hàng đợi
-function Queuecheck(danhSach) {
+    // Dan sách hàng đợi
+    function Queuecheck(danhSach) {
     const statusButtons = document.querySelectorAll(".kb-status-btn");
     const patientList = document.getElementById("patient-list");
     const patientListContent = document.getElementById("patient-list-content");
@@ -491,24 +491,101 @@ function Queuecheck(danhSach) {
         }
     });
 
-    // Đóng hồ sơ
-    document.querySelector('.kb-util-btn-closehs').addEventListener('click', function () {
+    // Lưu thông tin khám bệnh 
+    document.getElementById('luuthongtinkham').addEventListener('click',async function () {
         if (!kiemTraTruocKhiDongHoSo()) return;
+        const sinh_hieu_input = [
+            document.getElementById("mach").value,
+            document.getElementById("nhietDo").value,
+            document.getElementById("huyetAp").value,
+            document.getElementById("nhipTho").value,
+            document.querySelector('input[placeholder="cm"]').value,
+            document.querySelector('input[placeholder="kg"]').value,
+            document.querySelector('input[placeholder="%"]').value,
+            document.querySelector('input[placeholder^="A"]').value,
+            document.getElementById("bmi").value,
+            document.querySelector('input[placeholder="lít/phút"]').value,
+            document.querySelector('input[placeholder="ACVPU"]').value,
+            document.querySelector('input[placeholder="Vị trí"]').value
+        ].map(s => s.trim()).join("|");
 
-        const section = document.getElementById('thongtinkhambenh');
-        const inputs = section.querySelectorAll('input, textarea');
-        const data = {};
+        // === ✅ Collect Hỏi bệnh ===
+        const hoi_benh_input = [
+            document.getElementById("benhSu").value,
+            document.querySelectorAll("textarea")[1].value,
+            document.querySelectorAll("textarea")[2].value,
+            document.getElementById("diungthuoc").value,
+            document.getElementById("lyDoKham").value
+        ].map(s => s.trim()).join("|");
 
-        inputs.forEach((el, index) => {
-            const labelEl = el.closest('label')?.innerText?.split(':')[0]?.trim() ||
-                el.closest('.form-group')?.querySelector('label')?.innerText?.split(':')[0]?.trim() ||
-                `field_${index}`;
+        // === ✅ Collect Khám xét ===
+        const kham_xet_input = [
+            document.querySelectorAll("textarea")[3].value,
+            document.querySelectorAll("textarea")[4].value,
+            document.querySelectorAll("textarea")[5].value,
+            document.getElementById("dienBien").value,
+            document.querySelectorAll("input[type='text']")[1].value
+        ].map(s => s.trim()).join("|");
 
-            data[labelEl] = el.value.trim();
+
+        const textareaChanDoan = document.getElementById("icdmotachitiet");
+        const inputChanDoanSoBo = document.getElementById("icd-desc-input");
+        const inputICD = document.getElementById("icd-input");
+        const inputChanDoanKem = document.querySelectorAll("fieldset h5")[0].parentElement.querySelectorAll("input")[2];
+
+        const chan_doan_input = [
+            textareaChanDoan?.value || "",
+            inputChanDoanSoBo?.value || "",
+            inputICD?.value || "",
+            inputChanDoanKem?.value || ""
+        ].map(s => s.trim()).join("|");
+        const token = localStorage.getItem("token");
+
+
+        const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+        let MaHoSo = null;
+
+        if (hoSoRaw) {
+            try {
+                const hoSoParsed = JSON.parse(hoSoRaw);
+                MaHoSo = hoSoParsed?.data?.dot_kham?.ma_dot_kham || null;
+            } catch (err) {
+                console.error("Lỗi parse ho_so_chi_tiet:", err);
+            }
+        }
+
+        if (!MaHoSo) {
+            alert("❌ Không tìm thấy mã hồ sơ đợt khám trong localStorage.");
+            return;
+        }
+
+        // Encode dữ liệu an toàn
+        const query = new URLSearchParams({
+            token,
+            MaHoSo,
+            sinhhieu: sinh_hieu_input,
+            hoibenh: hoi_benh_input,
+            khamxet: kham_xet_input
         });
 
-        alert("Đóng hồ sơ thành công");
-        console.log(data);
+        const url = `/Khambenh/Luuthongtinkhambenh?${query.toString()}`;
+        try {
+            const res = await fetch(url, {
+                method: "POST"
+            });
+
+            const result = await res.json();
+            if (result.status === "SUCCESS") {
+                alert("✅ Đã lưu thông tin thành công");
+            } else {
+                alert("❌ Thất bại: " + result.message);
+            }
+        } catch (err) {
+            console.error("Lỗi API:", err);
+            alert("❌ Gọi API thất bại");
+        }
+
+        console.log("Payload khám bệnh:", payload);
     });
 
 

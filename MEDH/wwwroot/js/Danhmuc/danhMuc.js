@@ -199,22 +199,138 @@ function LoadDanhMucPhongVaNhanSu() {
 
 // FUNCTION: DỊCH VỤ KHÁM
 function LoadDanhMucDVKham() {
-    alert("Đang tải danh mục: Dịch vụ khám");
+    fetch("/Danhmuc/Danhmucdichvu/?loaidichvu=kham")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Lỗi khi gọi API danh mục thuốc.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const columns = ["ID", "Tên", "Thanh toán", "Đơn giá", "Phong thực hiện", "Hành động"];
+            const thead = document.getElementById("tableHead");
+            const tbody = document.getElementById("tableBody");
+
+            // Render header
+            thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join("")}</tr>`;
+
+            // Render body
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${item.ma_dich_vu}</td>
+                    <td>${item.ten_dich_vu}</td>
+                    <td>${item.thanh_toan}</td>
+                    <td>${item.don_gia.toLocaleString("vi-VN")}₫</td>
+                    <td>${item.phong_thuc_hien}</td>
+                    <td>${actionButtons(item.ma_dich_vu)}</td>
+                </tr>
+            `).join("");
+        })
+        .catch(error => {
+            alert("Không thể tải danh mục thuốc: " + error.message);
+        });
 }
 
 // FUNCTION: XÉT NGHIỆM
 function LoadDanhMucDVXetnghiem() {
-    alert("Đang tải danh mục: Dịch vụ xét nghiệm");
+    fetch("/Danhmuc/Danhmucdichvu/?loaidichvu=xet_nghiem")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Lỗi khi gọi API danh mục thuốc.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const columns = ["ID", "Tên", "Thanh toán", "Đơn giá", "Phong thực hiện", "Hành động"];
+            const thead = document.getElementById("tableHead");
+            const tbody = document.getElementById("tableBody");
+
+            // Render header
+            thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join("")}</tr>`;
+
+            // Render body
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${item.ma_dich_vu}</td>
+                    <td>${item.ten_dich_vu}</td>
+                    <td>${item.thanh_toan}</td>
+                    <td>${item.don_gia.toLocaleString("vi-VN")}₫</td>
+                    <td>${item.phong_thuc_hien}</td>
+                    <td>${actionButtons(item.ma_dich_vu)}</td>
+                </tr>
+            `).join("");
+        })
+        .catch(error => {
+            alert("Không thể tải danh mục thuốc: " + error.message);
+        });
 }
 
 // FUNCTION: CĐHA - PHCN
 function LoadDanhMucDVCDHA() {
-    alert("Đang tải danh mục: Chẩn đoán hình ảnh / PHCN");
+    fetch("/Danhmuc/Danhmucdichvu/?loaidichvu=chan_doan")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Lỗi khi gọi API danh mục thuốc.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const columns = ["ID", "Tên", "Thanh toán", "Đơn giá", "Phong thực hiện", "Hành động"];
+            const thead = document.getElementById("tableHead");
+            const tbody = document.getElementById("tableBody");
+
+            // Render header
+            thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join("")}</tr>`;
+
+            // Render body
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${item.ma_dich_vu}</td>
+                    <td>${item.ten_dich_vu}</td>
+                    <td>${item.thanh_toan}</td>
+                    <td>${item.don_gia.toLocaleString("vi-VN")}₫</td>
+                    <td>${item.phong_thuc_hien}</td>
+                    <td>${actionButtons(item.ma_dich_vu)}</td>
+                </tr>
+            `).join("");
+        })
+        .catch(error => {
+            alert("Không thể tải danh mục thuốc: " + error.message);
+        });
 }
 
 // FUNCTION: PHẪU THUẬT - THỦ THUẬT
 function LoadDanhMucDVPTTT() {
-    alert("Đang tải danh mục: Phẫu thuật thủ thuật");
+    fetch("/Danhmuc/Danhmucdichvu/?loaidichvu=pttt")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Lỗi khi gọi API danh mục thuốc.");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const columns = ["ID", "Tên", "Thanh toán", "Đơn giá", "Phong thực hiện", "Hành động"];
+            const thead = document.getElementById("tableHead");
+            const tbody = document.getElementById("tableBody");
+
+            // Render header
+            thead.innerHTML = `<tr>${columns.map(col => `<th>${col}</th>`).join("")}</tr>`;
+
+            // Render body
+            tbody.innerHTML = data.map((item, index) => `
+                <tr>
+                    <td>${item.ma_dich_vu}</td>
+                    <td>${item.ten_dich_vu}</td>
+                    <td>${item.thanh_toan}</td>
+                    <td>${item.don_gia.toLocaleString("vi-VN")}₫</td>
+                    <td>${item.phong_thuc_hien}</td>
+                    <td>${actionButtons(item.ma_dich_vu)}</td>
+                </tr>
+            `).join("");
+        })
+        .catch(error => {
+            alert("Không thể tải danh mục thuốc: " + error.message);
+        });
 }
 
 //FUNCTION: render danh sách bên phải
@@ -262,7 +378,6 @@ document.getElementById("btnAdd").addEventListener("click", () => {
 
     document.getElementById("popupForm").style.display = "block";
 });
-
 
 //FUNCTION: SUBMIT THÊ MỚI ITEM TRONG DANH MÚC
 document.getElementById("addForm").addEventListener("submit", function (e) {
