@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
+using System.Net.Http;
 
 namespace MEDH.Controllers
 {
     public class TiepdonController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private readonly HttpClient _httpClient;
+
+        public TiepdonController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            _httpClient = new HttpClient();
+        }
         public IActionResult Tiepdonmoi()
         {
             return View();
@@ -72,6 +81,40 @@ namespace MEDH.Controllers
         {
             return View();
         }
+
+        public async Task<IActionResult> Laydanhsachbndatiepdon()
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = baseUrl + "lay_danh_sach_tiep_don";
+
+                // Tạo Request
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                // Gửi Request
+                var response = await _httpClient.SendAsync(request);
+
+                // Xử lý Response
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { message = "❌ Lỗi từ Supabase", detail = error });
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                return Content(result, "application/json");
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+
     }
 
 }

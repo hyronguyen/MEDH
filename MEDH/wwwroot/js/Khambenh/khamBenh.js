@@ -520,7 +520,6 @@ const danhSachThuoc = [
             suggestionsBox.style.display = 'none';
         }
     });
-
     //FUNCTION: Fill khi người dùng chọn gợi ý
     suggestionsBox.addEventListener('click', (e) => {
         const item = e.target.closest('.suggestion-item');
@@ -530,14 +529,12 @@ const danhSachThuoc = [
             suggestionsBox.style.display = 'none';
         }
     });
-
     //FUNCTION: Ẩn gợi ý khi click ra ngoài
     document.addEventListener('click', (e) => {
         if (!suggestionsBox.contains(e.target) && e.target !== input) {
             suggestionsBox.style.display = 'none';
         }
     });
-
     //FUNCTION: Lưu thông tin khám bệnh 
     document.getElementById('luuthongtinkham').addEventListener('click', async function () {
         // Kiểm tra tạm ứng
@@ -685,8 +682,7 @@ const danhSachThuoc = [
             menu.classList.add('d-none');
         }
     });
-
-    // Kiểm tra các trường bắt buộc trước khi đóng hồ sơ
+    //FUCNTION: Kiểm tra các trường bắt buộc trước khi đóng hồ sơ
     function kiemTraTruocKhiDongHoSo() {
         const requiredFields = [
             'mach', 'nhietDo', 'huyetAp', 'nhipTho',
@@ -720,8 +716,7 @@ const danhSachThuoc = [
 
         return isValid;
     }
-
-    // Đổi tab chức năng (Màn hình tao tác chính)
+    //FUCNTION:  Đổi tab chức năng (Màn hình tao tác chính)
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             // Bỏ class active khỏi tất cả tab

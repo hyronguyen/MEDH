@@ -89,7 +89,6 @@ async function xacNhan() {
 
 }
 
-
 // Tính tuổi
 document.getElementById("ngaySinh").addEventListener("change", function () {
     const dob = new Date(this.value);
