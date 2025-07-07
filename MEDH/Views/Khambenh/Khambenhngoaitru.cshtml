@@ -39,14 +39,13 @@
             <!-- Nhóm nút chức năng -->
             <div class="kb-actions">
                 <select id="phong-kham-select" class="btn btn-outline-primary">
-                    <option value="1">Nội tiêu hóa 1</option>
-                    <option value="2">Nội tổng hợp</option>
-                    <option value="3">Ngoại tổng quát</option>
-                    <option value="4">Tai Mũi Họng</option>
+                    <option value="1">XXXX</option>
+                    <option value="2">XXXX</option>
+           
                 </select>
 
 
-                <button class="btn-next btn-dark">Bệnh nhân tiếp theo</button>
+                <button class="btn-next btn-dark" id="btnnguoibenhtieptheo">Bệnh nhân tiếp theo</button>
                 <button class="btn-list">Danh sách bệnh nhân</button>
             </div>
 
@@ -67,9 +66,8 @@
                     <div id="kbMaHS"><strong>Mã Hồ Sơ:</strong> @ViewBag.MaHS</div>
                     <div id="kbNbid"><strong>Mã bệnh nhân:</strong> HL383933</div>
                     <div id="kbVienphi"><strong>Viện phí:</strong> XXX.XXX đ</div>
-                    <div id="kbNbtra"><strong>NB trả:</strong> XXX.XXX đ</div>
-                    <div id="kbBHtra"><strong>BH trả:</strong> XXX.XXX đ</div>
                     <div id="kbTamung"><strong>Tạm ứng:</strong> XXX.XXX đ</div>
+                    <div id="kbSodu"><strong>Số dư:</strong> XXX.XXX đ</div>
                 </div>
             
 
@@ -79,15 +77,15 @@
                 <h4>Lịch sử khám</h4>
                 <div class="history-cards">
                     <div class="history-card">
-                        <div class="history-date">01/04/2025</div>
+                        <div class="history-date">01/04/2025 -<strong> CĐ: A01</strong></div>
                       
                     </div>
                     <div class="history-card">
-                        <div class="history-date">15/03/2025</div>
+                            <div class="history-date">15/03/2025 -<strong> CĐ: A01</strong></div>
          
                     </div>
                     <div class="history-card">
-                        <div class="history-date">10/02/2025</div>
+                            <div class="history-date">10/02/2025 -<strong> CĐ: A01</strong></div>
                     </div>
                 </div>
             </div>
@@ -163,7 +161,7 @@
                 </div>
                 <div class="form-group">
                     <label>Giai đoạn bệnh:</label>
-                    <input type="text">
+                    <input type="text" id="giaidoanbenh">
                 </div>
             </fieldset>
 
@@ -187,7 +185,7 @@
 
                 <div class="form-group">
                     <label>Chẩn đoán kèm theo:</label>
-                    <input type="text">
+                    <input type="text" id="kemtheo-input">
                 </div>
             </fieldset>
 
@@ -531,7 +529,7 @@
           <div class="kb-tab-list">
             <button class="kb-tab active" data-target="thongtinkhambenh"><i class="fa fa-info-circle"></i> Thông tin khám</button>
             <button class="kb-tab" data-target="chidinh"><i class="fa fa-stethoscope"></i> Chỉ định dịch vụ</button>
-                <button class="kb-tab" data-target="ketquacls"><i class="fa fa-square-poll-vertical"></i> Kết quả dịch vụ / CLS</button>
+            <button class="kb-tab" data-target="ketquacls"><i class="fa fa-square-poll-vertical"></i> Kết quả dịch vụ / CLS</button>
             <button class="kb-tab" data-target="ketluan"><i class="fa fa-file-medical-alt"></i> Kết luận khám</button>
             <button class="kb-tab" data-target="kedonthuoc"><i class="fa fa-pills"></i> Kê đơn thuốc</button>
           </div>

@@ -378,6 +378,10 @@ a {
 .benh-nhan-item {
     cursor: pointer;
 }
+    .benh-nhan-item:hover {
+        background-color: rgba(5, 167, 158, 0.1); /* màu nền nhẹ */
+        color: var(--primary-color);
+    }
 
 /* Dropdown style theo primary-color */
 select.btn.btn-outline-primary {

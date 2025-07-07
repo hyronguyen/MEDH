@@ -177,7 +177,6 @@
 
             if (result.status === "success" && result.token) {
                 localStorage.setItem("token", result.token);
-                alert("✅ Đăng nhập thành công.");
                 window.location.replace("/Home/Index");
             } else {
                 alert(`❌ Đăng nhập thất bại: ${result.message || "Không xác định"}`);

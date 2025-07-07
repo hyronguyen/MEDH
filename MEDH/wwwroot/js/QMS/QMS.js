@@ -88,6 +88,7 @@ function ModelChonQms() {
 
         
         qmsTitle.textContent = `QMS - ${selectedRoom}`;
+        capNhatSTT(maPhongHienTai);
 
         // Xử lý backdrop (nếu có sự cố)
         setTimeout(() => {
@@ -97,6 +98,8 @@ function ModelChonQms() {
             document.body.classList.remove('modal-open');
             document.body.style.overflow = '';
         }, 300);
+
+        
     });
 }
 
