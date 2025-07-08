@@ -107,7 +107,17 @@
                     <label>Chiều cao*:<input type="number" placeholder="cm"></label>
                     <label>Cân nặng*:<input type="number" placeholder="kg"></label>
                     <label>SpO2:<input type="number" placeholder="%"></label>
-                    <label>Nhóm máu:<input type="text" placeholder="A, B, AB, O..."></label>
+                    <label>
+                            Nhóm máu:
+                            <input type="text" list="nhomMauList" placeholder="A, B, AB, O...">
+                            <datalist id="nhomMauList">
+                                <option value="A">
+                                <option value="B">
+                                <option value="AB">
+                                <option value="O">
+                            </datalist>
+                    </label>
+
                     <label>BMI:<input type="number" step="0.1" id="bmi"></label>
                     <label>Thở oxy:<input type="number" placeholder="lít/phút"></label>
                     <label>Tri giác:<input type="text" placeholder="ACVPU"></label>
@@ -549,7 +559,7 @@
                 </div>
 
             <button class="kb-util-btn"><i class="fa fa-kit-medical"></i><span>BHYT</span></button>
-            <button class="kb-util-btn-closehs"><i class="fa fa-circle-check"></i><span>Đóng HS</span></button>
+            <button class="kb-util-btn-closehs" id="btnclosehs"><i class="fa fa-circle-check"></i><span>Đóng HS</span></button>
           </div>
         </section>
     </div>

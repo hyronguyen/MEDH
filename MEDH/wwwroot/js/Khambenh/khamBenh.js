@@ -27,11 +27,11 @@ const input_des = document.getElementById('icd-desc-input');
 const suggestionsBox = document.getElementById('icd-suggestions');
 const tabs = document.querySelectorAll('.kb-tab');
 const sections = document.querySelectorAll('.kb-col.kb-col-center');    
-
+const printBtn = document.getElementById('printbutton');
+const menu = document.getElementById('printContextMenu');
 
 //Call API ĐỔ vào danh sách này
-let dichVuCoSan = [
-];
+let dichVuCoSan = [];
 
 //Call API ĐỔ vào danh sách này
 const danhSachThuoc = [
@@ -48,7 +48,6 @@ const danhSachThuoc = [
 ];
 
 //FUNCTION CHUNG #########################################################################################################################################################
-
     function StartUp() {
     const token = localStorage.getItem("token");
 
@@ -69,10 +68,11 @@ const danhSachThuoc = [
     LoadDanhSachphong(sub);
         ChonPhongKham(sub);
         capNhatDanhSach();
+        CapNhatNutDongMoHoSo();
     InPhieu();
 }
-// FUNCTION: GIẢI MÃ TOKEN
-   function parseJwt(token) {
+    // FUNCTION: GIẢI MÃ TOKEN
+    function parseJwt(token) {
     try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -88,7 +88,7 @@ const danhSachThuoc = [
         return null;
     }
 }
-// FUNTION: LOAD NGƯỜI BỆNH TẠI PHÒNG
+    // FUNTION: LOAD NGƯỜI BỆNH TẠI PHÒNG
     async function LoadDanhSachkham(mabacsi, maphong) {
     try {
         const response = await fetch(`/Khambenh/Laydanhsachnguoibenhtaiphong?mabacsi=${mabacsi}&maPhong=${maphong}`);
@@ -107,7 +107,7 @@ const danhSachThuoc = [
         alert("Lỗi kết nối tới server.");
     }
 }
-// FUNCTION: LOAD DANH SÁCH PHÒNG KHÁM THUỘC BÁC SĨ
+    // FUNCTION: LOAD DANH SÁCH PHÒNG KHÁM THUỘC BÁC SĨ
     async function LoadDanhSachphong(manhanvien) {
     try {
         const response = await fetch(`/Khambenh/Laydanhsachphongthuocbacsi?mabacsi=${manhanvien}`);
@@ -150,7 +150,7 @@ const danhSachThuoc = [
         alert("Lỗi kết nối tới server.");
     }
 }
-// FUNCTION CHỌN PHÒNG KHÁM
+    // FUNCTION CHỌN PHÒNG KHÁM
     function ChonPhongKham(mabacsi) {
     const select = document.getElementById("phong-kham-select");
 
@@ -167,7 +167,7 @@ const danhSachThuoc = [
         }
     });
 }
-// FUNCTION IN PHIẾU
+    // FUNCTION IN PHIẾU
     function InPhieu() {
         const popupPhieuIn = new bootstrap.Modal(document.getElementById("popupPhieuIn"));
         const contentDiv = document.querySelector("#popupPhieuIn .modal-body");
@@ -186,7 +186,7 @@ const danhSachThuoc = [
             });
         });
     }
-// FUNCTION PRE-LOAD THÔNG TIN NGƯỜI BỆNH
+    // FUNCTION PRE-LOAD THÔNG TIN NGƯỜI BỆNH
     function PreLoadThongTinNB() {
     const jsonScript = document.getElementById("json-data");
     const wrapper = document.getElementById("patient-info-wrapper");
@@ -267,7 +267,6 @@ const danhSachThuoc = [
     // ✅ Hiển thị wrapper
     wrapper.style.display = "block";
 
-    // ----------------------------------
     // ✅ Hiển thị Sinh hiệu nếu có
     if (dot_kham.sinh_hieu) {
         const arr = dot_kham.sinh_hieu.split("|").map(s => s.trim());
@@ -324,7 +323,7 @@ const danhSachThuoc = [
             document.getElementById("kemtheo-input").value = kemtheo || "";
         }
 }
-// FUNCCTION GỌI NGƯỜI BỆNH TIẾP THEO
+    // FUNCCTION GỌI NGƯỜI BỆNH TIẾP THEO
     document.getElementById("btnnguoibenhtieptheo").addEventListener('click', async function () {
         try {
             const token = localStorage.getItem("token");
@@ -349,7 +348,115 @@ const danhSachThuoc = [
             alert("Lỗi kết nối tới server.");
         }
     });
-// FUCNTION CỦA THÔNG TIN KHÁM-----------------------------------------------------------------------------------------------------
+    // FUNCTION LẤY MÃ HỒ SƠ
+    function LayMaHoSo() {
+        const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+        let MaHoSo = null;
+        let hoSoParsed = null;
+
+        // Tìm mã hồ sơ
+        if (hoSoRaw) {
+            try {
+                hoSoParsed = JSON.parse(hoSoRaw);
+                MaHoSo = hoSoParsed?.data?.dot_kham?.ma_dot_kham || null;
+                return MaHoSo;
+            } catch (err) {
+                console.error("Lỗi parse ho_so_chi_tiet:", err);
+            }
+        }
+
+        if (!MaHoSo) {
+            alert("❌ Không tìm thấy mã hồ sơ đợt khám trong localStorage.");
+            return;
+        }
+        }
+    // FUNCTION LẤY kÊT luận khám
+    function LayKetLuanKham() {
+            const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+            let KetLuanKham = null;
+            let hoSoParsed = null;
+
+            // Tìm mã hồ sơ
+            if (hoSoRaw) {
+                try {
+                    hoSoParsed = JSON.parse(hoSoRaw);
+                    KetLuanKham = hoSoParsed?.data?.dot_kham?.ket_luan_kham || null;
+                    return MaHoSo;
+                } catch (err) {
+                    console.error("Lỗi parse ho_so_chi_tiet:", err);
+                }
+            }
+
+            if (!MaHoSo) {
+                alert("❌ Không tìm thấy mã hồ sơ đợt khám trong localStorage.");
+                return;
+            }
+        }
+    // FUNCTION LẤY TRẠNG THÁI KHÁM
+    function LayTrangThaiKham() {
+        const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+        let TrangThaiKham = null;
+        let hoSoParsed = null;
+
+        // Tìm mã hồ sơ
+        if (hoSoRaw) {
+            try {
+                hoSoParsed = JSON.parse(hoSoRaw);
+                TrangThaiKham = hoSoParsed?.data?.dot_kham?.trang_thai_kham ?? null;
+                return TrangThaiKham;
+            } catch (err) {
+                console.error("Lỗi parse ho_so_chi_tiet:", err);
+            }
+        }
+
+        if (!MaHoSo) {
+            alert("❌ Không tìm thấy mã hồ sơ đợt khám trong localStorage.");
+            return;
+        }
+}
+    // FUNCTION Hiển thị nút đống hay mở hồ sơ
+    function CapNhatNutDongMoHoSo() {
+        const btn = document.getElementById("btnclosehs");
+        const trangThai = LayTrangThaiKham();
+        console.log(trangThai);
+        if (trangThai == false) {
+            btn.innerHTML = '<i class="fa fa-circle-check"></i><span>Đóng HS</span>';
+        } else {
+            btn.innerHTML = '<i class="fa fa-folder-open"></i><span>Mở HS</span>';
+        }
+    }
+    // FUNCTION Đóng hồ sơ.
+    document.getElementById("btnclosehs").addEventListener('click', async () => {
+        const trangThai = LayTrangThaiKham();
+        console.log(trangThai + "n");
+        const mhs = LayMaHoSo();
+
+        const trangthaiMoi = trangThai ? "false" : "true"; 
+
+        try {
+            const response = await fetch(`/Khambenh/Xulyhosokham?MaHoSo=${mhs}&trangthai=${trangthaiMoi}`, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                throw new Error("Lỗi máy chủ");
+            }
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                alert(trangthaiMoi === "true" ? "Đã đóng hồ sơ thành công." : "Đã mở hồ sơ thành công.");
+                CapNhatNutDongMoHoSo();
+            } else {
+                alert((trangthaiMoi === "true" ? "Đóng" : "Mở") + " hồ sơ thất bại: " + (result.message || "Lỗi không xác định"));
+            }
+        } catch (error) {
+            console.error("Lỗi:", error);
+            alert("Có lỗi xảy ra khi " + (trangthaiMoi === "true" ? "đóng" : "mở") + " hồ sơ.");
+        }
+    });
+ 
+// FUCNTION CỦA THÔNG TIN KHÁM-------------------------------------------------------------------------------------------------------------------------------------------------------
     // ACtive button khi click
     document.querySelectorAll('.kb-tab-list .kb-tab').forEach(button => {
     button.addEventListener('click', () => {
@@ -358,6 +465,7 @@ const danhSachThuoc = [
         // Thêm active cho button được click
         button.classList.add('active');
     });
+
 });
     //FUNCTION: Dan sách hàng đợi theo trạng thái chờ - chưa kết luận - đã kết luận; Xử lý khi chọn danh sách 
     function Queuecheck(danhSach) {
@@ -662,12 +770,9 @@ const danhSachThuoc = [
             alert("❌ Gọi API thất bại");
         }
     });
-
-    const printBtn = document.getElementById('printbutton');
-    const menu = document.getElementById('printContextMenu');
-
+    //FUNCTION: In giấy tờ
     printBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Ngăn sự kiện lan ra document
+        e.stopPropagation();
 
         const btnRect = printBtn.getBoundingClientRect();
 
@@ -675,8 +780,7 @@ const danhSachThuoc = [
         menu.style.left = `${btnRect.left - menu.offsetWidth - 200}px`; // 10px cách trái
         menu.classList.toggle('d-none');
     });
-
-    // Ẩn menu nếu nhấn ra ngoài
+    //FUNCTION: Ẩn menu nếu nhấn ra ngoài
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target) && !printBtn.contains(e.target)) {
             menu.classList.add('d-none');
@@ -739,18 +843,16 @@ const danhSachThuoc = [
             }
         });
     });
-
-// FUCNTION CỦA KÊ DỊCH VỤ---------------------------------------------------------------------------------------------------------
-
+// FUCNTION CỦA KÊ DỊCH VỤ-------------------------------------------------------------------------------------------------------------------------------------------------------------
+// Biến toàn cục - Kê dịch vụ
 const popup = document.getElementById('popupDichVu');
-const listDichVuBody = document.querySelector('#listDichVu tbody'); // OK
+const listDichVuBody = document.querySelector('#listDichVu tbody'); 
 const filterInput = document.getElementById('filterDichVu');
 const dsDichVuBody = document.querySelector('#dsDichVu tbody');   
 let dsDichVu = []; // <-- list chứa các dịch vụ đã chọn
-let dsDaXoaTuHoSo = [];
-
-//FUNCTION: Mở popup kê dịch vụ khi click input
-popup.addEventListener('show.bs.modal', async () => {
+let dsDaXoaTuHoSo = []; // <-- list chứa các dịch vụ đã xóa
+ //FUNCTION: Mở popup kê dịch vụ khi click input
+    popup.addEventListener('show.bs.modal', async () => {
     try {
         const response = await LayDanhSachDichVu();
 
@@ -784,7 +886,7 @@ popup.addEventListener('show.bs.modal', async () => {
         alert("Đã xảy ra lỗi khi tải danh sách dịch vụ.");
     }
 });
-
+   //FUNCTION: Render danh sách dịch vụ trong popup
     function chuanHoaLoaiDichVu(loai) {
     switch (loai) {
         case 'xet_nghiem': return 'Xét nghiệm';
@@ -794,7 +896,6 @@ popup.addEventListener('show.bs.modal', async () => {
         default: return 'Khác';
     }
 }
-
     //FUNCTION: Render danh sách dịch vụ trong popup
     function renderListDichVu(filter = '') {
         const filterLower = filter.toLowerCase();
@@ -827,20 +928,17 @@ popup.addEventListener('show.bs.modal', async () => {
             listDichVuBody.appendChild(tr);
         });
     }
-
-    // Lọc Dịch vụ của popup
+    // FUNCTION Dịch vụ của popup
     filterInput.addEventListener('input', (e) => {
         renderListDichVu(e.target.value);
     });
-
-    // Đóng popup thuốc
+    // FUNCTION ĐỐNG POPUP THUỐC
     function closePopup() {
         const popupInstance = bootstrap.Modal.getInstance(popup);
         if (popupInstance) {
             popupInstance.hide();
         }
     }
-
     // Thêm dịch vụ vào danh sách
     function themDichVuVaoDanhSach(dv) {
 
@@ -871,14 +969,13 @@ popup.addEventListener('show.bs.modal', async () => {
     dsDichVu.push(dvMoi);
     capNhatDanhSach();
 }
-
+    // FUNCTION THÊM DỊCH VỤ TẠI POPUP TIẾP ĐÓN
     function themDichVuTuPopup() {
         const popupInstance = new bootstrap.Modal(popup); 
         popupInstance.show();
     }
-
-    // FUNCTION XÓA DỊCH VỤ
-async function xoaDichVu(index) {
+ // FUNCTION XÓA DỊCH VỤ
+  async function xoaDichVu(index) {
     const dv = dsTatCaDichVu[index];
     if (!dv) return;
 
@@ -920,11 +1017,8 @@ async function xoaDichVu(index) {
         }
     }
 }
-
-
-
-    // FUNCTION HIỂN THỊ DỊCH VỤ ĐÃ KÊ
-    function capNhatDanhSach() {
+// FUNCTION HIỂN THỊ DỊCH VỤ ĐÃ KÊ
+ function capNhatDanhSach() {
     const dsDichVuBody = document.querySelector("#dsDichVu tbody");
     dsDichVuBody.innerHTML = '';
 
@@ -996,10 +1090,8 @@ async function xoaDichVu(index) {
         dsDichVuBody.appendChild(tr);
     });
 }
-
-
-        //Lưu chỉ định đã kê 
-        async function luuChiDinh() {
+ //FUNCTION: Lưu chỉ định đã kê 
+ async function luuChiDinh() {
             if (dsDichVu.length === 0) {
                 alert('⚠️ Vui lòng thêm ít nhất một dịch vụ');
                 return;
@@ -1069,16 +1161,15 @@ async function xoaDichVu(index) {
                 alert("❌ Lỗi hệ thống khi kê dịch vụ.");
             }
         }
-
-
-
-// FUCNTION CỦA ĐƠN THUỐC------------------------------------------------------------------------------------
-
-
+// FUCNTION CỦA ĐƠN THUỐC-------------------------------------------------------------------------------------------------------------------------------------------------------------
 const ngaykeInput = document.getElementById('ngayke');
 const ngaydenInput = document.getElementById('ngayden');
 const songayInput = document.getElementById('songay');
+const tbodyDanhSachThuoc = document.getElementById('tbodyDanhSachThuoc');
+const tbodyThuocDaChon = document.getElementById('thuoc-da-chon');
 
+let thuocDaChon = new Map(); // <-- Danh sách thuốc đã chọn
+//FUCNTION TÍNH SỐ NGÀY
 function tinhSoNgay() {
     const ngayke = new Date(ngaykeInput.value);
     const ngayden = new Date(ngaydenInput.value);
@@ -1096,14 +1187,8 @@ function tinhSoNgay() {
         songayInput.value = '';
     }
 }
-
 ngaykeInput.addEventListener('change', tinhSoNgay);
 ngaydenInput.addEventListener('change', tinhSoNgay);
-
-const tbodyDanhSachThuoc = document.getElementById('tbodyDanhSachThuoc');
-const tbodyThuocDaChon = document.getElementById('thuoc-da-chon');
-
-let thuocDaChon = new Map();
 
 function loadDanhSachThuoc(filter = "") {
     tbodyDanhSachThuoc.innerHTML = "";
@@ -1373,3 +1458,5 @@ const tbodyDanhSachThuocChonNgoai = document.querySelector('#danhsach-thuoc-chon
         // In ra console
         console.log('Đơn thuốc:', donThuoc);
     });
+
+//FUNCTION: Chặn người dùng chuyển sang tab thuốc nếu chưa kết luận khám

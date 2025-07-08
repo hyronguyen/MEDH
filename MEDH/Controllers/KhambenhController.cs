@@ -320,5 +320,56 @@ namespace MEDH.Controllers
             }
         }
 
+        // Đóng hồ sơ
+        public async Task<IActionResult> Xulyhosokham(int MaHoSo, bool trangthai)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = $"{baseUrl}hosodotkham?ma_dot_kham=eq.{MaHoSo}";
+
+                // Gửi PATCH với trạng thái theo FE truyền vào
+                var payload = new { trang_thai_kham = trangthai };
+                var content = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(payload),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var request = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Content = content;
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "❌ Lỗi cập nhật trạng thái hồ sơ",
+                        detail = errorContent
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = trangthai ? "Đã đóng hồ sơ" : "Đã mở hồ sơ"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "❌ Lỗi hệ thống khi xử lý yêu cầu",
+                    detail = ex.Message
+                });
+            }
+        }
+
     }
 }
