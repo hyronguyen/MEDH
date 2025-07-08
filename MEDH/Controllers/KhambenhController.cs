@@ -18,7 +18,6 @@ namespace MEDH.Controllers
             _configuration = configuration;
             _httpClient = new HttpClient();
         }
-
         public async Task<IActionResult> Khambenhngoaitru(string MaHoso)
         {
             try
@@ -85,7 +84,6 @@ namespace MEDH.Controllers
                 });
             }
         }
-
         // LẤY DANH SÁCH NGƯỜI BỆNH TẠI PHÒNG KHÁM - LỌC THEO MÃ BÁC SĨ VÀ MÃ PHÒNG
         public async Task<IActionResult> Laydanhsachnguoibenhtaiphong(string mabacsi, string maPhong)
         {
@@ -126,7 +124,6 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
             }
         }
-
         // LẤY DANH SÁCH PHÒNG THUỘC BÁC SĨ
         public async Task<IActionResult> Laydanhsachphongthuocbacsi(string mabacsi)
         {
@@ -264,7 +261,6 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "Lỗi xử lý controller - Goinguoibenhtieptheovaophongkham", detail = ex.Message });
             }
         }
-
         // Xóa dịch vụ khám
         public async Task<IActionResult> Xoadichvukham(string madichvukham)
         {
@@ -319,7 +315,6 @@ namespace MEDH.Controllers
                 });
             }
         }
-
         // Đóng hồ sơ
         public async Task<IActionResult> Xulyhosokham(int MaHoSo, bool trangthai)
         {
@@ -366,6 +361,199 @@ namespace MEDH.Controllers
                 {
                     status = "error",
                     message = "❌ Lỗi hệ thống khi xử lý yêu cầu",
+                    detail = ex.Message
+                });
+            }
+        }
+        // Lấy dánh sách thuốc theo đối tượng truyền vào
+        public async Task<IActionResult> LayDanhSachThuocTheoDoiTuong(string doiTuong)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"]; // Đường dẫn Supabase đến /rest/v1/
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+
+                string queryString = doiTuong == "BH"
+                    ? "thanh_toan=in.(BH,DV)"   
+                    : "thanh_toan=eq.DV";
+
+                string requestUrl = $"{baseUrl}thuoc?{queryString}";
+
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { message = "❌ Lỗi từ Supabase", detail = errorText });
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "❌ Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+        // Tạo đơn thuốc mới
+        public async Task<IActionResult> TaoDonThuoc(string token, string maDotKham)
+        {
+            try
+            {
+                Console.WriteLine(maDotKham + " " + token);
+                if (string.IsNullOrWhiteSpace(token) || maDotKham == null)
+                {
+                    return BadRequest(new { message = "❌ Thiếu token hoặc mã đợt khám không hợp lệ." });
+                }
+
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = baseUrl + "tao_don_thuoc";
+
+                var payload = new
+                {
+                    p_token = token,
+                    p_ma_dot_kham = int.Parse(maDotKham)
+                };
+                Console.WriteLine(requestUrl+ " "+payload);
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
+                {
+                    Content = new StringContent(
+                        System.Text.Json.JsonSerializer.Serialize(payload),
+                        Encoding.UTF8,
+                        "application/json")
+                };
+                request.Headers.Add("apikey", apiKey);
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { message = "❌ Lỗi từ Supabase", detail = errorText });
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                return Content(result, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "❌ Lỗi xử lý controller - TaoDonThuoc",
+                    detail = ex.Message
+                });
+            }
+        }
+        // Kê thuốc vào đơn 
+        public async Task<IActionResult> KeThuoc(string token,[FromBody] JsonElement payloads)
+        {
+            try
+            {
+                var baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                var apiKey = _configuration["SUPBASECONFIG:apikey"];
+                var url = $"{baseUrl}ke_chi_tiet_don_thuoc";
+
+                var successList = new List<object>();
+                var errorList = new List<object>();
+
+                if (payloads.ValueKind != JsonValueKind.Array)
+                    return BadRequest(new { message = "Payload không đúng định dạng mảng." });
+
+                foreach (var item in payloads.EnumerateArray())
+                {
+                    try
+                    {
+                        var rpcPayload = new
+                        {
+                            p_token = token,
+                            p_ma_don_thuoc = item.GetProperty("p_ma_don_thuoc").GetInt32(),
+                            p_ma_thuoc = item.GetProperty("p_ma_thuoc").GetInt32(),
+                            p_so_luong = item.GetProperty("p_so_luong").GetInt32(),
+                            p_lieu_dung = item.GetProperty("p_lieu_dung").GetString(),
+                            p_thanh_tien = item.GetProperty("p_thanh_tien").GetDecimal()
+                        };
+
+                        var request = new HttpRequestMessage(HttpMethod.Post, url);
+                        request.Headers.Add("apikey", apiKey);
+                        request.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(rpcPayload), Encoding.UTF8, "application/json");
+
+                        var response = await _httpClient.SendAsync(request);
+                        var responseText = await response.Content.ReadAsStringAsync();
+
+                        if (response.IsSuccessStatusCode)
+                            successList.Add(new { rpcPayload.p_ma_thuoc, status = "OK", response = responseText });
+                        else
+                            errorList.Add(new { rpcPayload.p_ma_thuoc, status = "FAIL", error = responseText });
+                    }
+                    catch (Exception ex)
+                    {
+                        errorList.Add(new { status = "ERROR_PARSE", detail = ex.Message });
+                    }
+                }
+
+                return Ok(new
+                {
+                    status = errorList.Count == 0 ? "success" : "partial",
+                    successCount = successList.Count,
+                    failCount = errorList.Count,
+                    successList,
+                    errorList
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "❌ Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+        // Xóa đón thuốc
+        public async Task<IActionResult> XoaDonThuoc([FromQuery] int maDonThuoc)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];  
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+
+                // Endpoint RPC function Supabase
+                string requestUrl = $"{baseUrl}xoa_don_thuoc";
+
+                // Chuẩn bị payload
+                var payload = new { p_ma_don_thuoc = maDonThuoc };
+                var content = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(payload),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                // Gửi request
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+                request.Content = content;
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new
+                    {
+                        message = "❌ Lỗi khi gọi Supabase RPC",
+                        detail = error
+                    });
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                return Content(result, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "❌ Lỗi xử lý controller - XoaDonThuoc",
                     detail = ex.Message
                 });
             }

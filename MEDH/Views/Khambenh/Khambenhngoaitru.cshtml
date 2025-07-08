@@ -110,12 +110,7 @@
                     <label>
                             Nhóm máu:
                             <input type="text" list="nhomMauList" placeholder="A, B, AB, O...">
-                            <datalist id="nhomMauList">
-                                <option value="A">
-                                <option value="B">
-                                <option value="AB">
-                                <option value="O">
-                            </datalist>
+                       
                     </label>
 
                     <label>BMI:<input type="number" step="0.1" id="bmi"></label>
@@ -225,7 +220,7 @@
 
             <div style="margin-top: 20px;">
                     <h4 style="color: var(--black-color);">Danh sách dịch vụ đã chỉ định:</h4>
-                <table id="dsDichVu">
+                    <table id="dsDichVu" class="table table-bordered">
                     <thead>
                             <tr style="background-color: grey; color: white;">
                             <th style="padding: 8px; text-align: left;">Tên dịch vụ</th>
@@ -276,7 +271,7 @@
                         </div>
 
                         <!-- Bảng danh sách dịch vụ -->
-                        <div class="table-responsive">
+                        <div class="table-responsive" >
                             <table class="table table-bordered" id="listDichVu">
                                 <thead class="table-secondary">
                                     <tr>
@@ -343,7 +338,7 @@
                             </tr>
                             <tr>
                                 <td>4</td>
-                                <td>Chụp X-quang</td>
+                                <td>Chụp X-quangXXXXXX</td>
                                 <td>13/05/2025</td>
                                 <td><span class="badge bg-danger">Đã hủy</span></td>
                                 <td><button class="btn btn-sm btn-outline-secondary" disabled>--</button></td>
@@ -393,7 +388,7 @@
             <form id="form-donthuoc">
                 <div class="mb-3">
                     <label>Ngày kê:</label>
-                    <input type="date" id="ngayke" class="form-control" />
+                    <input type="date" id="ngayke" class="form-control" disabled />
                 </div>
                 <div class="mb-3">
                     <label>Ngày đến:</label>
@@ -409,12 +404,13 @@
                 </div>
 
                 <!-- Danh sách thuốc bên ngoài -->
-                    <table id="danhsach-thuoc-chon">
+                    <table id="danhsach-thuoc-chon" class="table table-bordered">
                         <thead>
                             <tr style="background-color: grey; color: white;">
                                 <th style="padding: 8px; text-align: left;">Mã</th>
                                 <th style="padding: 8px; text-align: left;">Tên</th>
                                 <th style="padding: 8px; text-align: left;">Cách dùng</th>
+                                <th style="padding: 8px; text-align: left;">SL</th>
                                 <th style="padding: 8px; text-align: left;">Thành tiền</th>
                                 <th style="padding: 8px; text-align: center;"></th>
                             </tr>
@@ -425,9 +421,31 @@
                     </table>
 
                 <!-- Nút mở popup chọn thuốc -->
-                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#popupThuoc">Chọn thuốc</button>
+                    <button type="button" class="btn btn-outline-dark" id="btnChonThuoc" >Chọn thuốc</button>
                 <button id="btn-luu-donthuoc" type="button" class="btn" style="color: white;background: var(--primary-color)">Lưu đơn thuốc</button>
             </form>
+
+            <!--Form khi đã có thuốc-->
+                <form id="form-donthuocdake">
+                    <table id="danhsachthuoctuhoso" class="table table-bordered">
+                        <thead>
+                            <tr style="background-color: var(--primary-color); color: white;">
+                                <th style="padding: 8px; text-align: left;">Mã</th>
+                                <th style="padding: 8px; text-align: left;">Tên</th>
+                                <th style="padding: 8px; text-align: left;">Cách dùng</th>
+                                <th style="padding: 8px; text-align: left;">SL</th>
+                                <th style="padding: 8px; text-align: left;">Thành tiền</th>
+                         
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Các dòng dịch vụ thêm vào đây -->
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-danger" id="btnXoaDonThuoc">Xóa đơn thuốc</button>
+                 
+                </form>
+
             </fieldset>
         </section>
 
@@ -442,65 +460,68 @@
                     </div>
 
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="d-flex flex-column gap-3">
 
-                            <!-- Bên trái: danh sách thuốc -->
-                            <div class="col-md-6">
-                                <!-- Tìm kiếm -->
+                            <!-- Phần trên: Danh sách thuốc -->
+                           <div class="bg-light p-2 rounded shadow-sm">
+                                <!-- 🔹 Thanh tìm kiếm (luôn cố định) -->
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="search-icon">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                             class="bi bi-search" viewBox="0 0 16 16">
-                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0
-                                     1.415-1.414l-3.85-3.85zm-5.242 1.656a5.5 5.5 0 1
-                                     1 0-11 5.5 5.5 0 0 1 0 11z" />
-                                        </svg>
+                                        <i class="bi bi-search"></i>
                                     </span>
                                     <input type="text" id="timKiemThuoc" class="form-control" placeholder="Tìm kiếm thuốc..." aria-label="Tìm thuốc" aria-describedby="search-icon">
                                 </div>
 
-                                <!-- Bảng danh sách thuốc -->
-                                <div class="table-responsive">
-                                    <table class="table table-bordered" id="bangDanhSachThuoc">
-                                        <thead class="table-secondary">
-                                            <tr>
-                                                <th>Mã</th>
-                                                <th>Tên thuốc</th>
-                                                <th>Giá</th>
-                                                <th>Tồn</th>
-                                                <th>Chọn</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbodyDanhSachThuoc">
-                                            <!-- Danh sách thuốc load ở đây -->
-                                        </tbody>
-                                    </table>
+                                <!-- 🔹 Bọc bảng bằng div có chiều cao cố định -->
+                                <div style="height: 320px; overflow-y: auto;">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mb-0" id="bangDanhSachThuoc">
+                                            <thead class="table-secondary sticky-top bg-light">
+                                                <tr>
+                                                    <th>Mã</th>
+                                                    <th>Tên thuốc</th>
+                                                    <th>Giá</th>
+                                                    <th>Tồn</th>
+                                                    <th>TT</th>
+                                                    <th>Chọn</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tbodyDanhSachThuoc">
+                                                <!-- Dữ liệu load vào đây -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Bên phải: thuốc đã chọn -->
-                            <div class="col-md-6">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered">
-                                        <thead style="background-color: var(--primary-color); color: white;">
 
-                                            <tr>
-                                                <th>Mã</th>
-                                                <th>Tên</th>
-                                                <th>Sáng</th>
-                                                <th>Chiều</th>
-                                                <th>Tối</th>
-                                                <th>Tổng</th>
-                                                <th>Ghi chú</th>
-                                                <th>Xóa</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="thuoc-da-chon">
-                                            <!-- Thuốc đã chọn hiện ở đây -->
-                                        </tbody>
-                                    </table>
+
+                            <!-- Phần dưới: Thuốc đã chọn -->
+                            <div class="bg-white p-2 rounded shadow-sm">
+                                <!-- Bảng thuốc đã chọn, với chiều cao cố định -->
+                                <div style="height: 300px; overflow-y: auto;">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered mb-0">
+                                            <thead style="background-color: var(--primary-color); color: white;" class="sticky-top">
+                                                <tr>
+                                                    <th>Mã</th>
+                                                    <th>Tên</th>
+                                                    <th>Sáng</th>
+                                                    <th>Chiều</th>
+                                                    <th>Tối</th>
+                                                    <th>Tổng</th>
+                                                    <th>Ghi chú</th>
+                                                    <th>Xóa</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="thuoc-da-chon">
+                                                <!-- Thuốc đã chọn hiện ở đây -->
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
+
 
                         </div>
                     </div>
@@ -552,7 +573,7 @@
             <button class="kb-util-btn" id="printbutton"><i class="fa fa-print"></i><span>In ấn</span></button>
                 <div id="printContextMenu" class="print-context-menu d-none">
                     <ul>
-                        <li><a value="1">In phiếu khám</a></li>
+                           <li><a value="1">In phiếu khám</a></li>
                             <li><a value="2">In đơn thuốc</a></li>
                             <li><a value="3">In hồ sơ</a></li>
                     </ul>
