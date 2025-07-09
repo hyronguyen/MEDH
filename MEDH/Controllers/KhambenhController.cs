@@ -316,23 +316,30 @@ namespace MEDH.Controllers
             }
         }
         // Đóng hồ sơ
-        public async Task<IActionResult> Xulyhosokham(int MaHoSo, bool trangthai)
+        public async Task<IActionResult> Xulyhosokham(int MaHoSo, bool trangthai,int madichvukham, string token)
         {
             try
             {
-                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"];
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
                 string apiKey = _configuration["SUPBASECONFIG:apikey"];
-                string requestUrl = $"{baseUrl}hosodotkham?ma_dot_kham=eq.{MaHoSo}";
+                string requestUrl = $"{baseUrl}xu_ly_ho_so";
 
                 // Gửi PATCH với trạng thái theo FE truyền vào
-                var payload = new { trang_thai_kham = trangthai };
+                var payload = new {
+                    p_token = token,
+                    p_ma_ho_so = MaHoSo,
+                    p_ma_dich_vu_kham = madichvukham,
+                    p_trang_thai_kham = trangthai
+                };
+
+                Console.WriteLine(requestUrl + " " + payload);
                 var content = new StringContent(
                     System.Text.Json.JsonSerializer.Serialize(payload),
                     Encoding.UTF8,
                     "application/json"
                 );
 
-                var request = new HttpRequestMessage(HttpMethod.Patch, requestUrl);
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
                 request.Headers.Add("apikey", apiKey);
                 request.Content = content;
 
@@ -348,7 +355,7 @@ namespace MEDH.Controllers
                         detail = errorContent
                     });
                 }
-
+                
                 return Ok(new
                 {
                     status = "success",

@@ -388,7 +388,6 @@ const danhSachThuoc = [
         alert("❌ Không tìm thấy MaDonThuoc đợt khám trong localStorage.");
         return null;
     }
-
     // FUNCTION LẤY kÊT luận khám
     function LayKetLuanKham() {
             const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
@@ -410,6 +409,25 @@ const danhSachThuoc = [
             alert("❌ Không tìm thấy KetLuanKham ở đợt khám trong localStorage.");
                 return;
             }
+}
+    //FUNTION LẤY DỊCH VỤ ĐANG THỰC HIỆN TẠI PHÒNG
+    function LayDichVuThucHienTaiPhong() {
+        const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+        let hoSoParsed = null
+        const phongDangChon = parseInt(localStorage.getItem("phong_dang_chon"));
+
+        if (hoSoRaw) {
+            hoSoParsed = JSON.parse(hoSoRaw);
+            const dichVu = hoSoParsed?.data?.dich_vu_kham?.find(dv => dv.ma_phong_thuc_hien === phongDangChon);
+            let dich_vu_kham_input;
+            if (dichVu) {
+                dich_vu_kham_input = dichVu.ma_dich_vu_kham;
+                return dich_vu_kham_input;
+            } else {
+                console.log("Không tìm thấy dịch vụ phù hợp với phòng đang chọn");
+            }
+        }
+
         }
     // FUNCTION LẤY TRẠNG THÁI KHÁM
     function LayTrangThaiKham() {
@@ -510,11 +528,12 @@ const danhSachThuoc = [
         const trangThai = LayTrangThaiKham();
         console.log(trangThai + "n");
         const mhs = LayMaHoSo();
-
+        const token = localStorage.getItem("token");
+        const madv = LayDichVuThucHienTaiPhong();
         const trangthaiMoi = trangThai ? "false" : "true"; 
 
         try {
-            const response = await fetch(`/Khambenh/Xulyhosokham?MaHoSo=${mhs}&trangthai=${trangthaiMoi}`, {
+            const response = await fetch(`/Khambenh/Xulyhosokham?MaHoSo=${mhs}&trangthai=${trangthaiMoi}&madichvukham=${madv}&token=${token}`, {
                 method: "POST"
             });
 
@@ -526,7 +545,7 @@ const danhSachThuoc = [
 
             if (result.status === "success") {
                 alert(trangthaiMoi === "true" ? "Đã đóng hồ sơ thành công." : "Đã mở hồ sơ thành công.");
-                CapNhatNutDongMoHoSo();
+                window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mhs)}`;
             } else {
                 alert((trangthaiMoi === "true" ? "Đóng" : "Mở") + " hồ sơ thất bại: " + (result.message || "Lỗi không xác định"));
             }
@@ -810,7 +829,6 @@ const danhSachThuoc = [
 
         // Tìm các dịch vụ khám của phòng đang chọn
         const phongDangChon = parseInt(localStorage.getItem("phong_dang_chon"));
-
         const dichVu = hoSoParsed?.data?.dich_vu_kham?.find(dv => dv.ma_phong_thuc_hien === phongDangChon);
         let dich_vu_kham_input;
         if (dichVu) {
