@@ -65,6 +65,7 @@ const danhSachThuoc = [
         capNhatDanhSach();
         CapNhatNutDongMoHoSo();
         InPhieu();
+        Kiemtradanhsachdichvukham();
         Kiemtradonthuoc();
         HienThiLichSuKham();
 }
@@ -101,7 +102,6 @@ const danhSachThuoc = [
         Queuecheck(danhSach);
     } catch (err) {
         console.error("Lỗi hệ thống:", err);
-        alert("Lỗi kết nối tới server.");
     }
 }
     // FUNCTION: LOAD DANH SÁCH PHÒNG KHÁM THUỘC BÁC SĨ
@@ -144,7 +144,6 @@ const danhSachThuoc = [
         LoadDanhSachkham(manhanvien, selectedPhong.ma_phong); 
     } catch (err) {
         console.error("Lỗi hệ thống:", err);
-        alert("Lỗi kết nối tới server.");
     }
 }
     // FUNCTION CHỌN PHÒNG KHÁM
@@ -163,25 +162,6 @@ const danhSachThuoc = [
             LoadDanhSachkham(mabacsi, maPhong);
         }
     });
-}
-    // FUNCTION IN PHIẾU
-    function InPhieu() {
-        const popupPhieuIn = new bootstrap.Modal(document.getElementById("popupPhieuIn"));
-        const contentDiv = document.querySelector("#popupPhieuIn .modal-body");
-
-        document.querySelectorAll("#printContextMenu a").forEach(item => {
-            item.addEventListener("click", function (e) {
-                e.preventDefault();
-
-                const value = this.getAttribute("value");
-
-                // Hiển thị nội dung tạm (sau này sẽ là nội dung phiếu)
-                contentDiv.innerHTML = `<div style="padding: 20px; font-weight: bold;">Bạn đã chọn in phiếu loại <span style="color:blue;">[${value}]</span></div>`;
-
-                // Hiển thị modal
-                popupPhieuIn.show();
-            });
-        });
 }
     // FUNCTION Hiển thị nút đống hay mở hồ sơ
     function CapNhatNutDongMoHoSo() {
@@ -439,73 +419,72 @@ const danhSachThuoc = [
 
         } catch (err) {
             console.error("Lỗi hệ thống:", err);
-            alert("Lỗi kết nối tới server.");
         }
     });
     // Hiển thị lịch sử khám
-async function HienThiLichSuKham() {
-    try {
-        const nb = LayMaNB();
-        console.log(nb);
-        if (!nb) {
-            console.warn("Không có mã người bệnh.");
-            return;
+    async function HienThiLichSuKham() {
+        try {
+            const nb = LayMaNB();
+            console.log(nb);
+            if (!nb) {
+                console.warn("Không có mã người bệnh.");
+                return;
+            }
+
+            const response = await fetch(`/Khambenh/LichSuKham?MaHoSo=${encodeURIComponent(nb)}`);
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error("❌ Lỗi khi lấy lịch sử khám:", error.detail || error.message);
+                return;
+            }
+
+            const data = await response.json();
+            console.log("✅ Dữ liệu lịch sử khám:", data);
+
+            const container = document.querySelector(".history-cards");
+            container.innerHTML = ""; // clear cũ
+
+            if (!Array.isArray(data) || data.length === 0) {
+                container.innerHTML = '<div class="text-muted">Không có lịch sử khám.</div>';
+                return;
+            }
+
+            data.forEach(item => {
+                const ngay = new Date(item.ngay_tiep_don).toLocaleDateString("vi-VN");
+                const cdChuoi = item.chuan_doan;
+                const cdHienThi = LayChuanDoanTuChuoi(cdChuoi);
+
+                const card = document.createElement("div");
+                card.className = "history-card";
+
+                card.innerHTML = `
+            <div class="history-date">
+                ${ngay}
+                ${cdHienThi ? ` - <strong>CĐ: ${cdHienThi}</strong>` : ""}
+            </div>
+        `;
+                container.appendChild(card);
+            });
+
+        } catch (err) {
+            console.error("❌ Lỗi xử lý lịch sử khám:", err);
         }
-
-        const response = await fetch(`/Khambenh/LichSuKham?MaHoSo=${encodeURIComponent(nb)}`);
-
-        if (!response.ok) {
-            const error = await response.json();
-            console.error("❌ Lỗi khi lấy lịch sử khám:", error.detail || error.message);
-            return;
-        }
-
-        const data = await response.json();
-        console.log("✅ Dữ liệu lịch sử khám:", data);
-
-        const container = document.querySelector(".history-cards");
-        container.innerHTML = ""; // clear cũ
-
-        if (!Array.isArray(data) || data.length === 0) {
-            container.innerHTML = '<div class="text-muted">Không có lịch sử khám.</div>';
-            return;
-        }
-
-        data.forEach(item => {
-            const ngay = new Date(item.ngay_tiep_don).toLocaleDateString("vi-VN");
-            const cdChuoi = item.chuan_doan;
-            const cdHienThi = LayChuanDoanTuChuoi(cdChuoi);
-
-            const card = document.createElement("div");
-            card.className = "history-card";
-
-            card.innerHTML = `
-        <div class="history-date">
-            ${ngay}
-            ${cdHienThi ? ` - <strong>CĐ: ${cdHienThi}</strong>` : ""}
-        </div>
-    `;
-            container.appendChild(card);
-        });
-
-    } catch (err) {
-        console.error("❌ Lỗi xử lý lịch sử khám:", err);
     }
-}
+    // Chuẩn hóa chuẩn đoán
+    function LayChuanDoanTuChuoi(cdChuoi) {
+        if (!cdChuoi) return null;
 
-function LayChuanDoanTuChuoi(cdChuoi) {
-    if (!cdChuoi) return null;
-
-    const parts = cdChuoi.split("|");
-    // Kiểm tra phần tử thứ 3 (index 2) có tồn tại và khác rỗng
-    if (parts.length >= 3 && parts[2].trim() !== "") {
-        return parts[2].trim();
+        const parts = cdChuoi.split("|");
+        // Kiểm tra phần tử thứ 3 (index 2) có tồn tại và khác rỗng
+        if (parts.length >= 3 && parts[2].trim() !== "") {
+            return parts[2].trim();
+        }
+        return null;
     }
-    return null;
-}
 
-//FUNCTION LẤY THÔNG TIN -------------------------------------------------------------------------------------------------------------------------------------------------
-    // FUNCTION LẤY MÃ HỒ SƠ
+//FUNCTION LẤY THÔNG TIN ------------------------------------------------------------------------------------------------------------------------------ 
+
     function LayMaHoSo() {
         const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
         let MaHoSo = null;
@@ -527,7 +506,6 @@ function LayChuanDoanTuChuoi(cdChuoi) {
             return;
         }
 }
-
     function LayMaNB() {
         const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
         let MaNB = null;
@@ -545,7 +523,7 @@ function LayChuanDoanTuChuoi(cdChuoi) {
         }
 
         if (!MaNB) {
-            alert("❌ Không tìm thấy MaNB sơ đợt khám trong localStorage.");
+            console.log("❌ Không tìm thấy MaNB sơ đợt khám trong localStorage.");
             return;
         }
     }
@@ -689,10 +667,31 @@ function LayChuanDoanTuChuoi(cdChuoi) {
         }
 
         if (!DonThuoc) {
-            alert("❌ Không tìm thấy DonThuoc đợt khám trong localStorage.");
+            console.log("❌ Không tìm thấy DonThuoc đợt khám trong localStorage.");
             return;
         }
-    }
+}
+    // FUNCTION DichVuKhamList
+    function LayDichVuKhamList() {
+            const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+            let LayDichVuKhamList = null;
+            let hoSoParsed = null;
+
+            // Tìm mã hồ sơ
+            if (hoSoRaw) {
+                try {
+                    hoSoParsed = JSON.parse(hoSoRaw);
+                    LayDichVuKhamList = hoSoParsed?.data?.dich_vu_kham ?? null;
+                    return LayDichVuKhamList;
+                } catch (err) {
+                    console.error("Lỗi parse ho_so_chi_tiet:", err);
+                }
+            }
+            if (!LayDichVuKhamList) {
+                console.log("❌ Không tìm thấy LayDichVuKhamList đợt khám trong localStorage.");
+                return;
+            }
+        }
    
 // FUCNTION CỦA THÔNG TIN KHÁM-------------------------------------------------------------------------------------------------------------------------------------------------------
     document.querySelectorAll('.kb-tab-list .kb-tab').forEach(button => {
@@ -727,8 +726,8 @@ function LayChuanDoanTuChuoi(cdChuoi) {
     };
 
     // Nếu không có người bệnh → clear localStorage + reset giao diện
-    if (!danhSach.r_data || danhSach.r_data.length === 0) {
-        alert("Không có người bệnh.");
+        if (!danhSach.r_data || danhSach.r_data.length === 0) {
+            console.log("Không có người bệnh.");
 
         // Xóa localStorage
         localStorage.removeItem("queueData");
@@ -892,7 +891,7 @@ function LayChuanDoanTuChuoi(cdChuoi) {
         const so_du = tam_ung - vien_phi;
 
         if (so_du < 0) {
-            alert("Người bệnh cần thanh toán thêm tạm ứng trước khi hoàn tất hồ sơ khám.");
+            alert("Người bệnh cần thanh toán thêm tạm ứng trước khi khám.");
             return;
         }
 
@@ -1396,7 +1395,20 @@ let dsDaXoaTuHoSo = []; // <-- list chứa các dịch vụ đã xóa
                 console.error("❌ Lỗi khi gọi apiKeDichVu:", err);
                 alert("❌ Lỗi hệ thống khi kê dịch vụ.");
             }
-        }
+}
+
+function Kiemtradanhsachdichvukham() {
+    const danhsachdichvu = LayDichVuKhamList();
+
+    if (!Array.isArray(danhsachdichvu) || danhsachdichvu.length === 0) {
+        window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=N%2FA`;
+        return;
+    }
+
+    // Tiếp tục xử lý nếu có dịch vụ
+    console.log("✅ Danh sách dịch vụ khám:", danhsachdichvu);
+}
+
 // FUCNTION CỦA ĐƠN THUỐC-------------------------------------------------------------------------------------------------------------------------------------------------------------
 const ngaykeInput = document.getElementById('ngayke');
 const ngaydenInput = document.getElementById('ngayden');
@@ -1812,7 +1824,6 @@ document.getElementById("btnChonThuoc").addEventListener("click", async function
     }
 });
 //FUNCTION: Kiểm tra đơn thuốc của người bệnh, đã có đơn thuốc hay chưa
-
 function Kiemtradonthuoc() {
     const donthuoc = LayDonThuoc();
     const madonthuoc = LayMaDonThuoc(); // Kiểm tra ID đơn thuốc
@@ -1860,8 +1871,6 @@ function Kiemtradonthuoc() {
         formChuaKe.style.display = "block";
     }
 }
-
-
 //FUNTION: Xóa đơn thuốc
 document.getElementById("btnXoaDonThuoc").addEventListener("click", async function () {
     const maDonThuoc = LayMaDonThuoc();
@@ -1902,6 +1911,204 @@ document.getElementById("btnXoaDonThuoc").addEventListener("click", async functi
         alert("❌ Không thể kết nối tới máy chủ.");
     }
 });
+
+// FUNCTION IN ẤN ---------------------------------------------------------------------------------------------------------------------------
+//FUNCTION: Tạo Payload in đơn thuốc
+function LayDonThuocJson() {
+    const tableRows = document.querySelectorAll("#danhsachthuoctuhoso tbody tr");
+
+    const donThuoc = Array.from(tableRows)
+        .filter(row => {
+            // Bỏ qua nếu là dòng "Đơn thuốc trắng"
+            return !row.textContent.includes("Đơn thuốc trắng");
+        })
+        .map(row => {
+            const cells = row.querySelectorAll("td");
+            return {
+                ten_thuoc: cells[1]?.textContent.trim() || "",
+                cach_dung: cells[2]?.textContent.trim() || "",
+                so_luong: parseInt(cells[3]?.textContent) || 0,
+                don_vi: (cells[3]?.textContent.match(/[^\d\s]+$/) || [""])[0],
+                thanh_tien: parseInt((cells[4]?.textContent || "0").replace(/[^\d]/g, "")) || 0
+            };
+        });
+
+    const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+    const hoSo = hoSoRaw ? JSON.parse(hoSoRaw) : null;
+    const dotKham = hoSo?.data?.dot_kham || {};
+    const nguoiBenh = hoSo?.data?.nguoi_benh || {};
+
+    return {
+        ma_nguoi_benh: ChuanHoaMa(nguoiBenh.ma_nguoi_benh || "1", "NB"),
+        ma_ho_so: ChuanHoaMa(dotKham.ma_dot_kham || "1", "HS"),
+        ho_ten: nguoiBenh.ho_ten || "Nguyễn Văn A",
+        tuoi: nguoiBenh.tuoi || 35,
+        gioi_tinh: nguoiBenh.gioi_tinh === "M" ? "Nam" : "Nữ",
+        dia_chi: nguoiBenh.dia_chi || "Hà Nội",
+        don_thuoc: donThuoc
+    };
+}
+//FUNCTION: Tạo Payload in tóm tắt bệnh án
+function laythongtintomtatbenhanjson() {
+    const hosoraw = localStorage.getItem("ho_so_chi_tiet");
+    const hoso = hosoraw ? JSON.parse(hosoraw) : null;
+    const dotkham = hoso?.data?.dot_kham || {};
+    const nguoibenh = hoso?.data?.nguoi_benh || {};
+
+    let tuoi = 0;
+    if (nguoibenh.ngay_sinh) {
+        const birthDate = new Date(nguoibenh.ngay_sinh);
+        const today = new Date();
+        tuoi = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            tuoi--; // Chưa đến sinh nhật năm nay
+        }
+    }
+
+
+    return {
+        ma_nguoi_benh: ChuanHoaMa(nguoibenh.ma_nguoi_benh || "0", "NB"),
+        ma_ho_so: ChuanHoaMa(dotkham.ma_dot_kham || "0", "HS"),
+        ho_ten: nguoibenh.ho_ten || "null",
+        ngay_sinh: nguoibenh.ngay_sinh,
+        tuoi: tuoi,
+        gioi_tinh: nguoibenh.gioi_tinh === "m" ? "Nam" : "Nữ",
+        dan_toc: "Kinh",
+        dia_chi: nguoibenh.dia_chi || "xxx",
+        so_the_bhyt: dotkham.so_the_bhyt || "Không BH",
+        so_cccd: dotkham.giay_to,
+        vao_vien: "null",
+        ra_vien: "null",
+        ...TachChanDoan(dotkham.chuan_doan),
+        ly_do_nhap_vien: dotkham.ly_do_den_kham || "null",
+        dien_bien: "null"
+    };
+}
+//FUNCTION : Chuẩn hóa mã hồ sơ
+function ChuanHoaMa(maGoc, tienTo) {
+    const so = maGoc.toString().replace(/\D/g, ""); // loại bỏ mọi ký tự không phải số
+    const soDuocPad = so.padStart(8, "0"); // phần số có 8 chữ số
+    return tienTo + soDuocPad; // ví dụ: NB00000001
+}
+// FUNCTION IN PHIẾU
+function InPhieu() {
+    const popupPhieuIn = new bootstrap.Modal(document.getElementById("popupPhieuIn"));
+    const contentDiv = document.querySelector("#popupPhieuIn .modal-body");
+
+    document.querySelectorAll("#printContextMenu a").forEach(item => {
+        item.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const value = this.getAttribute("value");
+
+            // số 2 là in đơn thuốc
+            if (value == 2) {
+                const payload = LayDonThuocJson()
+                console.log(payload);
+                fetch("/Khambenh/InDonThuoc", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "text/html"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Lỗi khi gọi controller InDonThuoc");
+                        return res.text(); // vì response là HTML
+                    })
+                    .then(html => {
+                        renderPhieuInHTML(html);
+                        popupPhieuIn.show();
+                    })
+                    .catch(err => {
+                        contentDiv.innerHTML = `<div class="text-danger fw-bold">Lỗi khi in đơn thuốc: ${err.message}</div>`;
+                        popupPhieuIn.show();
+                    });
+            }
+            if (value == 3) {
+                const payload = laythongtintomtatbenhanjson();
+                fetch("/Khambenh/InTomTatBenhAn", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "text/html"
+                    },
+                    body: JSON.stringify(payload)
+                })
+                    .then(res => {
+                        if (!res.ok) throw new Error("Lỗi khi gọi controller InTomTatBenhAn");
+                        return res.text(); // vì response là HTML
+                    })
+                    .then(html => {
+                        renderPhieuInHTML(html);
+                        popupPhieuIn.show();
+                    })
+                    .catch(err => {
+                        contentDiv.innerHTML = `<div class="text-danger fw-bold">Lỗi khi in InTomTatBenhAn: ${err.message}</div>`;
+                        popupPhieuIn.show();
+                    });
+            }
+        });
+    });
+}
+// FUNCTION IN PDF
+function InNoiDungPhieu() {
+    const iframe = document.querySelector("#popupPhieuIn .modal-body iframe");
+    if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+    } else {
+        alert("Không tìm thấy nội dung để in.");
+    }
+}
+ // FUCNTION RENDER NỘI DUNG PHIẾU
+function renderPhieuInHTML(htmlNoiDungPhieu) {
+    const contentDiv = document.querySelector("#popupPhieuIn .modal-body");
+
+    const iframe = document.createElement("iframe");
+    iframe.style.width = "794px";   // chuẩn A4
+    iframe.style.height = "1000px";
+    iframe.style.border = "1px solid #ccc";
+    iframe.style.display = "block";
+    iframe.style.margin = "0 auto";
+    iframe.style.boxShadow = "0 0 10px rgba(0,0,0,0.2)";
+    iframe.setAttribute("id", "iframePhieuIn");
+
+    contentDiv.innerHTML = "";
+    contentDiv.appendChild(iframe);
+
+    iframe.contentWindow.document.open();
+    iframe.contentWindow.document.write(htmlNoiDungPhieu);
+    iframe.contentWindow.document.close();
+}
+ // FUNCTION TÁCH CHUẨN ĐOÁN CHÍNH VÀ KÈM THEO
+function TachChanDoan(chanDoanChuoi) {
+    if (!chanDoanChuoi || typeof chanDoanChuoi !== "string") {
+        return { chan_doan_chinh: "null", chan_doan_kem_theo: "null" };
+    }
+
+    const danhSach = chanDoanChuoi.split("|").map(cd => cd.trim()).filter(Boolean);
+
+    // Nếu không có mục nào hợp lệ
+    if (danhSach.length === 0) {
+        return { chan_doan_chinh: "null", chan_doan_kem_theo: "null" };
+    }
+
+    // Nếu có ít nhất 3 mục, lấy mục thứ 3 làm chẩn đoán chính
+    const chan_doan_chinh = danhSach[2] || danhSach[0];
+
+    // Các mục còn lại là chẩn đoán kèm theo
+    const chan_doan_kem_theo = danhSach
+        .filter((cd, idx) => idx !== 2) // bỏ phần tử thứ 3
+        .join(", ") || "null";
+
+    return {
+        chan_doan_chinh,
+        chan_doan_kem_theo
+    };
+}
 
 
 

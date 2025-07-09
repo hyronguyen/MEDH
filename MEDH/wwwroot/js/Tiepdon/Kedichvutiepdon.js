@@ -170,9 +170,9 @@ function taoPayloadKeDichVu(maDotKham) {
     if (payloads.length > 0) {
         const success =  apiKeDichVu(payloads);
         if (success) {
-            alert("✅ Kê dịch vụ thành công.");
+            console.log("✅ Kê dịch vụ thành công.");
         } else {
-            alert("❌ Có lỗi xảy ra khi kê một số dịch vụ.");
+            console.log("❌ Có lỗi xảy ra khi kê một số dịch vụ.");
         }
     }
 }

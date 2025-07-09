@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text;
 using System.Net.Http;
+using MEDH.Models;
 
 namespace MEDH.Controllers
 {
@@ -25,7 +26,6 @@ namespace MEDH.Controllers
             return View();
         }
 
- 
         public async Task<IActionResult> Kedichvutiepdon(string maHS)
         {
             var apiUrl = "https://mpmtmnfjswssnkjbrhfw.supabase.co/rest/v1/rpc/lay_ho_so_chi_tiet";
@@ -71,11 +71,67 @@ namespace MEDH.Controllers
         }
 
 
-        public IActionResult Chitietnbtiepdon(String maHS)
+        public async Task<IActionResult> Chitietnbtiepdon(string maHS)
         {
-            ViewBag.MaHS = maHS;
-            return View();
+            try
+            {
+                var maDotKham = int.Parse(maHS);
+                var viewModel = new ChitietTiepdonViewModel();
+                viewModel.MaHoSo = maDotKham;
+
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                var requestUrl = baseUrl + "lay_ho_so_chi_tiet";
+
+                var payload = new { ma_dot_kham_input = maDotKham };
+
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
+                {
+                    Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+                };
+                request.Headers.Add("apikey", apiKey);
+
+                var response = await _httpClient.SendAsync(request);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest("Lỗi truy vấn Supabase");
+                }
+
+                var jsonStr = await response.Content.ReadAsStringAsync();
+                var json = JsonDocument.Parse(jsonStr).RootElement;
+
+                var data = json.GetProperty("data");
+
+                var nb = data.GetProperty("nguoi_benh");
+                viewModel.HoTen = nb.GetProperty("ho_ten").GetString();
+                viewModel.GioiTinh = nb.GetProperty("gioi_tinh").GetString();
+                viewModel.NgaySinh = nb.GetProperty("ngay_sinh").GetDateTime();
+                viewModel.DiaChi = nb.GetProperty("dia_chi").GetString();
+                viewModel.GioiTinh = nb.GetProperty("gioi_tinh").GetString();
+
+                var dichVus = data.GetProperty("dich_vu_kham").EnumerateArray();
+                foreach (var dv in dichVus)
+                {
+                    viewModel.DichVus.Add(new DichVuDaKeViewModel
+                    {
+                        MaDichVu = dv.GetProperty("ma_dich_vu").GetInt32(),
+                        MaDichVuKham = dv.GetProperty("ma_dich_vu_kham").GetInt32(),
+                        TenDichVu = dv.GetProperty("ten_dich_vu").GetString(),
+                        ThanhTien = dv.GetProperty("gia_tien").GetDecimal(),
+                        ThanhToan = dv.GetProperty("thanh_toan").GetString(),
+                        TrangThai = dv.GetProperty("trang_thai").GetString(),
+                        NgayThucHien = dv.GetProperty("ngay_thuc_hien").GetDateTime()
+                    });
+                }
+
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý", detail = ex.Message });
+            }
         }
+
 
         public IActionResult Dshenkham()
         {

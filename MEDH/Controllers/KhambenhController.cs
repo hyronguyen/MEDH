@@ -184,8 +184,10 @@ namespace MEDH.Controllers
                     kham_xet_input = khamxet,
                     sinh_hieu_input = sinhhieu,
                     chuan_doan_input = chuandoan,
-                    ma_dich_vu_kham_input= int.Parse(dichvukham)
+                    ma_dich_vu_kham_input = int.Parse(dichvukham)
                 };
+                Console.WriteLine($"{DateTime.Now:yyyy-MM-dd HH:mm:ss} {requestUrl} {payload}");
+
                 //Tạo Request
                 var request = new HttpRequestMessage(HttpMethod.Post, requestUrl)
                 {
@@ -652,6 +654,121 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
             }
         }
+        // CHỨC NĂNG IN __________________________________________________________________________________________________________________________________________________
+        public async Task<IActionResult> InDonThuoc([FromBody] object payload)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseFunctionURL"];
+                string apiUrl = $"{baseUrl}in-don-thuoc";
 
+                var jsonPayload = payload.ToString();
+
+                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+                {
+                    Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+                };
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/pdf")); 
+
+                var response = await _httpClient.SendAsync(request);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Gọi Supabase thất bại",
+                        status = (int)response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                return Content(responseContent, "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> InTomTatBenhAn([FromBody] object payload)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseFunctionURL"];
+                string apiUrl = $"{baseUrl}ban-tam-tat-benh-an";
+
+                var jsonPayload = payload.ToString();
+
+                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+                {
+                    Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+                };
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/pdf"));
+
+                var response = await _httpClient.SendAsync(request);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Gọi Supabase thất bại",
+                        status = (int)response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                return Content(responseContent, "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
+        public async Task<IActionResult> InPhieuKhamVaoVien([FromBody] object payload)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseFunctionURL"];
+                string apiUrl = $"{baseUrl}phieu-kham-vao-vien";
+
+                var jsonPayload = payload.ToString();
+
+                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+                {
+                    Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+                };
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/pdf"));
+
+                var response = await _httpClient.SendAsync(request);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Gọi Supabase thất bại",
+                        status = (int)response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                return Content(responseContent, "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
     }
 }

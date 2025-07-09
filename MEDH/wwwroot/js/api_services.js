@@ -139,6 +139,7 @@ window.LaySTTDaGoiMoiNhat = async function (maPhong) {
 
 window.apiKeDichVu = async function (payloads) {
     let allSuccess = true;
+    let errorMessages = [];
 
     for (const payload of payloads) {
         try {
@@ -154,21 +155,28 @@ window.apiKeDichVu = async function (payloads) {
             const result = await response.json();
 
             if (result.r_status === "SUCCESS") {
-                console.log(`✅ Kê thành công dịch vụ mã ${payload.p_ma_dich_vu}`);
                 apiSinhSTTchoDV(payload.p_ma_phong, payload.p_ma_dot_kham);
             } else {
-                console.warn(`❌ Kê thất bại dịch vụ mã ${payload.p_ma_dich_vu}: ${result.r_message || 'Không rõ lỗi'}`);
+                errorMessages.push(`- Dịch vụ ${payload.p_ma_dich_vu}: ${result.r_message || 'Không rõ lỗi'}`);
                 allSuccess = false;
             }
         } catch (err) {
-            console.error(`❌ Lỗi hệ thống khi kê dịch vụ mã ${payload.p_ma_dich_vu}:`, err.message);
+            errorMessages.push(`- Dịch vụ ${payload.p_ma_dich_vu}: Lỗi hệ thống (${err.message})`);
             allSuccess = false;
         }
+    }
+
+    if (allSuccess) {
+        alert("✅ Tất cả dịch vụ đã kê thành công.");
+    } else {
+        const message = `❌ Có lỗi xảy ra khi kê một số dịch vụ:\n\n${errorMessages.join('\n')}`;
+        alert(message);
     }
 
     console.log("👉 Đã hoàn tất quá trình kê tất cả dịch vụ.");
     return allSuccess;
 };
+
 
 
 // API CHUNG --------------------------------------------------------------------------------------

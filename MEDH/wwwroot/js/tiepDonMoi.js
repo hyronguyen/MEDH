@@ -81,7 +81,6 @@ async function xacNhan() {
     if (response.status === true && response.ma_dot_kham) {
         window.location.href = `/Tiepdon/Kedichvutiepdon?maHS=${encodeURIComponent(response.ma_dot_kham)}`;
     } else if (response.da_ton_tai && response.ma_dot_kham) {
-     
         console.warn("Đã có hồ sơ chưa hoàn thành: " + response.ma_dot_kham);
     } else {
         alert("Tiếp đón thất bại.");

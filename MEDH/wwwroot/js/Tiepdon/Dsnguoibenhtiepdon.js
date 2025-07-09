@@ -52,7 +52,6 @@
 });
 
 
-
 // FUNCTION: Chi tiết người bệnh
 function LoadChitietTiepdon() {
     const rows = document.querySelectorAll("#tableTiepDon tbody tr");

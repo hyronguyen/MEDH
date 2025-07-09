@@ -1,8 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Chi tiết tiếp đón";
+    @model ChitietTiepdonViewModel
+
+
 }
 
 <link rel="stylesheet" href="~/css/tiepdonStyles/chitiettiepdon.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <div class="container mt-4">
 
@@ -11,7 +15,7 @@
             <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
             <li class="breadcrumb-item"><a>Tiếp đón</a></li>
             <li class="breadcrumb-item"><a asp-area="" asp-controller="Tiepdon" asp-action="Dstiepdon">Danh sách tiếp đón</a></li>
-            <li class="breadcrumb-item active">@ViewBag.MaHS</li>
+            <li class="breadcrumb-item active">@Model.MaHoSo</li>
         </ol>
     </nav>
 
@@ -25,23 +29,32 @@
         <div class="card-body row g-3">
             <div class="col-md-4">
                 <label class="form-label fw-bold">Mã hồ sơ:</label>
-                <div>@ViewBag.MaHS</div>
+                <div>@Model.MaHoSo</div>
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-bold">Họ tên:</label>
-                <div><span class="text-muted">[Chưa có]</span></div>
+                <div><span class="text-muted">@Model.HoTen</span></div>
             </div>
+            
+            <!--format ngày sính -->
+            @{
+                var ngaySinhText = Model.NgaySinh.HasValue 
+                    ? Model.NgaySinh.Value.ToString("dd/MM/yyyy") 
+                    : "Không rõ";
+            }
+
             <div class="col-md-4">
                 <label class="form-label fw-bold">Năm sinh:</label>
-                <div><span class="text-muted">[Chưa có]</span></div>
+                <div><span class="text-muted">@ngaySinhText</span></div>
             </div>
+
             <div class="col-md-4">
                 <label class="form-label fw-bold">Giới tính:</label>
-                <div><span class="text-muted">[Chưa có]</span></div>
+                <div><span class="text-muted">@(Model.GioiTinh == "M" ? "Nam" : Model.GioiTinh == "F" ? "Nữ" : "Khác")</span></div>
             </div>
             <div class="col-md-4">
                 <label class="form-label fw-bold">Địa chỉ:</label>
-                <div><span class="text-muted">[Chưa có]</span></div>
+                <div><span class="text-muted">@Model.DiaChi</span></div>
             </div>
         </div>
     </div>
@@ -58,18 +71,70 @@
                         <th>#</th>
                         <th>Mã dịch vụ</th>
                         <th>Tên dịch vụ</th>
-                        <th>Số lượng</th>
-                        <th>Đơn giá</th>
+                        <th>Ngày thực hiện</th>
                         <th>Thành tiền</th>
-                        <th>Ghi chú</th>
+                        <th>Thanh toán</th>
+                        <th>Trạng thái</th>
+                        <th> </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <!-- Dữ liệu dịch vụ sẽ load ở đây -->
-                    <tr>
-                        <td colspan="7" class="text-center text-muted">Chưa có dịch vụ nào được kê</td>
-                    </tr>
-                </tbody>
+                @foreach (var dv in Model.DichVus)
+                {
+                <tr>
+                    <td>#</td>
+                    <td>@dv.MaDichVu</td>
+                    <td>@dv.TenDichVu</td>
+                        <td>@dv.NgayThucHien</td>
+                       <td>@dv.ThanhTien</td>
+                    <td>@dv.ThanhToan</td>
+                   <td>
+                            @switch (dv.TrangThai)
+                            {
+                                case "cho_thuc_hien":
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-hourglass-start me-1"></i>Chờ thực hiện
+                                    </span>
+                                    break;
+                                case "dang_thuc_hien":
+                                    <span class="badge bg-warning text-dark">
+                                        <i class="fa fa-clock me-1"></i>Đang thực hiện
+                                    </span>
+                                    break;
+                                case "da_thuc_hien":
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check-circle me-1"></i>Đã thực hiện
+                                    </span>
+                                    break;
+                                case "huy":
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times-circle me-1"></i>Hủy
+                                    </span>
+                                    break;
+                                default:
+                                    <span class="badge bg-light text-muted">
+                                        Không rõ
+                                    </span>
+                                    break;
+                            }
+
+                    </td>
+                        <td>
+                            @if (dv.TrangThai == "cho_thuc_hien")
+                            {
+                                <button class="btn btn-outline-danger btn-sm" title="Xóa dịch vụ" onclick="XoaDichVu('@dv.MaDichVuKham')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </button>
+                            }
+                        </td>
+
+                </tr>
+                        }
+                        @if (!Model.DichVus.Any())
+                        {
+                <tr>
+                    <td colspan="8" class="text-center text-muted">Chưa có dịch vụ nào được kê</td>
+                </tr>
+                }
             </table>
         </div>
     </div>
@@ -78,13 +143,13 @@
     <div class="mb-5">
         <a asp-controller="Tiepdon"
            asp-action="Kedichvutiepdon"
-           asp-route-maHS="@ViewBag.MaHS"
+           asp-route-maHS="@Model.MaHoSo"
            class="btn btn-success me-2">
             <i class="bi bi-plus-circle"></i> Kê thêm dịch vụ
         </a>
         <a asp-controller="Tiepdon"
            asp-action="HuyTiepdon"
-           asp-route-maHS="@ViewBag.MaHS"
+           asp-route-maHS="@Model.MaHoSo"
            class="btn btn-danger">
             <i class="bi bi-x-circle"></i> Hủy tiếp đón
         </a>

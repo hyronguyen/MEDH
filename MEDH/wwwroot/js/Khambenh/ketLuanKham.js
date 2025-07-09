@@ -1,39 +1,91 @@
-﻿const canvas = document.getElementById('pdf-viewer');
-const ctx = canvas.getContext('2d');
-const pdfUrl = "/assets/pdfs/nhap_vien_ver11.pdf";
+﻿document.addEventListener('DOMContentLoaded', () => {
+    RenderPhieuNhapVien();
+    document.getElementById('huong-dieu-tri')?.addEventListener('change', RenderPhieuNhapVien);
+});
 
-// Ẩn canvas lúc đầu
-canvas.style.display = "none";
+function RenderPhieuNhapVien() {
+    const selectedValue = document.getElementById('huong-dieu-tri').value;
+    const iframe = document.getElementById('iframe-phieu-kham');
 
-document.getElementById('huong-dieu-tri').addEventListener('change', function () {
-    const selectedValue = this.value;
+    const payload = LayThongTinInPhieuKhamVaoVien();
 
     if (selectedValue === 'nhap-vien') {
-        // Hiển thị canvas
-        canvas.style.display = "block";
 
-        // Tải PDF và hiển thị
-        pdfjsLib.getDocument(pdfUrl).promise.then(pdfDoc => {
-            return pdfDoc.getPage(1);
-        }).then(page => {
-            const viewport = page.getViewport({ scale: 1.5 });
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
 
-            const renderContext = {
-                canvasContext: ctx,
-                viewport: viewport
-            };
-            page.render(renderContext);
-        }).catch(err => {
-            console.error('Lỗi load PDF:', err);
-        });
+        fetch('/Khambenh/InPhieuKhamVaoVien', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Lỗi gọi API");
+                return res.text();
+            })
+            .then(html => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDoc.open();
+                iframeDoc.write(html);
+                iframeDoc.close();
+                iframe.style.display = "block";
+            })
+            .catch(err => {
+                console.error('Lỗi khi tải phiếu khám:', err);
+                iframe.style.display = "none";
+            });
 
     } else {
-        // Ẩn canvas nếu không phải "nhập viện"
-        canvas.style.display = "none";
+        iframe.style.display = "none";
+ 
     }
-});
+}
+
+function LayThongTinInPhieuKhamVaoVien() {
+    const hosoraw = localStorage.getItem("ho_so_chi_tiet");
+    const hoso = hosoraw ? JSON.parse(hosoraw) : null;
+    const dotkham = hoso?.data?.dot_kham || {};
+    const nguoibenh = hoso?.data?.nguoi_benh || {};
+
+    let tuoi = 0;
+    if (nguoibenh.ngay_sinh) {
+        const birthDate = new Date(nguoibenh.ngay_sinh);
+        const today = new Date();
+        tuoi = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            tuoi--;
+        }
+    }
+
+    // Giải mã JWT để lấy thông tin bác sĩ khám
+    let bac_si_kham = "Không rõ";
+    try {
+        const token = localStorage.getItem("token");
+        if (token) {
+            const payloadBase64 = token.split('.')[1];
+            const payloadJson = atob(payloadBase64);
+            const payload = JSON.parse(payloadJson);
+            bac_si_kham = payload?.name || "Không rõ";
+        }
+    } catch (err) {
+        console.warn("Lỗi khi giải mã token:", err);
+    }
+
+    return {
+        ma_nguoi_benh: ChuanHoaMa(nguoibenh.ma_nguoi_benh || "0", "NB"),
+        ma_ho_so: ChuanHoaMa(dotkham.ma_dot_kham || "0", "HS"),
+        ho_ten: nguoibenh.ho_ten || "Chưa rõ",
+        ngay_sinh: nguoibenh.ngay_sinh || "",
+        tuoi: tuoi,
+        gioi_tinh: nguoibenh.gioi_tinh === "m" ? "Nam" : "Nữ",
+        dia_chi: nguoibenh.dia_chi || "Chưa rõ",
+        so_the_bhyt: dotkham.so_the_bhyt || "Không BH",
+        so_cccd: dotkham.giay_to || "Chưa rõ",
+        chuan_doan_ban_dau: dotkham.chuan_doan_ban_dau || "Chưa rõ",
+        ly_do_kham: dotkham.ly_do_den_kham || "Chưa rõ",
+        bac_si_kham: bac_si_kham
+    };
+}
+
 
 // Lưu kết luận khám
 document.getElementById("btn-luu-ketluan").addEventListener('click', async () => {
