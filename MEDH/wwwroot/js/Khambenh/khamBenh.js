@@ -66,6 +66,7 @@ const danhSachThuoc = [
         CapNhatNutDongMoHoSo();
         InPhieu();
         Kiemtradonthuoc();
+        HienThiLichSuKham();
 }
     // FUNCTION: GIẢI MÃ TOKEN
     function parseJwt(token) {
@@ -181,7 +182,79 @@ const danhSachThuoc = [
                 popupPhieuIn.show();
             });
         });
+}
+    // FUNCTION Hiển thị nút đống hay mở hồ sơ
+    function CapNhatNutDongMoHoSo() {
+        const btn = document.getElementById("btnclosehs");
+        const trangThai = LayTrangThaiKham();
+        console.log("Hồ sơ đang ở trạng thái: " + trangThai);
+        const huongDieuTriSelect = document.getElementById("huong-dieu-tri");
+        const ketQuaSelect = document.getElementById("ket-qua");
+
+        // Xoá cả hai class trạng thái trước
+        btn.classList.remove("mo", "dong");
+
+        if (trangThai === false) {
+            // Hồ sơ đang mở → hiển thị nút ĐÓNG HS
+            btn.innerHTML = '<i class="fa fa-circle-check"></i><span> Đóng HS</span>';
+            btn.classList.add("mo");
+            huongDieuTriSelect.disabled = false;
+            ketQuaSelect.disabled = false;
+        } else {
+            // Hồ sơ đã đóng → hiển thị nút MỞ HS
+            btn.innerHTML = '<i class="fa fa-folder-open"></i><span> Mở HS</span>';
+            btn.classList.add("dong");
+            huongDieuTriSelect.disabled = true;
+            ketQuaSelect.disabled = true;
+        }
+
+        const nutCanXuLy = [
+            "btnthemdichvutupopup",
+            "luuthongtinkham",
+            "btnluuchidinhdv",
+            "timDichVu",
+            "btn-luu-ketluan",
+            "btnXoaDonThuoc"
+        ];
+
+        nutCanXuLy.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.style.display = trangThai === true ? "none" : "inline-block";
+            }
+        });
     }
+    // FUNCTION Đóng hồ sơ.
+    document.getElementById("btnclosehs").addEventListener('click', async () => {
+        const trangThai = LayTrangThaiKham();
+        console.log(trangThai + "n");
+        const mhs = LayMaHoSo();
+        const token = localStorage.getItem("token");
+        const madv = LayDichVuThucHienTaiPhong();
+        const trangthaiMoi = trangThai ? "false" : "true";
+
+        try {
+            const response = await fetch(`/Khambenh/Xulyhosokham?MaHoSo=${mhs}&trangthai=${trangthaiMoi}&madichvukham=${madv}&token=${token}`, {
+                method: "POST"
+            });
+
+            if (!response.ok) {
+                throw new Error("Lỗi máy chủ");
+            }
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                alert(trangthaiMoi === "true" ? "Đã đóng hồ sơ thành công." : "Đã mở hồ sơ thành công.");
+                window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mhs)}`;
+            } else {
+                alert((trangthaiMoi === "true" ? "Đóng" : "Mở") + " hồ sơ thất bại: " + (result.message || "Lỗi không xác định"));
+            }
+        } catch (error) {
+            console.error("Lỗi:", error);
+            alert("Có lỗi xảy ra khi " + (trangthaiMoi === "true" ? "đóng" : "mở") + " hồ sơ.");
+        }
+    });
     // FUNCTION PRE-LOAD THÔNG TIN NGƯỜI BỆNH
     function PreLoadThongTinNB() {
     const jsonScript = document.getElementById("json-data");
@@ -308,8 +381,8 @@ const danhSachThuoc = [
         document.getElementById("giaidoanbenh").value = giaiDoan || "";
         }
 
-        // ✅ Hiển thị chuẩn đoán nếu cáo
-        if (dot_kham.chuan_doan) {
+    // ✅ Hiển thị chuẩn đoán nếu cáo
+     if (dot_kham.chuan_doan) {
             const arr = dot_kham.chuan_doan.split("|").map(s => s.trim());
             const [mota, sobo, icd, kemtheo] = arr;
 
@@ -317,6 +390,31 @@ const danhSachThuoc = [
             document.getElementById("icd-desc-input").value = sobo || "";
             document.getElementById("icd-input").value = icd || "";
             document.getElementById("kemtheo-input").value = kemtheo || "";
+        }
+
+    // Hiển thị kết luận nếu có
+        const ketluanRaw = LayKetLuanKham(); 
+        const ketluan = String(ketluanRaw || "").trim(); 
+        if (ketluan.includes("|")) {
+            const [huongDieuTriText, ketQuaText] = ketluan.split("|").map(s => s.trim());
+
+            const huongDieuTriMap = {
+                "Cho về": "cho-ve",
+                "Nhập viện": "nhap-vien",
+                "Theo dõi": "theo-doi",
+                "Cho đơn về": "cho-don-ve"
+            };
+
+            const ketQuaMap = {
+                "Khỏi bệnh": "khoi-benh",
+                "Tiến triển": "tien-trien",
+                "Dừng lại": "dung-lai",
+                "Xấu đi": "xau-di",
+                "Khác": "khac"
+            };
+
+            document.getElementById("huong-dieu-tri").value = huongDieuTriMap[huongDieuTriText] || "";
+            document.getElementById("ket-qua").value = ketQuaMap[ketQuaText] || "";
         }
 }
     // FUNCCTION GỌI NGƯỜI BỆNH TIẾP THEO
@@ -344,6 +442,69 @@ const danhSachThuoc = [
             alert("Lỗi kết nối tới server.");
         }
     });
+    // Hiển thị lịch sử khám
+async function HienThiLichSuKham() {
+    try {
+        const nb = LayMaNB();
+        console.log(nb);
+        if (!nb) {
+            console.warn("Không có mã người bệnh.");
+            return;
+        }
+
+        const response = await fetch(`/Khambenh/LichSuKham?MaHoSo=${encodeURIComponent(nb)}`);
+
+        if (!response.ok) {
+            const error = await response.json();
+            console.error("❌ Lỗi khi lấy lịch sử khám:", error.detail || error.message);
+            return;
+        }
+
+        const data = await response.json();
+        console.log("✅ Dữ liệu lịch sử khám:", data);
+
+        const container = document.querySelector(".history-cards");
+        container.innerHTML = ""; // clear cũ
+
+        if (!Array.isArray(data) || data.length === 0) {
+            container.innerHTML = '<div class="text-muted">Không có lịch sử khám.</div>';
+            return;
+        }
+
+        data.forEach(item => {
+            const ngay = new Date(item.ngay_tiep_don).toLocaleDateString("vi-VN");
+            const cdChuoi = item.chuan_doan;
+            const cdHienThi = LayChuanDoanTuChuoi(cdChuoi);
+
+            const card = document.createElement("div");
+            card.className = "history-card";
+
+            card.innerHTML = `
+        <div class="history-date">
+            ${ngay}
+            ${cdHienThi ? ` - <strong>CĐ: ${cdHienThi}</strong>` : ""}
+        </div>
+    `;
+            container.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error("❌ Lỗi xử lý lịch sử khám:", err);
+    }
+}
+
+function LayChuanDoanTuChuoi(cdChuoi) {
+    if (!cdChuoi) return null;
+
+    const parts = cdChuoi.split("|");
+    // Kiểm tra phần tử thứ 3 (index 2) có tồn tại và khác rỗng
+    if (parts.length >= 3 && parts[2].trim() !== "") {
+        return parts[2].trim();
+    }
+    return null;
+}
+
+//FUNCTION LẤY THÔNG TIN -------------------------------------------------------------------------------------------------------------------------------------------------
     // FUNCTION LẤY MÃ HỒ SƠ
     function LayMaHoSo() {
         const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
@@ -366,6 +527,28 @@ const danhSachThuoc = [
             return;
         }
 }
+
+    function LayMaNB() {
+        const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+        let MaNB = null;
+        let hoSoParsed = null;
+
+        // Tìm mã hồ sơ
+        if (hoSoRaw) {
+            try {
+                hoSoParsed = JSON.parse(hoSoRaw);
+                MaNB = hoSoParsed?.data?.nguoi_benh?.ma_nguoi_benh || null;
+                return MaNB;
+            } catch (err) {
+                console.error("Lỗi parse ho_so_chi_tiet:", err);
+            }
+        }
+
+        if (!MaNB) {
+            alert("❌ Không tìm thấy MaNB sơ đợt khám trong localStorage.");
+            return;
+        }
+    }
     // FUNCTION LẤY MÃ ĐƠN THUỐC
     function LayMaDonThuoc() {
         const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
@@ -384,8 +567,6 @@ const danhSachThuoc = [
                 console.error("Lỗi parse ho_so_chi_tiet:", err);
             }
         }
-
-        alert("❌ Không tìm thấy MaDonThuoc đợt khám trong localStorage.");
         return null;
     }
     // FUNCTION LẤY kÊT luận khám
@@ -512,49 +693,7 @@ const danhSachThuoc = [
             return;
         }
     }
-    // FUNCTION Hiển thị nút đống hay mở hồ sơ
-    function CapNhatNutDongMoHoSo() {
-        const btn = document.getElementById("btnclosehs");
-        const trangThai = LayTrangThaiKham();
-        console.log(trangThai);
-        if (trangThai == false) {
-            btn.innerHTML = '<i class="fa fa-circle-check"></i><span>Đóng HS</span>';
-        } else {
-            btn.innerHTML = '<i class="fa fa-folder-open"></i><span>Mở HS</span>';
-        }
-    }
-    // FUNCTION Đóng hồ sơ.
-    document.getElementById("btnclosehs").addEventListener('click', async () => {
-        const trangThai = LayTrangThaiKham();
-        console.log(trangThai + "n");
-        const mhs = LayMaHoSo();
-        const token = localStorage.getItem("token");
-        const madv = LayDichVuThucHienTaiPhong();
-        const trangthaiMoi = trangThai ? "false" : "true"; 
-
-        try {
-            const response = await fetch(`/Khambenh/Xulyhosokham?MaHoSo=${mhs}&trangthai=${trangthaiMoi}&madichvukham=${madv}&token=${token}`, {
-                method: "POST"
-            });
-
-            if (!response.ok) {
-                throw new Error("Lỗi máy chủ");
-            }
-
-            const result = await response.json();
-
-            if (result.status === "success") {
-                alert(trangthaiMoi === "true" ? "Đã đóng hồ sơ thành công." : "Đã mở hồ sơ thành công.");
-                window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mhs)}`;
-            } else {
-                alert((trangthaiMoi === "true" ? "Đóng" : "Mở") + " hồ sơ thất bại: " + (result.message || "Lỗi không xác định"));
-            }
-        } catch (error) {
-            console.error("Lỗi:", error);
-            alert("Có lỗi xảy ra khi " + (trangthaiMoi === "true" ? "đóng" : "mở") + " hồ sơ.");
-        }
-    });
- 
+   
 // FUCNTION CỦA THÔNG TIN KHÁM-------------------------------------------------------------------------------------------------------------------------------------------------------
     document.querySelectorAll('.kb-tab-list .kb-tab').forEach(button => {
     button.addEventListener('click', () => {
@@ -1537,9 +1676,9 @@ document.getElementById('btn-luu-donthuoc').addEventListener('click',async funct
     
     const mHS = LayMaHoSo();
 
-    let p_ma_don_thuoc = localStorage.getItem("ma_don_thuoc_moi_tam_thoi");
+    let p_ma_don_thuoc = Number(localStorage.getItem("ma_don_thuoc_moi_tam_thoi"));
     if (!p_ma_don_thuoc) {
-        p_ma_don_thuoc = LayMaDonThuoc();
+        p_ma_don_thuoc = Number(LayMaDonThuoc());
             }
         const thuocRows = document.querySelectorAll('#danhsach-thuoc-chon tbody tr');
         const payloads = [];
@@ -1557,7 +1696,11 @@ document.getElementById('btn-luu-donthuoc').addEventListener('click',async funct
             }
         });
 
-    console.log(payloads);
+
+    if (payloads.length === 0) {
+        alert("Không có thuốc nào được chọn. Vui lòng chọn thuốc trước khi lưu đơn.");
+        return;
+    }
     
     try {
         const response = await fetch(`/Khambenh/KeThuoc?token=${encodeURIComponent(token)}`, {
@@ -1672,13 +1815,15 @@ document.getElementById("btnChonThuoc").addEventListener("click", async function
 
 function Kiemtradonthuoc() {
     const donthuoc = LayDonThuoc();
+    const madonthuoc = LayMaDonThuoc(); // Kiểm tra ID đơn thuốc
     const chiTiet = donthuoc?.[0]?.chi_tiet;
 
     const formDaKe = document.getElementById("form-donthuocdake");
     const formChuaKe = document.getElementById("form-donthuoc");
     const tableBody = document.querySelector("#danhsachthuoctuhoso tbody");
 
-    if (Array.isArray(chiTiet) && chiTiet.length > 0) {
+    // Nếu có mã đơn thuốc (dù không có chi tiết), vẫn coi là đã kê
+    if (madonthuoc) {
         console.log("đã kê");
 
         // Hiển thị form đã kê, ẩn form kê thuốc
@@ -1688,29 +1833,34 @@ function Kiemtradonthuoc() {
         // Xóa nội dung cũ của bảng (nếu có)
         tableBody.innerHTML = "";
 
-        // Duyệt qua danh sách thuốc và thêm vào bảng
-        chiTiet.forEach((thuoc, index) => {
+        // Nếu có chi tiết thuốc thì hiển thị vào bảng
+        if (Array.isArray(chiTiet) && chiTiet.length > 0) {
+            chiTiet.forEach((thuoc, index) => {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${thuoc.ten_thuoc}</td>
+                    <td>${thuoc.lieu_dung}</td>
+                    <td>${thuoc.so_luong} ${thuoc.don_vi}</td>
+                    <td>${thuoc.thanh_tien_thuoc.toLocaleString()}đ</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+        } else {
+            // Nếu không có chi tiết, thông báo là chưa có thuốc nào
             const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${thuoc.ten_thuoc}</td>
-                <td>${thuoc.lieu_dung}</td>
-                <td>${thuoc.so_luong} ${thuoc.don_vi}</td>
-                <td>${thuoc.thanh_tien_thuoc.toLocaleString()}đ</td>
-           
-            `;
-
+            row.innerHTML = `<td colspan="5" class="text-center text-muted">Đơn thuốc trắng</td>`;
             tableBody.appendChild(row);
-        });
+        }
     } else {
-        console.log("chưa kê");
-
-        // Hiển thị form kê thuốc, ẩn form đã kê
+        // Không có đơn thuốc ⇒ cho phép kê mới
         formDaKe.style.display = "none";
         formChuaKe.style.display = "block";
     }
 }
+
 
 //FUNTION: Xóa đơn thuốc
 document.getElementById("btnXoaDonThuoc").addEventListener("click", async function () {

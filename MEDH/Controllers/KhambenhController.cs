@@ -565,6 +565,93 @@ namespace MEDH.Controllers
                 });
             }
         }
+        // Kết luận khám 
+        public async Task<IActionResult> KetLuanKham(int MaHoSo, string ketluan, string token)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = $"{baseUrl}cap_nhat_ket_luan_kham";
+
+                // Gửi PATCH với trạng thái theo FE truyền vào
+                var payload = new
+                {
+                    p_token = token,
+                    p_ma_ho_so = MaHoSo,
+                    p_ket_luan = ketluan
+                };
+
+                Console.WriteLine(requestUrl + " " + payload);
+
+                var content = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(payload),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Content = content;
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "❌ Lỗi cập nhật trạng thái hồ sơ",
+                        detail = errorContent
+                    });
+                }
+
+                return Ok(new
+                {
+                    status = "success",
+                    message = "kết luận thành công"
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    status = "error",
+                    message = "❌ Lỗi hệ thống khi xử lý yêu cầu",
+                    detail = ex.Message
+                });
+            }
+        }
+        // Lấy lịch sử khám bệnh 
+        public async Task<IActionResult> LichSuKham(int MaHoSo)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURLv1"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = $"{baseUrl}hosodotkham?ma_nguoi_benh=eq.{MaHoSo}";
+
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorText = await response.Content.ReadAsStringAsync();
+                    return BadRequest(new { message = "Lỗi từ Supabase", detail = errorText });
+                }
+
+                var result = await response.Content.ReadAsStringAsync();
+                return Content(result, "application/json");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
 
     }
 }

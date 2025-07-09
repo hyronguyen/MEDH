@@ -19,6 +19,8 @@
 }
 
 .kb-status {
+    user-select: none; 
+    cursor: pointer;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
@@ -35,11 +37,16 @@
         box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
-/* Nhóm nút */
-.kb-actions {
-    display: flex;
-    gap: 0.75rem;
-}
+    .kb-status :hover {
+        background-color: rgb(9, 237, 245, 0.05); 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* Nhóm nút */
+    .kb-actions {
+        display: flex;
+        gap: 0.75rem;
+    }
 
     .kb-actions button {
         padding: 0.5rem 1rem;
@@ -197,6 +204,19 @@
     text-align: center;
     background-color: var(--primary-color);
 }
+
+    /* Trạng thái: hồ sơ đang mở (mặc định là nút "Đóng HS") */
+    .kb-util-btn-closehs.mo {
+        background-color: var(--primary-color); /* màu xanh dương */
+        color: white;
+    }
+
+    /* Trạng thái: hồ sơ đã đóng (nút "Mở HS") */
+    .kb-util-btn-closehs.dong {
+        background-color: #f59e0b; /* màu cam vàng (Tailwind warning) */
+        color: white;
+    }
+
 /* THông tin hành chính*/
 .patient-info {
     display: flex;
