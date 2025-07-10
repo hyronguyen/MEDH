@@ -1,8 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
 
-
-
-   
     const table = document.querySelector("#tableTiepDon tbody");
     const searchMaNB = document.getElementById("searchMaNB");
     const searchMaHS = document.getElementById("searchMaHS");

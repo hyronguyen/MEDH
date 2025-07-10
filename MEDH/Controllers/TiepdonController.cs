@@ -70,7 +70,6 @@ namespace MEDH.Controllers
             return View();
         }
 
-
         public async Task<IActionResult> Chitietnbtiepdon(string maHS)
         {
             try
@@ -131,7 +130,6 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "Lỗi xử lý", detail = ex.Message });
             }
         }
-
 
         public IActionResult Dshenkham()
         {

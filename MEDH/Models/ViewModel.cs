@@ -23,8 +23,8 @@ namespace MEDH.Models
         public DateTime? NgayThucHien { get; set; }
     }
 
-    //TẠM ỨNG VIEW MODEL
-public class ChiTietTamUngViewModel
+    //CHI TIẾT TẠM ỨNG VIEW MODEL
+    public class ChiTietTamUngViewModel
     {
         [JsonPropertyName("r_status")]
         public string Status { get; set; }
@@ -76,9 +76,9 @@ public class ChiTietTamUngViewModel
         [JsonPropertyName("vien_phi")]
         public decimal VienPhi { get; set; }
         [JsonPropertyName("so_the_bhyt")]
-        public string SoTheBHYT { get; set; }
+        public string? SoTheBHYT { get; set; }
         [JsonPropertyName("muc_huong_bhyt")]
-        public decimal MucHuongBHYT { get; set; }
+        public decimal? MucHuongBHYT { get; set; }
     }
 
     public class NguoiBenhInfo
@@ -165,5 +165,29 @@ public class ChiTietTamUngViewModel
         [JsonPropertyName("trang_thai_phieu_thu")]
         public string TrangThaiPhieuThu { get; set; }
 
+    }
+
+    //Danh sách tạm ứng
+    public class DanhSachTamUngViewModel
+    {
+        [JsonPropertyName("ma_dot_kham")]
+        public int MaDotKham { get; set; }
+
+        [JsonPropertyName("ma_nguoi_benh")]
+        public int MaNguoiBenh { get; set; }
+
+        [JsonPropertyName("ten_nguoi_benh")]
+        public string TenNguoiBenh { get; set; }
+
+        [JsonPropertyName("ngay_sinh")]
+        public DateTime NgaySinh { get; set; }
+        [JsonPropertyName("gioi_tinh")]
+        public string GioiTinh { get; set; }
+        [JsonPropertyName("so_tien_con_lai")]
+        public decimal SoTienTamUng { get; set; }
+        [JsonPropertyName("ten_nhan_vien_tiep_don")]
+        public string TenNhanVienTiepDon { get; set; }
+        [JsonPropertyName("ngay_tiep_don")]
+        public DateTime NgayTiepDon { get; set; }
     }
 }

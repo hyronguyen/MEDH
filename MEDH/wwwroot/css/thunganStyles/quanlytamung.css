@@ -39,3 +39,11 @@ table thead {
 .breadcrumb .breadcrumb-item.active {
     color: var(--primary-color);
 }
+
+.row-do {
+    background-color: #f8d7da !important; /* đỏ nhạt */
+}
+
+.row-xanh {
+    background-color: #d1e7dd !important; /* xanh nhạt */
+}

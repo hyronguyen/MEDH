@@ -21,10 +21,43 @@ namespace MEDH.Controllers
             return View();
         }
 
-        public IActionResult Quanlytamung()
+        public async Task<IActionResult> Quanlytamung()
         {
-            return View();
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseURL"];
+                string apiKey = _configuration["SUPBASECONFIG:apikey"];
+                string requestUrl = baseUrl + "lay_danh_sach_nb_tam_ung";
+
+                var request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
+                request.Headers.Add("apikey", apiKey);
+                request.Headers.Add("Accept", "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    ViewBag.ErrorMessage = $"❌ Lỗi từ Supabase: {error}";
+                    return View(new List<DanhSachTamUngViewModel>());
+                }
+
+                var jsonResult = await response.Content.ReadAsStringAsync();
+
+                var danhSach = JsonSerializer.Deserialize<List<DanhSachTamUngViewModel>>(jsonResult, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                return View(danhSach);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = $"Lỗi xử lý controller: {ex.Message}";
+                return View(new List<DanhSachTamUngViewModel>());
+            }
         }
+
 
         public IActionResult Dshoandoi()
         {
@@ -163,8 +196,6 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "❌ Lỗi xử lý hoàn tạm ứng", detail = ex.Message });
             }
         }
-
-
 
         //FUNCTION IN ---------------------------------------------------------------------------------------------------------
         public async Task<IActionResult> InPhieuTamUng([FromBody] object payload)

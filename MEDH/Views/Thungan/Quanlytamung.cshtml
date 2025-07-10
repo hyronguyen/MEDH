@@ -1,8 +1,20 @@
 ﻿@{
     ViewData["Title"] = "Quản lý tạm ứng";
+    @model List<DanhSachTamUngViewModel>
+
 }
 
 <link rel="stylesheet" href="~/css/thunganStyles/quanlytamung.css" asp-append-version="true" />
+
+<style>
+    .row-do {
+        background-color: #f8d7da !important; /* đỏ nhạt */
+    }
+
+    .row-xanh {
+        background-color: #d1e7dd !important; /* xanh nhạt */
+    }
+</style>
 
 <div class="container py-4">
     <nav aria-label="breadcrumb">
@@ -19,47 +31,59 @@
     <div class="filter-bar">
         <input type="text" id="fltMaHS2" class="form-control" placeholder="Mã hồ sơ..." />
         <input type="text" id="fltTenBN2" class="form-control" placeholder="Tên bệnh nhân..." />
-        <input type="date" id="fltNgay2" class="form-control" placeholder="Ngày ứng..." />
-        <input type="text" id="fltNguoi2" class="form-control" placeholder="Người ứng..." />
+        <input type="date" id="fltNgay2" class="form-control" placeholder="Ngày sinh..." />
+        <input type="text" id="fltNguoi2" class="form-control" placeholder="Giới tính (Nam/Nữ)..." />
+        <select id="fltTrangThai" class="form-control">
+            <option value="">-- Trạng thái --</option>
+            <option value="du">Dư</option>
+            <option value="thieu">Thiếu</option>
+        </select>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper mt-3">
         <div class="table-responsive">
             <table class="table table-bordered table-hover" id="tblTamUng">
                 <thead>
                     <tr>
                         <th>STT</th>
                         <th>Mã HS</th>
+                        <th>Mã NB</th>
                         <th>Họ tên</th>
-                        <th>Ngày ứng</th>
-                        <th>Số tiền (VNĐ)</th>
-                        <th>Người ứng</th>
-                        <th>Ghi chú</th>
-                        <th>Trạng thái</th>
+                        <th>Ngày sinh</th>
+                        <th>Giới tính</th>
+                        <th>Số tiền dư/thiếu (đ)</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Ví dụ tĩnh -->
-                    <tr>
-                        <td>1</td>
-                        <td>HS020</td>
-                        <td>Mai Thị Z</td>
-                        <td>2025-05-22</td>
-                        <td>700,000</td>
-                        <td>Thu ngân C</td>
-                        <td>Ứng trước viện phí</td>
-                        <td><span class="badge bg-info">Đang ứng</span></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>HS021</td>
-                        <td>Hoàng Văn W</td>
-                        <td>2025-05-23</td>
-                        <td>300,000</td>
-                        <td>Thu ngân D</td>
-                        <td>Ứng trước xét nghiệm</td>
-                        <td><span class="badge bg-info">Đang ứng</span></td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            string rowClass = "";
+                            if (item.SoTienTamUng > 0)
+                                rowClass = "row-do";
+                            else if (item.SoTienTamUng < 0)
+                                rowClass = "row-xanh";
+
+                            <tr class="@rowClass">
+                                <td>@stt</td>
+                                <td>@item.MaDotKham</td>
+                                <td>@item.MaNguoiBenh</td>
+                                <td>@item.TenNguoiBenh</td>
+                                <td>@item.NgaySinh.ToString("yyyy-MM-dd")</td>
+                                <td>@(item.GioiTinh == "M" ? "Nam" : item.GioiTinh == "F" ? "Nữ" : "Khác")</td>
+                                <td>@item.SoTienTamUng.ToString("N0")</td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Không có dữ liệu tạm ứng.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
@@ -74,49 +98,55 @@
             const fltTen2 = document.getElementById("fltTenBN2");
             const fltNgay2 = document.getElementById("fltNgay2");
             const fltNguoi2 = document.getElementById("fltNguoi2");
+            const fltTrangThai = document.getElementById("fltTrangThai");
 
             function filterTamUng() {
                 const vHS = fltHS2.value.trim().toLowerCase();
                 const vTen = fltTen2.value.trim().toLowerCase();
                 const vNgay = fltNgay2.value;
                 const vNguoi = fltNguoi2.value.trim().toLowerCase();
+                const trangThai = fltTrangThai.value;
 
                 Array.from(tbody2.rows).forEach(row => {
                     const hs = row.cells[1].textContent.toLowerCase();
-                    const ten = row.cells[2].textContent.toLowerCase();
-                    const ngay = row.cells[3].textContent;
+                    const ten = row.cells[3].textContent.toLowerCase();
+                    const ngay = row.cells[4].textContent;
                     const nguoi = row.cells[5].textContent.toLowerCase();
+                    const soTien = parseFloat(row.cells[6].textContent.replace(/,/g, '')) || 0;
+
+                    const matchTrangThai =
+                        trangThai === "" ||
+                        (trangThai === "du" && soTien > 0) ||
+                        (trangThai === "thieu" && soTien < 0);
 
                     const show =
                         hs.includes(vHS) &&
                         ten.includes(vTen) &&
                         (!vNgay || ngay === vNgay) &&
-                        nguoi.includes(vNguoi);
+                        nguoi.includes(vNguoi) &&
+                        matchTrangThai;
 
                     row.style.display = show ? '' : 'none';
                 });
             }
 
-            [fltHS2, fltTen2, fltNgay2, fltNguoi2].forEach(i =>
-                i.addEventListener("input", filterTamUng)
+            [fltHS2, fltTen2, fltNgay2, fltNguoi2, fltTrangThai].forEach(input =>
+                input.addEventListener("input", filterTamUng)
             );
+            fltTrangThai.addEventListener("change", filterTamUng);
 
-            // Gắn sự kiện click để load chi tiết
+            // Sự kiện click
             const baseUrl = '@Url.Action("Chitiettamung", "Thungan")';
-            function LoadChitietTamung() {
-                const rows = document.querySelectorAll("#tblTamUng tbody tr");
-                rows.forEach(row => {
-                    row.style.cursor = "pointer";
-                    row.addEventListener("click", function () {
-                        const maHS = row.cells[1].textContent.trim();
-                        if (maHS) {
-                            window.location.href = `${baseUrl}?maHS=${encodeURIComponent(maHS)}`;
-                        }
-                    });
+            const rows = document.querySelectorAll("#tblTamUng tbody tr");
+            rows.forEach(row => {
+                row.style.cursor = "pointer";
+                row.addEventListener("click", function () {
+                    const maHS = row.cells[1].textContent.trim();
+                    if (maHS) {
+                        window.location.href = `${baseUrl}?maHS=${encodeURIComponent(maHS)}`;
+                    }
                 });
-            }
-
-            LoadChitietTamung();
+            });
         });
     </script>
 }
