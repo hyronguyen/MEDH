@@ -1937,6 +1937,7 @@ function LayDonThuocJson() {
     const hoSo = hoSoRaw ? JSON.parse(hoSoRaw) : null;
     const dotKham = hoSo?.data?.dot_kham || {};
     const nguoiBenh = hoSo?.data?.nguoi_benh || {};
+    const ngayke = hoSo?.data?.don_thuoc.ngay_ke || "00-00-0000";
 
     return {
         ma_nguoi_benh: ChuanHoaMa(nguoiBenh.ma_nguoi_benh || "1", "NB"),
@@ -1945,7 +1946,8 @@ function LayDonThuocJson() {
         tuoi: nguoiBenh.tuoi || 35,
         gioi_tinh: nguoiBenh.gioi_tinh === "M" ? "Nam" : "Nữ",
         dia_chi: nguoiBenh.dia_chi || "Hà Nội",
-        don_thuoc: donThuoc
+        don_thuoc: donThuoc,
+        ngay_ke_don: ngayke
     };
 }
 //FUNCTION: Tạo Payload in tóm tắt bệnh án

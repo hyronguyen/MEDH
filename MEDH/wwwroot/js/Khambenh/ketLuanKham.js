@@ -111,27 +111,29 @@ document.getElementById("btn-luu-ketluan").addEventListener('click', async () =>
     const mahs = LayMaHoSo();
 
     try {
-        token = localStorage.getItem('token');
-        const response = await fetch(`/Khambenh/KetLuanKham?MaHoSo=${mahs}&ketluan=${payload}&token=${token}`, {
+        const token = localStorage.getItem('token');
+
+        const response = await fetch(`/Khambenh/KetLuanKham?MaHoSo=${mahs}&ketluan=${encodeURIComponent(payload)}&token=${encodeURIComponent(token)}`, {
             method: "POST"
         });
 
-        if (!response.ok) {
-            throw new Error("Lỗi máy chủ");
-        }
-
         const result = await response.json();
 
-        if (result.status === "success") {
-            alert("kết luận thành công");
-            window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mahs)}`;
+        if (response.ok) {
+            if (result.status === "success") {
+                alert("✅ Kết luận thành công");
+                // window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mahs)}`;
+            } else {
+                alert(`${result.message || "Lỗi nghiệp vụ không xác định"}`);
+            }
         } else {
-            alert(result.message || "Lỗi không xác định");
+            alert(`${result.message || "Lỗi máy chủ"}`);
         }
+
     } catch (error) {
-        console.error("Lỗi:", error);
-        alert("Có lỗi xảy ra khi đống hồ sơ");
+        alert(`${error.message || "Lỗi kết nối hệ thống"}`);
     }
+
 });
 
 

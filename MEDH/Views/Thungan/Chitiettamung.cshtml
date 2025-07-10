@@ -1,5 +1,7 @@
 ﻿@{
     ViewData["Title"] = "Chi tiết tạm ứng";
+    var sttphieuthu = 1;
+    var sttphieuhoan = 1;
 }
 
 <link rel="stylesheet" href="~/css/thunganStyles/chitiettamung.css" asp-append-version="true" />
@@ -7,24 +9,24 @@
 
 
 <div class="container mt-4">
-
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
             <li class="breadcrumb-item"><a>Thu ngân</a></li>
             <li class="breadcrumb-item"><a asp-controller="Thungan" asp-action="Quanlytamung">Danh sách tạm ứng</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@ViewBag.MaHS</li>
+            <li class="breadcrumb-item active" aria-current="page">@ViewBag.DotKham.MaDotKham</li>
         </ol>
     </nav>
 
     <h2 class="mb-4">Chi tiết tạm ứng</h2>
     <!-- Toolbar: thời gian ca + chọn quầy -->
     <div class="toolbar">
-   
-        <select class="form-select w-auto">
-            <option selected>Quầy 1</option>
-            <option>Quầy 2</option>
-        </select>
+        <div class="toolbar mb-3">
+            <button type="button" class="btn btn-outline-primary" onclick="InHtml('lich_su_tam_ung')">
+                <i class="fas fa-print"></i> In lịch sử tạm ứng
+            </button>
+        </div>
+
     </div>
 
     <!-- Patient Header -->
@@ -33,15 +35,14 @@
             <i class="fa-solid fa-user"></i>
         </div>
         <div class="patient-info">
-            <div><span class="label">Mã BN:</span> <span class="value">@ViewBag.MaBN</span></div>
-            <div><span class="label">Mã HS:</span> <span class="value">@ViewBag.MaHS</span></div>
-            <div><span class="label">Mã BA:</span> <span class="value">@ViewBag.MaBA</span></div>
-            <div><span class="label">Khoa:</span> <span class="value">@ViewBag.Khoa</span></div>
-            <div><span class="label">Trạng thái:</span> <span class="value">@ViewBag.TrangThai</span></div>
-            <div><span class="label">Ngày đăng ký:</span> <span class="value">@ViewBag.NgayDK</span></div>
-            <div><span class="label">Ngày nhập viện:</span> <span class="value">@ViewBag.NgayNV</span></div>
-            <div><span class="label">Số BHYT:</span> <span class="value">@ViewBag.SoBHYT</span></div>
-            <div><span class="label">Giá trị thẻ:</span> <span class="value">@ViewBag.GiaTriThe</span></div>
+            <div><span class="label">Mã BN:</span> <span class="value">@ViewBag.NguoiBenh.MaNguoiBenh</span></div>
+            <div><span class="label">Mã HS:</span> <span class="value">@ViewBag.DotKham.MaDotKham</span></div>
+            <div><span class="label">Họ tên:</span> <span class="value">@ViewBag.NguoiBenh.HoTen</span></div>
+            <div><span class="label">Giới tính:</span> <span class="value">@ViewBag.NguoiBenh.GioiTinh</span></div>
+            <div><span class="label">Ngày sinh:</span> <span class="value">@ViewBag.NguoiBenh.NgaySinh</span></div>
+            <div><span class="label">Địa chỉ:</span> <span class="value">@ViewBag.NguoiBenh.DiaChi</span></div>
+            <div><span class="label">Số BHYT:</span> <span class="value">@ViewBag.DotKham.SoTheBHYT</span></div>
+            <div><span class="label">Giá trị thẻ:</span> <span class="value">@ViewBag.DotKham.MucHuongBHYT </span></div>
         </div>
     </div>
 
@@ -50,105 +51,269 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs mb-3" id="tamungTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="thuTamUng-tab" data-bs-toggle="tab" data-bs-target="#thuTamUng" type="button" role="tab">Thu tạm ứng</button>
+                    <button class="nav-link active" id="dexuatTamung-tab" data-bs-toggle="tab" data-bs-target="#dexuattamung" type="button" role="tab">Đề xuất tạm ứng</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="thuTamUng-tab" data-bs-toggle="tab" data-bs-target="#thuTamUng" type="button" role="tab">Thu tạm ứng</button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="hoanTamUng-tab" data-bs-toggle="tab" data-bs-target="#hoanTamUng" type="button" role="tab">Hoàn tạm ứng</button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="huyTamUng-tab" data-bs-toggle="tab" data-bs-target="#huyTamUng" type="button" role="tab">Hủy tạm ứng</button>
+                    <button class="nav-link" id="thuTamUngKhac-tab" data-bs-toggle="tab" data-bs-target="#thuTamUngKhac" type="button" role="tab">Thu thêm</button>
                 </li>
             </ul>
-
+    
             <!-- Tab panes -->
             <div class="tab-content">
+               
+                <div class="tab-pane fade show active" id="dexuattamung" role="tabpanel">
+                    <h5>Đề xuất tạm ứng</h5>
+
+                    @if (ViewBag.ConThieu > 0)
+                    {
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div>
+                                        <div class="fw-bold text-danger">Số tiền còn thiếu: @String.Format("{0:N0} đ", ViewBag.ConThieu)</div>
+                                        <div class="text-muted">Lý do: Thiếu phí dịch vụ</div>
+                                    </div>
+                                    <button style="background: var(--primary-color)" class="btn btn-primary" id="btnThuTamUng" onclick="ThuTamTung(@ViewBag.ConThieu,@ViewBag.DotKham.MaDotKham)">Thu ngay</button>
+                                </div>
+
+                                @if (ViewBag.Dichvu != null)
+                                    {
+                                        var dichVus = (List<DichVuInfo>)ViewBag.Dichvu;
+                                        var tongTien = dichVus.Sum(dv => dv.GiaTien);
+
+                                        <hr />
+                                        <h6 class="mb-2 text-primary">Chi tiết dịch vụ/thuốc</h6>
+                                        <ul class="list-group list-group-flush">
+                                            @foreach (var dv in dichVus)
+                                            {
+                                                <li class="list-group-item d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="fw-semibold">@dv.Ten</div>
+                                                        <small class="text-muted">@dv.Loai.ToUpper() - Thanh toán: @dv.ThanhToan</small>
+                                                    </div>
+                                                    <span class="text-end">@String.Format("{0:N0} đ", dv.GiaTien)</span>
+                                                </li>
+                                            }
+
+                                            <!-- Tổng cộng -->
+                                            <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold">
+                                                <div>Tổng cộng</div>
+                                                <span class="text-danger">@String.Format("{0:N0} đ", tongTien)</span>
+                                            </li>
+                                        </ul>
+                                    }
+
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-success text-center" role="alert">
+                            Không có đề xuất tạm ứng nào cần xử lý.
+                        </div>
+                    }
+                </div>
+
+
                 <!-- Thu tạm ứng -->
-                <div class="tab-pane fade show active" id="thuTamUng" role="tabpanel">
+                <div class="tab-pane fade" id="thuTamUng" role="tabpanel">
                     <h5>DS Phiếu thu tạm ứng</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Số tiền</th>
-                                    <th>Ký hiệu</th>
-                                    <th>Số phiếu</th>
-                                    <th>Lần</th>
+                                    <th>Mã phiếu thu</th>
+                                    <th>Số tiền đã thu (đ)</th>
                                     <th>Ngày thu</th>
-                                    <th>PTTT</th>
-                                    <th>Lý do</th>
-                                    <th>Khoa</th>
-                                    <th>Thu ngân</th>
-                                    <th>Xác nhận</th>
+                                    <th>Thu ngân thu</th>
+                                    <th>Trạng thái</th>
                                     <th>Thao tác</th>
+                                    <th>In</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @* … *@
+                                @if (ViewBag.PhieuThu == null || ViewBag.PhieuThu.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Không có phiếu thu tạm ứng nào.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                 
+                                    foreach (var pt in ViewBag.PhieuThu)
+                                    {
+                                        <tr>
+                                            <td>@sttphieuthu</td>
+                                            <td>@pt.MaPhieu</td>
+                                            <td>@pt.SoTien.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                            <td>@pt.NgayThu</td>
+                                            <td value="@pt.MaNguoiThu">@pt.TenNguoiThu</td>
+
+                                            <td>
+                                                @if (pt.TrangThaiPhieuThu == "da_hoan")
+                                                {
+                                                    <span class="badge bg-secondary">Đã hoàn</span>
+                                                }
+                                                else if (pt.TrangThaiPhieuThu == "da_tam_ung")
+                                                {
+                                                    <span class="badge bg-success">Đã tạm ứng</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning text-dark">@pt.TrangThaiPhieuThu</span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                @if (pt.TrangThaiPhieuThu == "da_tam_ung")
+                                                {
+                                                    <button class="btn btn-outline-danger btn-sm d-flex align-items-center gap-1" onclick="HoanTamUng(@pt.MaPhieu)">
+                                                        <i class="fas fa-undo-alt"></i> Hoàn
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">—</span>
+                                                }
+                                            </td>
+
+                                            <td>
+                                                <button class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1"
+                                                onclick="InHtml('pt-@pt.MaPhieu')">
+                                                    <i class="fas fa-print"></i> In
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                        sttphieuthu++;
+                                    }
+                                }
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <!-- Hoàn tạm ứng -->
-                <div class="tab-pane fade" id="hoanTamUng" role="tabpanel">
+               <div class="tab-pane fade" id="hoanTamUng" role="tabpanel">
                     <h5>DS Phiếu hoàn tạm ứng</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
-                            <thead>
+                            <thead style="background:var(--red-color)">
                                 <tr>
                                     <th>STT</th>
-                                    <th>Số tiền</th>
-                                    <th>Ký hiệu</th>
-                                    <th>Số phiếu</th>
-                                    <th>Lần</th>
+                                    <th>Mã phiếu hoàn</th>
+                                    <th>Mã phiếu thu</th>
+                                    <th>Số tiền đã hoàn</th>                     
                                     <th>Ngày hoàn</th>
-                                    <th>Khoa</th>
-                                    <th>Thu ngân</th>
-                                    <th>Thao tác</th>
+                                    <th>Thu ngân hoàn</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @* … *@
+                                @if (ViewBag.PhieuHoan == null || ViewBag.PhieuHoan.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Không có phiếu hoàn tạm ứng nào.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                            
+                                    foreach (var pt in ViewBag.PhieuHoan)
+                                    {
+                                        <tr>
+                                            <td>@sttphieuhoan</td>
+                                            <td>@pt.MaPhieu</td>
+                                            <td>@pt.MaPhieuThu</td>
+                                            <td>@pt.SoTien.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                            <td>@pt.NgayHoan</td>
+                                            <td value="@pt.MaNguoiHoan">@pt.TenNguoiHoan</td>
+                                        </tr>
+                                        sttphieuhoan++;
+                                    }
+                                }
                             </tbody>
                         </table>
                     </div>
                 </div>
 
+
                 <!-- Hủy tạm ứng -->
-                <div class="tab-pane fade" id="huyTamUng" role="tabpanel">
-                    <h5>DS Phiếu hủy tạm ứng</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover">
-                            <thead>
-                                <tr>
-                                    <th>STT</th>
-                                    <th>Số tiền</th>
-                                    <th>Số phiếu</th>
-                                    <th>Ngày hủy</th>
-                                    <th>Lý do</th>
-                                    <th>Thu ngân</th>
-                                    <th>Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @* … *@
-                            </tbody>
-                        </table>
+                <div class="tab-pane fade" id="thuTamUngKhac" role="tabpanel">
+              <div class="mb-3 border rounded p-3 bg-light">
+                <h6 class="mb-3 text-primary">Thêm khoản thu tạm ứng khác</h6>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="soTienThu" class="form-label">Số tiền</label>
+                        <input type="number" class="form-control" id="soTienThu" placeholder="Nhập số tiền" required min="1000">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="lyDoThu" class="form-label">Lý do</label>
+                        <input type="text" class="form-control" id="lyDoThu" placeholder="Nhập lý do thu" required>
+                    </div>
+                    <div class="col-md-4 d-flex align-items-end">
+                        <button type="button" class="btn" style="background:var(--primary-color); color:white;"
+                                        onclick="ThuTamTungKhac(@ViewBag.DotKham.MaDotKham)">
+                            <i class="fas fa-plus-circle"></i> Thu thêm
+                        </button>
                     </div>
                 </div>
+            </div>
+
+
+            </div>
             </div>
         </div>
 
         <div class="col-lg-3">
       <div class="money-card">
         <h5>Thông tin số tiền</h5>
-        <div class="money-item"><span>Số tiền đã tạm ứng:</span><span>500.000 đ</span></div>
-        <div class="money-item"><span>Số tiền DV phải trả:</span><span>0 đ</span></div>
-        <div class="money-item"><span>Số tiền còn lại:</span><span>500.000 đ</span></div>
-        <div class="money-item total"><span>Tổng cần xử lý:</span><span>500.000 đ</span></div>
-      </div>
-    </div>
+        <div class="money-item"><span>Số tiền đã tạm ứng:</span><span>@String.Format("{0:N0} đ", ViewBag.SoTienTamUng)</span></div>
+        <div class="money-item"><span>Viện phí:</span><span>@String.Format("{0:N0} đ", ViewBag.VienPhi)</span></div>
+        <div class="money-item"><span>Số tiền còn thiếu:</span><span class="text-danger">@String.Format("{0:N0} đ", ViewBag.ConThieu)</span></div>
+        <div class="money-item total"><span>Tổng cần xử lý:</span><span>@String.Format("{0:N0} đ", ViewBag.ConThieu)</span></div>
     </div>
 
+            <!-- Modal xem trước và in phiếu -->
+            <div class="modal fade" id="modalInPhieu" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content shadow border-0">
+                        <!-- Header -->
+                        <div class="modal-header bg-light d-flex justify-content-between align-items-center">
+                            <h5 class="modal-title fw-bold text-primary">
+                                <i class="fa-solid fa-file-lines me-2"></i> Xem trước phiếu in
+                            </h5>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-primary" onclick="ThucHienInPhieu()">
+                                    <i class="fa-solid fa-print me-1"></i> In phiếu
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-xmark me-1"></i> Đóng
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Body -->
+                        <div class="modal-body bg-white d-flex justify-content-center" style="padding: 0;">
+                            <iframe id="iframePhieuIn"
+                                    class="border-0 shadow-sm"
+                                    style="width: 794px; height: 1123px; background: white;">
+                            </iframe>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+    </div>
+  </div>
  </div>
+
+  <script src="~/js/Thungan/Chitiettamung.js" asp-append-version="true"></script>

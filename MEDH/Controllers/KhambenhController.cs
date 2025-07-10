@@ -576,15 +576,12 @@ namespace MEDH.Controllers
                 string apiKey = _configuration["SUPBASECONFIG:apikey"];
                 string requestUrl = $"{baseUrl}cap_nhat_ket_luan_kham";
 
-                // Gửi PATCH với trạng thái theo FE truyền vào
                 var payload = new
                 {
                     p_token = token,
                     p_ma_ho_so = MaHoSo,
                     p_ket_luan = ketluan
                 };
-
-                Console.WriteLine(requestUrl + " " + payload);
 
                 var content = new StringContent(
                     System.Text.Json.JsonSerializer.Serialize(payload),
@@ -597,22 +594,35 @@ namespace MEDH.Controllers
                 request.Content = content;
 
                 var response = await _httpClient.SendAsync(request);
+                var responseBody = await response.Content.ReadAsStringAsync();
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
                     return BadRequest(new
                     {
                         status = "error",
                         message = "❌ Lỗi cập nhật trạng thái hồ sơ",
-                        detail = errorContent
+                        detail = responseBody
+                    });
+                }
+
+                // Phân tích nội dung phản hồi JSON
+                var result = System.Text.Json.JsonSerializer.Deserialize<JsonElement>(responseBody);
+                var rStatus = result.GetProperty("r_status").GetString();
+
+                if (rStatus == "INCOMPLETE_DATA")
+                {
+                    return BadRequest(new
+                    {
+                        status = "error",
+                        message = "❌ Yêu cầu nhập đầy đủ thông tin khám trước khi kết luận"
                     });
                 }
 
                 return Ok(new
                 {
                     status = "success",
-                    message = "kết luận thành công"
+                    message = "✅ Kết luận thành công"
                 });
             }
             catch (Exception ex)
@@ -625,6 +635,7 @@ namespace MEDH.Controllers
                 });
             }
         }
+
         // Lấy lịch sử khám bệnh 
         public async Task<IActionResult> LichSuKham(int MaHoSo)
         {
