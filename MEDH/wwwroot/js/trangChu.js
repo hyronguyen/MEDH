@@ -32,7 +32,7 @@ function hideCardsByRole(role) {
     const cardsToHide = {
         tiep_don: ['qms', 'kiosk','khambenh','hoichan', 'kho', 'xetnghiem', 'thungan', 'nhathuoc', 'cdha', 'khomau', 'danhmuc', 'dinhduong', 'thietlap'],
         bac_si: ['tiepdon', 'kho', 'thungan', 'nhathuoc', 'khomau', 'danhmuc', 'qms', 'kiosk', 'dinhduong', 'thietlap'],
-        thu_ngan: ['tiepdon','khambenh','hoichan', 'kho', 'xetnghiem', 'nhathuoc', 'hsba', 'cdha', 'khomau', 'danhmuc', 'nhapvien', 'qms', 'kiosk', 'dinhduong', 'thietlap'],
+        thu_ngan: ['khambenh','hoichan', 'kho', 'xetnghiem', 'nhathuoc', 'cdha', 'khomau', 'danhmuc', 'nhapvien', 'qms', 'kiosk', 'dinhduong', 'thietlap'],
         duoc: ['danhmuc','tiepdon', 'khambenh', 'thungan', 'hoichan', 'xetnghiem', 'nhapvien', 'cdha', 'hsba', 'qms', 'kiosk', 'dinhduong', 'thietlap'],
         quan_tri: []
     };

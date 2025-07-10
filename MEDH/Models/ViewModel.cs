@@ -9,6 +9,8 @@ namespace MEDH.Models
         public DateTime? NgaySinh { get; set; }
         public string GioiTinh { get; set; }
         public string DiaChi { get; set; }
+        public string? SoTheBHYT { get; set; }
+        public decimal? MucHuongBHYT { get; set; }
         public List<DichVuDaKeViewModel> DichVus { get; set; } = new();
     }
 
@@ -124,6 +126,9 @@ namespace MEDH.Models
 
         [JsonPropertyName("nguon")]
         public string Nguon { get; set; }
+
+        [JsonPropertyName("so_luong")]
+        public int? SoLuong { get; set; }
     }
 
     public class HoanTamUngInfo
@@ -190,4 +195,142 @@ namespace MEDH.Models
         [JsonPropertyName("ngay_tiep_don")]
         public DateTime NgayTiepDon { get; set; }
     }
+    //Danh sách phiếu thu tất toán
+    public class DanhSachPhieuThuTatToan
+    {
+        [JsonPropertyName("ma_dot_kham")]
+        public int MaDotKham { get; set; }
+
+        [JsonPropertyName("ma_nguoi_benh")]
+        public int MaNguoiBenh { get; set; }
+
+        [JsonPropertyName("ten_nguoi_benh")]
+        public string TenNguoiBenh { get; set; }
+
+        [JsonPropertyName("ngay_sinh")]
+        public DateTime NgaySinh { get; set; }
+
+        [JsonPropertyName("gioi_tinh")]
+        public string GioiTinh { get; set; }
+
+        [JsonPropertyName("dia_chi")]
+        public string DiaChi { get; set; }
+
+        [JsonPropertyName("ngay_tiep_don")]
+        public DateTime NgayTiepDon { get; set; }
+
+        [JsonPropertyName("trang_thai")]
+        public bool TrangThai { get; set; }
+
+        [JsonPropertyName("so_tien_tam_ung")]
+        public decimal SoTienTamUng { get; set; }
+
+        [JsonPropertyName("tong_vien_phi")]
+        public decimal TongVienPhi { get; set; }
+
+        [JsonPropertyName("so_tien_con_lai")]
+        public decimal SoTienConLai { get; set; }
+    }
+    // Chi tiết phiếu tất toán
+    public class ChiTietTatToanViewModel
+    {
+        [JsonPropertyName("r_status")]
+        public string Satus { get; set; }
+
+        [JsonPropertyName("data")]
+        public ChiTietTatToanDataViewModel Data { get; set; }
+    }
+    public class ChiTietTatToanDataViewModel
+    {
+        [JsonPropertyName("thong_tin_chung")]
+        public ThongTinChungViewModel ThongTinChung { get; set; }
+
+        [JsonPropertyName("phieu_tat_toan")]
+        public PhieuTatToanViewModel? PhieuTatToan { get; set; }
+
+        [JsonPropertyName("dich_vu")]
+        public List<DichVuInfo> DichVu { get; set; }
+    }
+    public class PhieuTatToanViewModel
+    {
+        [JsonPropertyName("ma_phieu_tat_toan")]
+        public int MaPhieuTatToan { get; set; }
+
+        [JsonPropertyName("ma_dot_kham")]
+        public int MaDotKham { get; set; }
+
+        [JsonPropertyName("ma_nguoi_benh")]
+        public int MaNguoiBenh { get; set; }
+
+        [JsonPropertyName("ho_ten")]
+        public string HoTen { get; set; }
+
+        [JsonPropertyName("gioi_tinh")]
+        public string GioiTinh { get; set; }
+
+        [JsonPropertyName("ngay_sinh")]
+        public DateTime NgaySinh { get; set; }
+
+        [JsonPropertyName("so_dien_thoai")]
+        public string SoDienThoai { get; set; }
+
+        [JsonPropertyName("dia_chi")]
+        public string DiaChi { get; set; }
+
+        [JsonPropertyName("so_tien_tat_toan")]
+        public decimal SoTienTatToan { get; set; }
+
+        [JsonPropertyName("nguoi_thu")]
+        public int? NguoiThu { get; set; }
+
+        [JsonPropertyName("ngay_tat_toan")]
+        public DateTime NgayTatToan { get; set; }
+    }
+
+    // thông tin chung
+    public class ThongTinChungViewModel
+    {
+        [JsonPropertyName("ma_dot_kham")]
+        public int MaDotKham { get; set; }
+
+        [JsonPropertyName("ngay_tiep_don")]
+        public DateTime NgayTiepDon { get; set; }
+
+        [JsonPropertyName("trang_thai")]
+        public bool TrangThai { get; set; }
+
+        [JsonPropertyName("trang_thai_kham")]
+        public bool TrangThaiKham { get; set; }
+
+        [JsonPropertyName("so_tien_tam_ung")]
+        public decimal SoTienTamUng { get; set; }
+
+        [JsonPropertyName("so_the_bhyt")]
+        public string? SoTheBHYT { get; set; }
+
+        [JsonPropertyName("muc_huong_bhyt")]
+        public decimal? MucHuongBHYT { get; set; }
+
+        [JsonPropertyName("vien_phi")]
+        public decimal VienPhi { get; set; }
+
+        [JsonPropertyName("ma_nguoi_benh")]
+        public int MaNguoiBenh { get; set; }
+
+        [JsonPropertyName("ho_ten")]
+        public string HoTen { get; set; }
+
+        [JsonPropertyName("gioi_tinh")]
+        public string GioiTinh { get; set; }
+
+        [JsonPropertyName("ngay_sinh")]
+        public DateTime NgaySinh { get; set; }
+
+        [JsonPropertyName("so_dien_thoai")]
+        public string? SoDienThoai { get; set; }
+
+        [JsonPropertyName("dia_chi")]
+        public string DiaChi { get; set; }
+    }
+
 }

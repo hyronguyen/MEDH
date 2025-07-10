@@ -13,9 +13,14 @@ async function xacNhan() {
     ];
 
     const loaiDoiTuong = document.getElementById('loaiDoiTuong').value;
+    const isThongTuyen = document.getElementById('thongTuyen').checked;
 
     if (loaiDoiTuong === 'BHYT') {
-        requiredFields.push('maThe', 'mucHuong', 'ngayCapThe', 'ngayHetHan', 'noiDangKy', 'noiGioiThieu');
+        requiredFields.push('maThe', 'mucHuong', 'ngayCapThe', 'ngayHetHan', 'noiDangKy');
+    }
+    if (!isThongTuyen) {
+        // Nếu không thông tuyến, bắt buộc phải có nơi giới thiệu
+        requiredFields.push('noiGioiThieu');
     }
 
     let isValid = true;

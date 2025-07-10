@@ -41,8 +41,27 @@
             <div><span class="label">Giới tính:</span> <span class="value">@ViewBag.NguoiBenh.GioiTinh</span></div>
             <div><span class="label">Ngày sinh:</span> <span class="value">@ViewBag.NguoiBenh.NgaySinh</span></div>
             <div><span class="label">Địa chỉ:</span> <span class="value">@ViewBag.NguoiBenh.DiaChi</span></div>
-            <div><span class="label">Số BHYT:</span> <span class="value">@ViewBag.DotKham.SoTheBHYT</span></div>
-            <div><span class="label">Giá trị thẻ:</span> <span class="value">@ViewBag.DotKham.MucHuongBHYT </span></div>
+            @{
+                var soThe = ViewBag.DotKham?.SoTheBHYT as string;
+                var mucHuong = ViewBag.DotKham?.MucHuongBHYT as decimal?;
+            }
+
+            @if (!string.IsNullOrWhiteSpace(soThe) && mucHuong.HasValue)
+            {
+                <div>
+                    <span class="label">Đối tượng:</span>
+                    <span class="value text-success">
+                        <i class="fa-solid fa-shield-heart"></i> BHYT
+                    </span>
+                </div>
+                <div><span class="label">Số BHYT:</span> <span class="value">@soThe</span></div>
+                <div><span class="label">Giá trị thẻ:</span> <span class="value">@mucHuong.Value.ToString("N0")%</span></div>
+            }
+            else
+            {
+                <div><span class="label">Đối tượng:</span> <span class="value text-danger">Không BH</span></div>
+            }
+
         </div>
     </div>
 
@@ -114,7 +133,7 @@
                     }
                     else
                     {
-                        <div class="alert alert-success text-center" role="alert">
+                        <div class="alert alert-success text-center fw-bold" role="alert">
                             Không có đề xuất tạm ứng nào cần xử lý.
                         </div>
                     }
@@ -247,25 +266,38 @@
 
                 <!-- Hủy tạm ứng -->
                 <div class="tab-pane fade" id="thuTamUngKhac" role="tabpanel">
-              <div class="mb-3 border rounded p-3 bg-light">
-                <h6 class="mb-3 text-primary">Thêm khoản thu tạm ứng khác</h6>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="soTienThu" class="form-label">Số tiền</label>
-                        <input type="number" class="form-control" id="soTienThu" placeholder="Nhập số tiền" required min="1000">
-                    </div>
-                    <div class="col-md-4">
-                        <label for="lyDoThu" class="form-label">Lý do</label>
-                        <input type="text" class="form-control" id="lyDoThu" placeholder="Nhập lý do thu" required>
-                    </div>
-                    <div class="col-md-4 d-flex align-items-end">
-                        <button type="button" class="btn" style="background:var(--primary-color); color:white;"
+                    @if (ViewBag.DotKham?.TrangThai == true)
+                    {
+                        <div class="alert alert-warning fw-bold">
+                            <i class="fas fa-info-circle me-2"></i> Hồ sơ đã hoàn tất, không thể thu thêm.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-3 border rounded p-3 bg-light">
+                            <h6 class="mb-3 text-primary">Thêm khoản thu tạm ứng khác</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="soTienThu" class="form-label">Số tiền</label>
+                                    <input type="number" class="form-control" id="soTienThu" placeholder="Nhập số tiền" required min="1000">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="lyDoThu" class="form-label">Lý do</label>
+                                    <input type="text" class="form-control" id="lyDoThu" placeholder="Nhập lý do thu" required>
+                                </div>
+                                <div class="col-md-4 d-flex align-items-end">
+                                    <button type="button" class="btn" style="background:var(--primary-color); color:white;"
                                         onclick="ThuTamTungKhac(@ViewBag.DotKham.MaDotKham)">
-                            <i class="fas fa-plus-circle"></i> Thu thêm
-                        </button>
-                    </div>
-                </div>
-            </div>
+                                        <i class="fas fa-plus-circle"></i> Thu thêm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+            
+            
+
 
 
             </div>
@@ -275,6 +307,11 @@
         <div class="col-lg-3">
       <div class="money-card">
         <h5>Thông tin số tiền</h5>
+         @if (ViewBag.DotKham?.TrangThai == true)
+        {
+            <span class="badge bg-success"><i class="fas fa-check-circle me-1"></i> Hồ sơ đã hoàn tất</span>
+        }
+    
         <div class="money-item"><span>Số tiền đã tạm ứng:</span><span>@String.Format("{0:N0} đ", ViewBag.SoTienTamUng)</span></div>
         <div class="money-item"><span>Viện phí:</span><span>@String.Format("{0:N0} đ", ViewBag.VienPhi)</span></div>
         <div class="money-item"><span>Số tiền còn thiếu:</span><span class="text-danger">@String.Format("{0:N0} đ", ViewBag.ConThieu)</span></div>

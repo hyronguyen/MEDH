@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Danh phiếu thu";
+    @model List<DanhSachPhieuThuTatToan>
 }
 
 <link rel="stylesheet" href="~/css/thunganStyles/dsphieuthu.css" asp-append-version="true" />
@@ -14,7 +15,7 @@
         </ol>
     </nav>
 
-    <h2 class="mb-4">Danh phiếu thu</h2>
+    <h2 class="mb-4">Danh sách phiếu thu</h2>
 
     <!-- Bộ lọc nằm ngang -->
     <div class="filter-bar">
@@ -31,34 +32,48 @@
                     <tr>
                         <th>STT</th>
                         <th>Mã HS</th>
+                        <th>Mã NB</th>
                         <th>Họ tên</th>
-                        <th>Ngày thu</th>
-                        <th>Số tiền (VNĐ)</th>
-                        <th>Người thu</th>
+                        <th>Giới tính</th>
+                        <th>Địa chỉ</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Viện phí (VNĐ)</th>
                         <th>Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @* Dữ liệu tĩnh mẫu *@
-                    <tr>
-                        <td>1</td>
-                        <td>HS001</td>
-                        <td>Nguyễn Văn A</td>
-                        <td>2025-05-17</td>
-                        <td>500,000</td>
-                        <td>Thu ngân B</td>
-                        <td><span class="badge bg-success">Đã thanh toán</span></td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>HS002</td>
-                        <td>Lê Thị C</td>
-                        <td>2025-05-18</td>
-                        <td>1,200,000</td>
-                        <td>Thu ngân D</td>
-                        <td><span class="badge bg-success">Đã thanh toán</span></td>
-                    </tr>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            var trangThaiHtml = item.TrangThai
+                            ? "<span class='badge bg-success'>Hồ sơ hoàn tất</span>"
+                            : "<span class='badge bg-warning text-dark'>Chưa hoàn tất</span>";
+
+                            <tr>
+                                <td>@stt</td>
+                                <td>@item.MaDotKham</td>
+                                <td>@item.MaNguoiBenh</td>
+                                <td>@item.TenNguoiBenh</td>
+                                <td>@(item.GioiTinh == "M" ? "Nam" : item.GioiTinh == "F" ? "Nữ" : "Khác")</td>
+                                <td>@item.DiaChi</td>
+                                <td>@item.NgayTiepDon.ToString("dd/MM/yyyy")</td>
+                                <td>@item.TongVienPhi.ToString("N0")</td>
+                                <td>@Html.Raw(trangThaiHtml)</td>
+                            </tr>
+
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="text-center">Không có dữ liệu.</td>
+                        </tr>
+                    }
                 </tbody>
+
             </table>
         </div>
     </div>

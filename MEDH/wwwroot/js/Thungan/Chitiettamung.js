@@ -93,8 +93,6 @@ function ThuTamTungKhac(maDotKham) {
     document.getElementById('lyDoThu').value = "";
 }
 
-
-
 // FUNCTION In Phiếu HTMl
 function InHtml(main) {
     currentMaPhieuIn = null;

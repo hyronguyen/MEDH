@@ -35,8 +35,8 @@
         <input type="text" id="fltNguoi2" class="form-control" placeholder="Giới tính (Nam/Nữ)..." />
         <select id="fltTrangThai" class="form-control">
             <option value="">-- Trạng thái --</option>
-            <option value="du">Dư</option>
-            <option value="thieu">Thiếu</option>
+            <option value="du">Dư tiền tạm ứng</option>
+            <option value="thieu">Thiếu tiền tạm ứng</option>
         </select>
     </div>
 
@@ -116,8 +116,8 @@
 
                     const matchTrangThai =
                         trangThai === "" ||
-                        (trangThai === "du" && soTien > 0) ||
-                        (trangThai === "thieu" && soTien < 0);
+                        (trangThai === "thieu" && soTien > 0) ||
+                        (trangThai === "du" && soTien < 0);
 
                     const show =
                         hs.includes(vHS) &&

@@ -100,13 +100,23 @@ namespace MEDH.Controllers
                 var json = JsonDocument.Parse(jsonStr).RootElement;
 
                 var data = json.GetProperty("data");
-
+                var dk = data.GetProperty("dot_kham");
                 var nb = data.GetProperty("nguoi_benh");
                 viewModel.HoTen = nb.GetProperty("ho_ten").GetString();
                 viewModel.GioiTinh = nb.GetProperty("gioi_tinh").GetString();
                 viewModel.NgaySinh = nb.GetProperty("ngay_sinh").GetDateTime();
                 viewModel.DiaChi = nb.GetProperty("dia_chi").GetString();
                 viewModel.GioiTinh = nb.GetProperty("gioi_tinh").GetString();
+                viewModel.SoTheBHYT = dk.GetProperty("so_the_bhyt").ValueKind == JsonValueKind.Null
+                      ? ""
+                      : dk.GetProperty("so_the_bhyt").GetString();
+
+                                viewModel.MucHuongBHYT = dk.GetProperty("muc_huong_bhyt").ValueKind == JsonValueKind.Null
+                                    ? null
+                                    : dk.GetProperty("muc_huong_bhyt").GetDecimal();
+
+
+                Console.WriteLine(viewModel.SoTheBHYT + " " + viewModel.MucHuongBHYT);
 
                 var dichVus = data.GetProperty("dich_vu_kham").EnumerateArray();
                 foreach (var dv in dichVus)
