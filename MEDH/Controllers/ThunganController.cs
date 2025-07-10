@@ -385,5 +385,43 @@ namespace MEDH.Controllers
                 return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
             }
         }
+        public async Task<IActionResult> InBangKe([FromBody] object payload)
+        {
+            try
+            {
+                string baseUrl = _configuration["SUPBASECONFIG:SupbaseFunctionURL"];
+                string apiUrl = $"{baseUrl}chi-phi-kham";
+
+                var jsonPayload = payload.ToString();
+
+                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl)
+                {
+                    Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+                };
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/pdf"));
+
+                var response = await _httpClient.SendAsync(request);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return BadRequest(new
+                    {
+                        message = "Gọi Supabase thất bại",
+                        status = (int)response.StatusCode,
+                        detail = responseContent
+                    });
+                }
+
+                return Content(responseContent, "text/html");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi xử lý controller", detail = ex.Message });
+            }
+        }
     }
 }

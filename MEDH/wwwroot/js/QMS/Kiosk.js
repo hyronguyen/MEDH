@@ -37,7 +37,7 @@ document.getElementById("saveZoneBtn").addEventListener("click", () => {
     }
 });
 
-
+// Lấy và in stt
 function layVaInSTT(loai) {
     fetch(`/Qms/LaySTTKiosk?loai=${loai}`)
         .then(res => res.json())

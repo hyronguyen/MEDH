@@ -1,7 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Chi tiết phiếu thu";
     @model ChiTietTatToanDataViewModel
+       var vienPhi = Model.ThongTinChung.VienPhi;
+                    var daTamUng = Model.ThongTinChung.SoTienTamUng;
 
+                    var soTienDaThanhToan = Math.Min(vienPhi, daTamUng); // chỉ tính phần tạm ứng đã được sử dụng
+                    var conNo = vienPhi - daTamUng;
+                    var traLai = daTamUng > vienPhi ? daTamUng - vienPhi : 0;
 }
 
 <link rel="stylesheet" href="~/css/thunganStyles/chitietphieuthu.css" asp-append-version="true" />
@@ -15,7 +20,7 @@
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Trang chủ</a></li>
             <li class="breadcrumb-item"><a>Thu ngân</a></li>
             <li class="breadcrumb-item"><a asp-controller="Thungan" asp-action="Dsphieuthu">Danh sách phiếu thu</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@ViewBag.MaHS</li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.ThongTinChung.MaDotKham</li>
         </ol>
     </nav>
 
@@ -155,15 +160,6 @@
                     }
                 </h5>
 
-                             @{
-                    var vienPhi = Model.ThongTinChung.VienPhi;
-                    var daTamUng = Model.ThongTinChung.SoTienTamUng;
-
-                    var soTienDaThanhToan = Math.Min(vienPhi, daTamUng); // chỉ tính phần tạm ứng đã được sử dụng
-                    var conNo = vienPhi - daTamUng;
-                    var traLai = daTamUng > vienPhi ? daTamUng - vienPhi : 0;
-                }
-
                 <div class="item"><span>Tạm ứng:</span><span id="sotientamung">@daTamUng.ToString("N0")</span></div>
 
                 @if (conNo > 0)
@@ -197,7 +193,7 @@
                         <i class="fa-solid fa-print"></i> In
                     </button>
                     <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" >📄 In bảng kê chi phí BV-01</a></li>
+                            <li><a class="dropdown-item" onclick="InHtmlBangke(@Model.ThongTinChung.MaDotKham)">📄 In bảng kê chi phí BV-01</a></li>
 
                             @if (Model.ThongTinChung.TrangThai)
                             {
@@ -286,7 +282,7 @@
                 <div class="list-group">
                     <button class="list-group-item list-group-item-action" onclick="TatToan(@Model.ThongTinChung.MaDotKham,@Model.ThongTinChung.VienPhi)">Tiền mặt</button>
                     <button class="list-group-item list-group-item-action">Thẻ ngân hàng</button>
-                    <button class="list-group-item list-group-item-action">Bảo hiểm y tế</button>
+                    <button class="list-group-item list-group-item-action" onclick="InHtmlQRtinh(@((conNo > 0 ? conNo : 0)))">QRCode tĩnh</button>
                     <button class="list-group-item list-group-item-action">Ví điện tử</button>
                 </div>
             </div>
