@@ -14,21 +14,22 @@
 
 <!-- Nút lấy số to + gộp dữ liệu -->
 <div class="kiosk-options d-flex justify-content-center align-items-center gap-5 flex-wrap">
-    <button class="kiosk-btn kiosk-btn-bhyt btn  shadow-lg">
-        <div class="btn-main-label">KHÁM BHYT</div>
+    <button class="kiosk-btn kiosk-btn-bhyt btn  shadow-lg" onclick="layVaInSTT('thuong')">
+        <div class="btn-main-label">Khám thường</div>
         <div class="btn-sub-info">
             <div>Đã lấy: <strong>0052</strong></div>
             <div>Số hiện tại: <strong>0053</strong></div>
         </div>
     </button>
 
-    <button class="kiosk-btn kiosk-btn-dv btn shadow-lg">
-        <div class="btn-main-label">KHÁM DỊCH VỤ</div>
+    <button class="kiosk-btn kiosk-btn-bhyt btn  shadow-lg" onclick="layVaInSTT('dv')">
+        <div class="btn-main-label">Khám chuyên gia</div>
         <div class="btn-sub-info">
-            <div>Đã lấy: <strong>0018</strong></div>
-            <div>Số hiện tại: <strong>0019</strong></div>
+            <div>Đã lấy: <strong>0052</strong></div>
+            <div>Số hiện tại: <strong>0053</strong></div>
         </div>
     </button>
+
 </div>
 
 <!-- Modal nhập PIN -->
@@ -76,5 +77,26 @@
         </div>
     </div>
 </div>
+
+<!-- Modal hiển thị STT -->
+<div class="modal fade" id="modalPhieuSTT" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content p-3 text-center">
+      <!-- Iframe hiển thị phiếu STT thực tế để in -->
+      <div class="mt-3">
+        <iframe id="iframePhieuSTT"
+                style="width: 300px; height: 360px; border: 1px solid #ccc;"
+                title="Phiếu STT"></iframe>
+      </div>
+
+      <button type="button" class="btn btn-secondary mt-3" data-bs-dismiss="modal">
+        Đóng
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
 
 <script src="~/js/QMS/kiosk.js" asp-append-version="true"></script>

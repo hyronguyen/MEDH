@@ -36,3 +36,37 @@ document.getElementById("saveZoneBtn").addEventListener("click", () => {
         }, 300);
     }
 });
+
+
+function layVaInSTT(loai) {
+    fetch(`/Qms/LaySTTKiosk?loai=${loai}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data.html) throw new Error("Không có HTML phiếu");
+
+            const iframe = document.getElementById("iframePhieuSTT");
+            if (!iframe) return alert("Không tìm thấy iframe!");
+
+            const doc = iframe.contentWindow.document;
+            doc.open();
+            doc.write(data.html);
+            doc.close();
+
+            // Đợi iframe render xong rồi mới gọi in
+            iframe.onload = () => {
+                setTimeout(() => {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                }, 300); // thời gian chờ nhỏ để đảm bảo render xong
+            };
+
+            // Hiển thị modal (nếu muốn người dùng thấy phiếu đang hiển thị)
+            const modal = new bootstrap.Modal(document.getElementById("modalPhieuSTT"));
+            modal.show();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Không thể lấy STT hoặc in phiếu.");
+        });
+}
+
