@@ -46,3 +46,16 @@ a {
     color: var(--primary-color);
     text-align: end;
 }
+
+.table-wrapper-scroll-y {
+    max-height: 400px; /* Giới hạn chiều cao bảng */
+    overflow-y: auto;
+    display: block;
+}
+
+.table-scroll thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa; /* hoặc màu tùy chỉnh */
+    z-index: 1;
+}

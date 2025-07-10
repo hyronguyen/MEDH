@@ -122,7 +122,7 @@ document.getElementById("btn-luu-ketluan").addEventListener('click', async () =>
         if (response.ok) {
             if (result.status === "success") {
                 alert("✅ Kết luận thành công");
-                // window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mahs)}`;
+                window.location.href = `/Khambenh/Khambenhngoaitru?MaHoso=${encodeURIComponent(mahs)}`;
             } else {
                 alert(`${result.message || "Lỗi nghiệp vụ không xác định"}`);
             }

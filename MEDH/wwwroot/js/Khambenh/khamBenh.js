@@ -440,7 +440,6 @@ const danhSachThuoc = [
             }
 
             const data = await response.json();
-            console.log("✅ Dữ liệu lịch sử khám:", data);
 
             const container = document.querySelector(".history-cards");
             container.innerHTML = ""; // clear cũ
@@ -986,7 +985,7 @@ const danhSachThuoc = [
             dichvukham: dich_vu_kham_input 
         });
 
-        console.log();
+
         const url = `/Khambenh/Luuthongtinkhambenh?${query.toString()}`;
         try {
             const res = await fetch(url, {
@@ -1205,10 +1204,35 @@ let dsDaXoaTuHoSo = []; // <-- list chứa các dịch vụ đã xóa
     capNhatDanhSach();
 }
     // FUNCTION THÊM DỊCH VỤ TẠI POPUP TIẾP ĐÓN
-    function themDichVuTuPopup() {
-        const popupInstance = new bootstrap.Modal(popup); 
-        popupInstance.show();
+function themDichVuTuPopup() {
+    const hoSoRaw = localStorage.getItem("ho_so_chi_tiet");
+    let hoSoParsed = null;
+    if (hoSoRaw) {
+        try {
+            hoSoParsed = JSON.parse(hoSoRaw);
+            const sinhHieu = hoSoParsed?.data?.dot_kham?.sinh_hieu || null;
+            const hoiBenh = hoSoParsed?.data?.dot_kham?.hoi_benh || null;
+            const khamXet = hoSoParsed?.data?.dot_kham?.kham_xet || null;
+            if (!sinhHieu || !hoiBenh || !khamXet) {
+                alert("Vui lòng hoàn tất khám bệnh trước khi kê dịch vụ.");
+                return;
+            }
+
+        } catch (err) {
+            console.error("Lỗi parse ho_so_chi_tiet:", err);
+            alert("Không thể đọc thông tin hồ sơ. Vui lòng thử lại.");
+            return;
+        }
+    } else {
+        alert("Không tìm thấy thông tin hồ sơ.");
+        return;
     }
+
+    // Nếu đã khám, hiển thị popup
+    const popupInstance = new bootstrap.Modal(popup);
+    popupInstance.show();
+}
+
  // FUNCTION XÓA DỊCH VỤ
   async function xoaDichVu(index) {
     const dv = dsTatCaDichVu[index];
@@ -1405,8 +1429,6 @@ function Kiemtradanhsachdichvukham() {
         return;
     }
 
-    // Tiếp tục xử lý nếu có dịch vụ
-    console.log("✅ Danh sách dịch vụ khám:", danhsachdichvu);
 }
 
 // FUCNTION CỦA ĐƠN THUỐC-------------------------------------------------------------------------------------------------------------------------------------------------------------
